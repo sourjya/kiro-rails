@@ -16,6 +16,11 @@ What you get:
 - Security review process with OWASP-aligned audit categories
 - Changelog management with automatic rolling archives
 - Bug tracking workflow with mandatory regression tests
+- Reusable component architecture with design-time reuse mindset
+- Infrastructure abstraction with adapter pattern for all external services
+- Centralized configuration and constants — zero embedded literals
+- Comprehensive code commenting standards for human and AI readability
+- PostgreSQL database conventions with least-privilege access patterns
 
 ## Quick Start
 
@@ -92,21 +97,32 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 
 | File | Inclusion | Purpose |
 |------|-----------|---------|
-| `engineering-standards.md` | always | TDD mandate, task-first discipline, test locations, commit rules |
-| `execution-discipline.md` | always | Dependency minimalism, documentation taxonomy, bug workflow, API versioning |
+| `engineering-standards.md` | always | TDD, folder organization, reusable architecture, infrastructure abstraction, centralized config, test organization, task-first discipline, commit rules |
+| `execution-discipline.md` | always | Dependency minimalism, documentation taxonomy, bug workflow, API versioning, observability-first design |
 | `git-workflow.md` | always | Branch naming, forbidden actions, conventional commits, merge lifecycle |
-| `code-commenting-standards.md` | always | Module docstrings, inline comment rules, cross-references |
-| `project-conventions.md` | always | Project-specific conventions, ports, venv rules, logging |
+| `code-commenting-standards.md` | always | Module/class/method/property docstrings, agent-readability, cross-references |
+| `project-conventions.md` | always | Project-specific conventions, ports, PostgreSQL setup, logging |
 | `import-path-rules.md` | always | Ban on deep relative imports, `@/` alias for TS, package imports for Python |
 | `naming-conventions.md` | auto | Test files mirror source file names |
 | `ux-expert-persona.md` | manual | Senior UX expert persona for accessibility and usability guidance |
+
+### What `engineering-standards.md` Covers
+
+This is the largest steering file. It enforces:
+
+- **Folder Organization** — backend: layer-first, domain-second. Frontend: feature-sliced design. Graduation policy for shared code.
+- **Reusable Component Architecture** — search before building, identify the generic core, design for reuse but place locally, pure functions by default.
+- **Infrastructure Abstraction** — adapter pattern for all external services (storage, email, payments, AI). Factory + config-driven instantiation. Secure defaults, idempotency, observability.
+- **Centralized Configuration & Constants** — zero embedded literals. Config from environment. Constants grouped by domain. Enums over string literals.
+- **Test Folder Organization** — `unit/` (domain-mirrored), `integration/`, `e2e/`, `property/`. One test file per source file. Shared fixtures in conftest.
+- **Task-First Discipline** — no code without a task list. TDD mandatory (RED → GREEN → REFACTOR).
 
 ### Customization Points
 
 Files marked with `<!-- CUSTOMIZE -->` comments need project-specific values:
 
 - `engineering-standards.md` — backend/frontend tech stack, directory structure, dev server ports
-- `project-conventions.md` — port allocations, venv location, domain-specific rules
+- `project-conventions.md` — port allocations, venv location, PostgreSQL database names, domain-specific rules
 
 ## Automated Hooks
 
