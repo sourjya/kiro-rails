@@ -51,7 +51,7 @@ git add -A && git commit -m "feat: initialize from kiro-project-starter"
 ```
 .kiro/
 ├── steering/           # AI behavioral rules (always-on and on-demand)
-│   ├── engineering-standards.md      # TDD, task-first discipline, test locations
+│   ├── engineering-standards.md      # TDD, folder organization, reusable architecture, infrastructure abstraction, centralized config, test organization, task-first discipline, commit rules
 │   ├── execution-discipline.md       # Dependency minimalism, docs taxonomy, bug workflow
 │   ├── git-workflow.md               # Branch types, forbidden actions, commit format
 │   ├── code-commenting-standards.md  # Docstrings, cross-references, section separators
@@ -200,6 +200,36 @@ Periodic security reviews use the `code-security-reviewer` agent with a 12-categ
 5. Create your first ADR in `docs/decisions/ADR-001-tech-stack.md`
 6. Build your roadmap in `docs/roadmap/roadmap.md`
 
+## Research
+
+The steering rules in this template were informed by cross-tool research into AI coding agent conventions. See [docs/references/steering-research-2026-04-11.md](docs/references/steering-research-2026-04-11.md) for sources, methodology, and gap analysis.
+
+Key sources:
+- [MSR 2026 — "Beyond the Prompt: An Empirical Study of Cursor Rules"](https://arxiv.org/html/2512.18925v2) — taxonomy of 401 repos
+- [ETH Zurich — Context file effectiveness study](https://arxiv.org/abs/2602.11988) — human-curated vs auto-generated rules
+- [AGENTS.md Standard](https://github.com/agentsmd/agents.md) — Linux Foundation cross-tool specification
+- [Augment Code — How to Build Your AGENTS.md](https://www.augmentcode.com/guides/how-to-build-agents-md) — patterns from 2,500+ repos
+
 ## License
 
-<!-- CUSTOMIZE: Add your license -->
+MIT License
+
+Copyright (c) 2026 Sourjya S. Sen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
