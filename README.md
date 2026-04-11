@@ -106,16 +106,16 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 | `naming-conventions.md` | auto | Test files mirror source file names |
 | `ux-expert-persona.md` | manual | Senior UX expert persona for accessibility and usability guidance |
 
-### What `engineering-standards.md` Covers
+### What Each Steering File Covers
 
-This is the largest steering file. It enforces:
-
-- **Folder Organization** — backend: layer-first, domain-second. Frontend: feature-sliced design. Graduation policy for shared code.
-- **Reusable Component Architecture** — search before building, identify the generic core, design for reuse but place locally, pure functions by default.
-- **Infrastructure Abstraction** — adapter pattern for all external services (storage, email, payments, AI). Factory + config-driven instantiation. Secure defaults, idempotency, observability.
-- **Centralized Configuration & Constants** — zero embedded literals. Config from environment. Constants grouped by domain. Enums over string literals.
-- **Test Folder Organization** — `unit/` (domain-mirrored), `integration/`, `e2e/`, `property/`. One test file per source file. Shared fixtures in conftest.
-- **Task-First Discipline** — no code without a task list. TDD mandatory (RED → GREEN → REFACTOR).
+- **[engineering-standards.md](.kiro/steering/engineering-standards.md)** — Folder organization (layer-first backend, feature-sliced frontend, graduation policy), reusable component architecture, infrastructure abstraction (adapter pattern, factory instantiation, secure defaults, idempotency, observability), centralized config & constants, test folder organization, task-first discipline, TDD mandate, commit rules.
+- **[execution-discipline.md](.kiro/steering/execution-discipline.md)** — Dependency minimalism, documentation taxonomy (13 `docs/` subdirectories with placement rules), spec quality standards, observability-first design for pipelines/background processes, bug reporting workflow, API versioning, ADR-roadmap linking.
+- **[git-workflow.md](.kiro/steering/git-workflow.md)** — Branch naming (`feat/`, `fix/`, `ui/`, `test/`, `chore/`, `docs/`, `refactor/`), forbidden actions (no direct commits to main, no mixing features on one branch), conventional commit format, merge lifecycle, per-file conflict resolution.
+- **[code-commenting-standards.md](.kiro/steering/code-commenting-standards.md)** — Module/class/method/property docstrings at all visibility levels, agent-readability requirement, method justification, cross-references, enum/constant documentation, section separators.
+- **[project-conventions.md](.kiro/steering/project-conventions.md)** — Project-specific rules: port registry, PostgreSQL database conventions (central instance, least-privilege users, Alembic migration rules), domain constants strategy, code style, command output logging.
+- **[import-path-rules.md](.kiro/steering/import-path-rules.md)** — Ban on `../../` or deeper relative imports. `@/` alias for TypeScript, package imports for Python. One-level relative imports only for tightly coupled files.
+- **[naming-conventions.md](.kiro/steering/naming-conventions.md)** — Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`).
+- **[ux-expert-persona.md](.kiro/steering/ux-expert-persona.md)** — On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage.
 
 ### Customization Points
 
