@@ -91,6 +91,43 @@ All documentation must be placed in the appropriate `docs/` subdirectory based o
 - Execute work incrementally, one task at a time.
 - If implementation realities require a plan change: update the spec/roadmap, document the reason, record in changelog.
 
+### Spec Quality Standards — NON-NEGOTIABLE
+
+**Requirements.md** must include:
+- Numbered user stories with acceptance criteria (testable, not vague)
+- Non-functional requirements (performance, cost, reliability, accessibility)
+- Explicit "out of scope" section to prevent scope creep
+
+**Design.md** must include:
+- Architecture diagram showing service interactions
+- Data model with actual SQL or Pydantic schemas (not hand-wavy descriptions)
+- API contracts with request/response examples
+- Frontend component tree with data flow
+- For pipelines/background processes: observability design (what gets logged, what metrics are emitted, how to trace a request end-to-end)
+
+**Tasks.md** must include:
+- Phases with clear boundaries and checkpoint gates
+- Every task has a concrete deliverable (file path, test name, endpoint)
+- TDD structure: RED → GREEN → REFACTOR per step
+- Security checkpoint at final phase
+- No vague tasks like "implement the feature" — break down to individual functions/components
+
+**If a spec feels thin, it IS thin. Expand it before writing code.**
+
+## Observability-First Design — MANDATORY
+
+**ZERO BLACKBOXES.** Every pipeline, background process, and async workflow must be observable from day one.
+
+### Rules for all background/async/pipeline code:
+
+1. **Structured logging** — every operation logs: what started, what inputs it received, what it produced, how long it took, whether it succeeded or failed. JSON structured logging, not print statements.
+2. **Correlation IDs** — every pipeline run or background task gets a unique ID that flows through all log entries and database records.
+3. **State transitions** — every job/task has explicit states (PENDING → RUNNING → SUCCESS/FAILED/RETRYING) stored in the database.
+4. **Metrics** — track: items processed, items failed, processing time, queue depth, retry count.
+5. **Error context** — when something fails, log the full context: what was being processed, what step failed, what the input was.
+6. **Resumability** — if a pipeline crashes mid-run, it must be resumable from where it stopped via database checkpointing.
+7. **Discuss architecture first** — before implementing any pipeline or background process, discuss the architecture: data flow, failure modes, retry strategy, observability hooks.
+
 ## Git Branching — MANDATORY
 
 **All work must happen on a feature branch, never directly on `main`.**
