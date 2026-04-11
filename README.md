@@ -21,6 +21,10 @@ What you get:
 - Centralized configuration and constants — zero embedded literals
 - Comprehensive code commenting standards for human and AI readability
 - PostgreSQL database conventions with least-privilege access patterns
+- Error handling standards — explicit errors, no silent swallowing, contextual messages
+- Performance guidelines — caching, pagination, N+1 prevention, timeouts
+- Permission boundaries — three-tier system (Always / Ask First / Never)
+- Consistency and change scope discipline — match existing patterns, minimal changes only
 
 ## Quick Start
 
@@ -108,8 +112,8 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 
 ### What Each Steering File Covers
 
-- **[engineering-standards.md](.kiro/steering/engineering-standards.md)** — Folder organization (layer-first backend, feature-sliced frontend, graduation policy), reusable component architecture, infrastructure abstraction (adapter pattern, factory instantiation, secure defaults, idempotency, observability), centralized config & constants, test folder organization, task-first discipline, TDD mandate, commit rules.
-- **[execution-discipline.md](.kiro/steering/execution-discipline.md)** — Dependency minimalism, documentation taxonomy (13 `docs/` subdirectories with placement rules), spec quality standards, observability-first design for pipelines/background processes, bug reporting workflow, API versioning, ADR-roadmap linking.
+- **[engineering-standards.md](.kiro/steering/engineering-standards.md)** — Folder organization (layer-first backend, feature-sliced frontend, graduation policy), reusable component architecture, infrastructure abstraction (adapter pattern, factory instantiation, secure defaults, idempotency, observability), centralized config & constants, test folder organization, task-first discipline, TDD mandate, commit rules. Error handling standards, performance guidelines, permission boundaries, consistency rules, change scope discipline.
+- **[execution-discipline.md](.kiro/steering/execution-discipline.md)** — Dependency minimalism (justify, audit, pin versions, check overlap), documentation taxonomy (13 `docs/` subdirectories with placement rules), spec quality standards, observability-first design for pipelines/background processes, bug reporting workflow, API versioning, ADR-roadmap linking.
 - **[git-workflow.md](.kiro/steering/git-workflow.md)** — Branch naming (`feat/`, `fix/`, `ui/`, `test/`, `chore/`, `docs/`, `refactor/`), forbidden actions (no direct commits to main, no mixing features on one branch), conventional commit format, merge lifecycle, per-file conflict resolution.
 - **[code-commenting-standards.md](.kiro/steering/code-commenting-standards.md)** — Module/class/method/property docstrings at all visibility levels, agent-readability requirement, method justification, cross-references, enum/constant documentation, section separators.
 - **[project-conventions.md](.kiro/steering/project-conventions.md)** — Project-specific rules: port registry, PostgreSQL database conventions (central instance, least-privilege users, Alembic migration rules), domain constants strategy, code style, command output logging.
