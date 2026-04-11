@@ -33,6 +33,7 @@
 #### Checkpoint: Phase 1 Complete
 - [ ] All tests passing
 - [ ] No linting errors
+- [ ] Security checkpoint passed (no hardcoded secrets, auth intact, inputs validated)
 - [ ] Changelog updated
 - [ ] Changes committed
 
