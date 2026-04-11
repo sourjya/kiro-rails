@@ -1,0 +1,30 @@
+{
+  "name": "code-security-reviewer",
+  "description": "Performs structured code security and quality audits with restricted tool access.",
+  "prompt": "file://../prompts/code-review.md",
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "knowledge",
+    "shell"
+  ],
+  "allowedTools": [
+    "read",
+    "grep",
+    "glob",
+    "knowledge"
+  ],
+  "resources": [
+    "file://README.md",
+    "file://docs/**/*.md",
+    "file://.kiro/**/*.md",
+    "file://pyproject.toml",
+    "file://package.json",
+    "file://package-lock.json",
+    "file://Dockerfile*",
+    "file://docker-compose*.yml",
+    "file://docker-compose*.yaml"
+  ],
+  "welcomeMessage": "Security reviewer ready. I will inspect trust boundaries, auth, secrets, injection risks, and misconfigurations before suggesting fixes."
+}
