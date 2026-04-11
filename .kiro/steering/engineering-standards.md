@@ -116,12 +116,133 @@ The directory structures above are defaults. Adapt them to your stack:
 - **No ORM**: replace `models/` with whatever your data layer uses (`entities/`, `repositories/`, etc.)
 - Keep the principles (layer-first backend, feature-first frontend, graduation policy) even when the directory names change
 
-## Test File Locations — STRICT
+## Reusable Component Architecture — MANDATORY
+
+Before building any new service, module, component, or helper, think reuse-first.
+
+### Design-Time Mindset
+
+1. **Search before building** — scan the codebase for existing implementations that solve the same or a similar problem. Duplication is a bug.
+2. **Identify the generic core** — every piece of logic has a domain-specific shell and a generic core. Extract the generic core as a standalone unit with clean inputs/outputs.
+3. **Design for reuse, place locally** — architect components with clean interfaces, dependency injection, and no hardcoded assumptions. But place them in the feature where they're first needed (per the Graduation Policy). The clean design makes future graduation to `shared/` trivial.
+4. **Pure functions by default** — helper methods and utilities should be pure functions (no side effects, no hidden state, no implicit dependencies) wherever possible. Pure functions are trivially reusable and testable.
+5. **Parameterize, don't specialize** — if a component could serve multiple consumers with minor variations, accept those variations as parameters rather than forking the implementation.
+
+### When NOT to Make Something Reusable
+
+- If it requires more than 3 domain-specific parameters to generalize, it's not ready — keep it feature-scoped
+- If the "generic" version would be more complex than two specialized copies, don't abstract
+- If only one consumer exists and no second consumer is foreseeable, don't over-engineer
+
+### Review Checkpoint
+
+When designing any new module, answer these before writing code:
+- Does something similar already exist in the codebase?
+- What is the generic core vs. the domain-specific wrapper?
+- Could another feature, service, or project use this with zero modification?
+- Am I hardcoding anything that should be a parameter?
+
+## Centralized Configuration & Constants — MANDATORY
+
+**ZERO embedded literals.** All configuration values, magic numbers, string constants, and environment-dependent settings must live in dedicated, centralized locations — never scattered across modules.
+
+### Configuration Hierarchy
+
+```
+backend/src/
+├── core/
+│   └── config.py             # App config: reads from env vars, .env, defaults
+├── constants/                # Domain constants — organized by domain
+│   ├── auth.py               # Roles, token lifetimes, OAuth scopes
+│   ├── products.py           # Categories, statuses, limits
+│   └── common.py             # Shared constants (pagination defaults, date formats)
+```
+
+```
+frontend/src/
+├── shared/
+│   └── config/
+│       ├── env.ts            # Environment-dependent config (API URLs, feature flags)
+│       └── constants.ts      # App-wide constants
+├── features/
+│   └── auth/
+│       └── constants.ts      # Feature-scoped constants (only if used by this feature alone)
+```
+
+### Rules
+
+1. **No string literals in business logic** — URLs, status values, error messages, field names, limits, thresholds — all go in constants files or config.
+2. **No magic numbers** — every numeric value with business meaning gets a named constant with a comment explaining why that value was chosen.
+3. **Config reads from environment** — all environment-dependent values (DB URLs, API keys, feature flags, ports) go through a single config module that reads from `.env` / environment variables with typed defaults.
+4. **Constants are grouped by domain** — `constants/auth.py` for auth-related values, `constants/products.py` for product-related values. Not one giant constants file.
+5. **Feature-scoped constants stay in the feature** — if a constant is only used within one feature, it lives in that feature's `constants.ts` or at the top of the relevant module. It graduates to `shared/` or `constants/` when a second consumer appears.
+6. **Enums over string literals** — use enums (Python `Enum`, TypeScript `enum` or `as const`) for any value that has a fixed set of options. Never compare against raw strings.
+7. **Single source of truth** — if the same value is needed by both frontend and backend, define it in the backend and expose it via API or shared schema. Never duplicate constants across the stack.
+
+### What Belongs Where
+
+| Value type | Location |
+|---|---|
+| Environment-dependent (DB URL, API keys, ports) | `core/config.py` / `shared/config/env.ts` |
+| Domain constants (statuses, roles, categories) | `constants/<domain>.py` / `features/<domain>/constants.ts` |
+| Shared constants (pagination, date formats) | `constants/common.py` / `shared/config/constants.ts` |
+| Error messages | `constants/<domain>.py` or a dedicated `constants/errors.py` |
+| Feature flags | `core/config.py` (read from env) |
+
+## Test Folder Organization — STRICT
+
+### Directory Structure
+
+```
+tests/
+├── unit/                     # Fast, isolated tests — no I/O, no DB, no network
+│   ├── auth/                 # Mirrors backend/src domain structure
+│   │   ├── test_auth_service.py
+│   │   └── test_token_utils.py
+│   ├── products/
+│   │   ├── test_product_service.py
+│   │   └── test_pricing.py
+│   └── common/
+│       └── test_pagination.py
+├── integration/              # Tests that hit real DB, APIs, or external services
+│   ├── test_auth_flow.py
+│   └── test_product_api.py
+├── e2e/                      # End-to-end tests (Playwright, Cypress, etc.)
+│   └── test_checkout_flow.py
+├── property/                 # Property-based tests (Hypothesis, fast-check)
+│   └── test_pricing_properties.py
+├── conftest.py               # Root fixtures: DB sessions, auth helpers, test client
+└── unit/conftest.py          # Unit-specific fixtures (mocks, fakes)
+```
+
+### Rules
 
 - **NEVER** create `__tests__/` folders, co-located test files, or any alternative test directory structure
-- **Frontend tests** go in the project's designated test directory
-- **Backend tests** go in the project's designated test directory (e.g., `backend/tests/`, `tests/`)
-- Place new test files in the subdirectory matching the domain of the code under test
+- **Unit test subdirectories mirror source domains** — if the source has `services/auth/`, tests go in `tests/unit/auth/`
+- **One test file per source file** — `auth_service.py` → `test_auth_service.py`. Never bundle unrelated tests.
+- **Test file naming mirrors source** — prefix with `test_` (Python) or suffix with `.test.ts` / `.spec.ts` (TypeScript)
+- **Shared fixtures in conftest.py** — never duplicate fixture setup across test files. Extract to the nearest `conftest.py`.
+- **Integration tests are separate from unit tests** — unit tests must run without any external dependencies (DB, network, filesystem). Integration tests get their own directory.
+- **Create subdirectories as domains emerge** — don't pre-create empty test directories. Add them when the first test for that domain is written.
+
+### Frontend Test Structure
+
+```
+frontend/tests/
+├── unit/
+│   ├── auth/
+│   │   ├── LoginForm.test.tsx
+│   │   └── useAuth.test.ts
+│   ├── dashboard/
+│   │   └── DashboardPage.test.tsx
+│   └── shared/
+│       └── Button.test.tsx
+├── integration/
+│   └── auth-flow.test.ts
+├── e2e/
+│   └── checkout.spec.ts
+└── setup.ts                  # Test setup (mocks, providers, global config)
+```
 
 ## Task-First Discipline — MANDATORY
 
