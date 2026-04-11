@@ -25,5 +25,5 @@ Test files must use the **exact same name** as the source file they test, with t
 
 ### Rules
 
-- Never mix conventions — the test file name is always derived from the source file name
+- Never mix conventions - the test file name is always derived from the source file name
 - E2E tests use kebab-case descriptive names (e.g. `ingredient-analysis-flow.test.ts`)

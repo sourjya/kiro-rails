@@ -14,7 +14,7 @@ Terminal output capture can be unreliable in this environment. Always use the st
 
 ## Domain Constants Strategy
 
-**Rule: All domain constants live in a dedicated constants directory — never inline in model files.**
+**Rule: All domain constants live in a dedicated constants directory - never inline in model files.**
 
 - Never define domain constants inline in a model file
 - When adding a new feature with constants, create a dedicated constants file
@@ -26,13 +26,13 @@ Terminal output capture can be unreliable in this environment. Always use the st
 
 ## Code Style
 
-- Use `datetime.now(timezone.utc)` — never `datetime.utcnow()` (deprecated)
-- Use parameterized queries for all SQL — never string interpolation
+- Use `datetime.now(timezone.utc)` - never `datetime.utcnow()` (deprecated)
+- Use parameterized queries for all SQL - never string interpolation
 - Separation of concerns: keep services as separate classes
 
 ## Architecture Decisions
 
-- ADRs are required before major implementations — store them in `docs/decisions/`
+- ADRs are required before major implementations - store them in `docs/decisions/`
 
 ## Environment and Tooling
 
@@ -46,7 +46,7 @@ Port allocations are tracked in `~/coding/PORT_REGISTRY.md`. Before adding any n
 
 This project uses ports: <!-- FILL IN -->
 
-## Command Output Logging — MANDATORY
+## Command Output Logging - MANDATORY
 
 ALL commands that produce output you need to analyze MUST be logged to files using `tee`.
 
@@ -58,7 +58,7 @@ python -m pytest tests/ -v --tb=short 2>&1 | tee logs/test_results.log
 ### Log File Location:
 - All command logs: `logs/`
 
-## PostgreSQL Database Conventions — MANDATORY
+## PostgreSQL Database Conventions - MANDATORY
 
 <!-- CUSTOMIZE: Update database names and ports for your project -->
 
@@ -69,8 +69,8 @@ Use the central PostgreSQL instance running on the host (Windows). Do NOT spin u
 ### Credential Management
 
 - The PG superuser (root) password is stored in `.env` as `PG_ROOT_PASSWORD`
-- **NEVER use the root account for application connections** — root is for admin operations only
-- **NEVER prompt the user for database passwords** — always read from `.env`
+- **NEVER use the root account for application connections** - root is for admin operations only
+- **NEVER prompt the user for database passwords** - always read from `.env`
 
 ### Database Setup Pattern
 
@@ -105,16 +105,16 @@ TEST_DATABASE_PASSWORD=<test_password>
 
 ### Migration Rules (Alembic)
 
-- Alembic connects using the **root account** for running migrations — it needs DDL privileges
+- Alembic connects using the **root account** for running migrations - it needs DDL privileges
 - Configure Alembic's `env.py` to read `PG_ROOT_PASSWORD` and connect as superuser
-- Application code connects using the **app user** — limited to DML operations on its own database
+- Application code connects using the **app user** - limited to DML operations on its own database
 - Never run migrations with the app user account
 
 ### Rules
 
-1. **One database per project** — no sharing databases across projects
-2. **Separate test database** — tests never touch the application database
-3. **App user has minimal privileges** — only what the application needs (SELECT, INSERT, UPDATE, DELETE on its tables). No CREATE/DROP in production.
-4. **Root for admin only** — schema changes, migrations, user creation, grants
-5. **All connection strings in `.env`** — never hardcode host, port, database name, or credentials in source code
-6. **Test database is disposable** — tests may truncate/recreate tables freely
+1. **One database per project** - no sharing databases across projects
+2. **Separate test database** - tests never touch the application database
+3. **App user has minimal privileges** - only what the application needs (SELECT, INSERT, UPDATE, DELETE on its tables). No CREATE/DROP in production.
+4. **Root for admin only** - schema changes, migrations, user creation, grants
+5. **All connection strings in `.env`** - never hardcode host, port, database name, or credentials in source code
+6. **Test database is disposable** - tests may truncate/recreate tables freely

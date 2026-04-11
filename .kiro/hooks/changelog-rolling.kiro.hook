@@ -11,6 +11,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "The changelog was just updated. Check if docs/changelogs/CHANGELOG.md exceeds 500 lines using `wc -l docs/changelogs/CHANGELOG.md`. If it does, roll the file over: rename the current file to `docs/changelogs/CHANGELOG.YYYY-MM-DD.md` (using today's date) and create a blank `docs/changelogs/CHANGELOG.md` with just the standard header. Do NOT try to copy, summarize, or selectively preserve entries — just roll it over clean."
+    "prompt": "The changelog was just updated. Check if docs/changelogs/CHANGELOG.md exceeds 500 lines using `wc -l docs/changelogs/CHANGELOG.md`. If it does, roll the file over: rename the current file to `docs/changelogs/CHANGELOG.YYYY-MM-DD.md` (using today's date) and create a blank `docs/changelogs/CHANGELOG.md` with just the standard header. Do NOT try to copy, summarize, or selectively preserve entries - just roll it over clean."
   }
 }

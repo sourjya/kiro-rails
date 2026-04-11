@@ -1,6 +1,6 @@
 # Kiro Project Starter
 
-An opinionated project template for [Kiro](https://kiro.dev)-driven development. It provides a complete scaffolding of steering files, automated hooks, documentation taxonomy, and workflow scripts so that every new project starts with enforced engineering discipline — TDD, spec-driven planning, security reviews, and structured documentation — out of the box.
+An opinionated project template for [Kiro](https://kiro.dev)-driven development. It provides a complete scaffolding of steering files, automated hooks, documentation taxonomy, and workflow scripts so that every new project starts with enforced engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - out of the box.
 
 ## Why Use This Template
 
@@ -18,13 +18,13 @@ What you get:
 - Bug tracking workflow with mandatory regression tests
 - Reusable component architecture with design-time reuse mindset
 - Infrastructure abstraction with adapter pattern for all external services
-- Centralized configuration and constants — zero embedded literals
+- Centralized configuration and constants - zero embedded literals
 - Comprehensive code commenting standards for human and AI readability
 - PostgreSQL database conventions with least-privilege access patterns
-- Error handling standards — explicit errors, no silent swallowing, contextual messages
-- Performance guidelines — caching, pagination, N+1 prevention, timeouts
-- Permission boundaries — three-tier system (Always / Ask First / Never)
-- Consistency and change scope discipline — match existing patterns, minimal changes only
+- Error handling standards - explicit errors, no silent swallowing, contextual messages
+- Performance guidelines - caching, pagination, N+1 prevention, timeouts
+- Permission boundaries - three-tier system (Always / Ask First / Never)
+- Consistency and change scope discipline - match existing patterns, minimal changes only
 
 ## Quick Start
 
@@ -56,7 +56,7 @@ git add -A && git commit -m "feat: initialize from kiro-project-starter"
 │   ├── git-workflow.md               # Branch types, forbidden actions, commit format
 │   ├── code-commenting-standards.md  # Docstrings, cross-references, section separators
 │   ├── project-conventions.md        # Project-specific rules, ports, logging
-│   ├── import-path-rules.md          # No deep relative imports — use aliases
+│   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   └── ux-expert-persona.md          # On-demand UX expert persona (manual)
 ├── hooks/              # Automated quality gates
@@ -76,11 +76,11 @@ git add -A && git commit -m "feat: initialize from kiro-project-starter"
 └── settings/           # LSP and MCP configuration
 
 docs/
-├── decisions/          # ADR-###-name.md — Architecture Decision Records
+├── decisions/          # ADR-###-name.md - Architecture Decision Records
 ├── architecture/       # Living technical documentation
 ├── roadmap/            # Planning, milestones, and sprint tracking
 ├── changelogs/         # CHANGELOG.md + dated rolling archives
-├── bugs/               # BUG-###-name.md — bug reports with regression test requirements
+├── bugs/               # BUG-###-name.md - bug reports with regression test requirements
 ├── ideas/              # Feature exploration (promoted ideas → _archive/)
 ├── technical-debt/     # Known debt items and remediation plans
 ├── testing/            # Test strategy and coverage reports
@@ -114,8 +114,8 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 
 Files marked with `<!-- CUSTOMIZE -->` comments need project-specific values:
 
-- `engineering-standards.md` — backend/frontend tech stack, directory structure, dev server ports
-- `project-conventions.md` — port allocations, venv location, PostgreSQL database names, domain-specific rules
+- `engineering-standards.md` - backend/frontend tech stack, directory structure, dev server ports
+- `project-conventions.md` - port allocations, venv location, PostgreSQL database names, domain-specific rules
 
 ## Automated Hooks
 
@@ -137,9 +137,9 @@ Every feature follows the spec lifecycle:
 
 1. Explore the idea in `docs/ideas/`
 2. Create a spec in `.kiro/specs/<feature-name>/` with three files:
-   - `requirements.md` — what the feature must do
-   - `design.md` — how it will be built
-   - `tasks.md` — ordered implementation steps (TDD phases)
+   - `requirements.md` - what the feature must do
+   - `design.md` - how it will be built
+   - `tasks.md` - ordered implementation steps (TDD phases)
 3. Add the spec to `.kiro/specs/README.md` index and link it in `docs/roadmap/roadmap.md`
 4. Create a `feat/<spec-name>` branch from `main`
 5. Execute tasks in order, marking progress as you go
@@ -161,7 +161,7 @@ No implementation code may be written before its test. The only exceptions are c
 main ──→ feat/A ──→ merge ──→ fix/B ──→ merge ──→ feat/C ──→ ...
 ```
 
-- One branch per feature/fix — never mix unrelated work
+- One branch per feature/fix - never mix unrelated work
 - Never commit directly to `main`
 - Use `bash scripts/git-commit-push.sh "feat: description"` to commit, merge, and push
 - Branch types: `feat/`, `fix/`, `ui/`, `test/`, `chore/`, `docs/`, `refactor/`
@@ -172,7 +172,7 @@ main ──→ feat/A ──→ merge ──→ fix/B ──→ merge ──→ 
 1. Assign the next `BUG-###` number
 2. Create `docs/bugs/BUG-###-description.md`
 3. Fix on a dedicated `fix/bug-###-description` branch
-4. Add regression tests (both negative and positive) — non-negotiable
+4. Add regression tests (both negative and positive) - non-negotiable
 5. Update changelog and roadmap
 6. Merge to `main`
 
@@ -194,10 +194,10 @@ Periodic security reviews use the `code-security-reviewer` agent with a 12-categ
 The steering rules in this template were informed by cross-tool research into AI coding agent conventions. See [docs/references/steering-research-2026-04-11.md](docs/references/steering-research-2026-04-11.md) for sources, methodology, and gap analysis.
 
 Key sources:
-- [MSR 2026 — "Beyond the Prompt: An Empirical Study of Cursor Rules"](https://arxiv.org/html/2512.18925v2) — taxonomy of 401 repos
-- [ETH Zurich — Context file effectiveness study](https://arxiv.org/abs/2602.11988) — human-curated vs auto-generated rules
-- [AGENTS.md Standard](https://github.com/agentsmd/agents.md) — Linux Foundation cross-tool specification
-- [Augment Code — How to Build Your AGENTS.md](https://www.augmentcode.com/guides/how-to-build-agents-md) — patterns from 2,500+ repos
+- [MSR 2026 - "Beyond the Prompt: An Empirical Study of Cursor Rules"](https://arxiv.org/html/2512.18925v2) - taxonomy of 401 repos
+- [ETH Zurich - Context file effectiveness study](https://arxiv.org/abs/2602.11988) - human-curated vs auto-generated rules
+- [AGENTS.md Standard](https://github.com/agentsmd/agents.md) - Linux Foundation cross-tool specification
+- [Augment Code - How to Build Your AGENTS.md](https://www.augmentcode.com/guides/how-to-build-agents-md) - patterns from 2,500+ repos
 
 ## License
 

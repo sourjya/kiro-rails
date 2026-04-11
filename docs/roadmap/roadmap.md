@@ -28,4 +28,4 @@ Per ADR, security reviews run every 2-3 specs. Use `.kiro/prompts/security-revie
 
 | Review | Date | Scope | Report |
 |--------|------|-------|--------|
-| — | — | No reviews yet | — |
+| - | - | No reviews yet | - |

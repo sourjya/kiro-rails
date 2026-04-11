@@ -5,7 +5,7 @@ Every security finding, decision, and resolution is recorded here for future aud
 
 ## How to Read This Log
 
-- **ID**: `SRR-{review#}-F{finding#}` — traceable to the full report
+- **ID**: `SRR-{review#}-F{finding#}` - traceable to the full report
 - **Status**: FIXED (commit ref), ROADMAP (target spec/date), ACCEPTED RISK (justification in SRR)
 - **Category**: S1-S9 from `.kiro/prompts/code-review.md` security categories
 
@@ -13,7 +13,7 @@ Every security finding, decision, and resolution is recorded here for future aud
 
 | ID | Severity | Category | Summary | Status | SRR | Resolution |
 |----|----------|----------|---------|--------|-----|------------|
-| — | — | — | No reviews yet | — | — | — |
+| - | - | - | No reviews yet | - | - | - |
 
 ## Statistics
 

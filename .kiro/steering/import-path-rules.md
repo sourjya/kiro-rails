@@ -27,7 +27,7 @@ from ..core import config
 
 ### Forbidden
 ```python
-# BANNED — deep relative imports
+# BANNED - deep relative imports
 from ...common.models import Ingredient
 from ....evidence.src.scoring import ConsensusScorer
 ```
@@ -53,7 +53,7 @@ import { IngredientCard } from './IngredientCard'
 
 ### Forbidden
 ```typescript
-// BANNED — any relative import crossing directory boundaries
+// BANNED - any relative import crossing directory boundaries
 import { Button } from '../../shared/components/Button'
 import { api } from '../../../services/api'
 ```

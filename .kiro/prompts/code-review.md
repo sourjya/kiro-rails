@@ -24,7 +24,7 @@ Audit the ENTIRE codebase organized into 12 categories:
 
 1. Scan every route, service, and schema file
 2. Assign confidence: CONFIRMED, LIKELY, or NEEDS VALIDATION
-3. Do NOT report false positives — verify against actual code paths
+3. Do NOT report false positives - verify against actual code paths
 4. Include code evidence for every finding
 5. Severity: CRITICAL, HIGH, MEDIUM, LOW, INFO
 6. Finding IDs: `S{cat}-{seq}` for security, `Q{cat}-{seq}` for quality

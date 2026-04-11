@@ -1,21 +1,21 @@
-# Steering File Research — 2026-04-11
+# Steering File Research - 2026-04-11
 
 Research into AI coding agent rule systems across Cursor, AGENTS.md, Claude Code, Windsurf,
 and academic studies. Used to identify gaps in our steering files.
 
 ## Sources
 
-1. **MSR 2026 Study** — "Beyond the Prompt: An Empirical Study of Cursor Rules" (arxiv.org/html/2512.18925v2)
+1. **MSR 2026 Study** - "Beyond the Prompt: An Empirical Study of Cursor Rules" (arxiv.org/html/2512.18925v2)
    - Analyzed 401 open-source repos with cursor rules
    - Taxonomy: 5 themes (Convention, Guideline, Project, LLM Directive, Example), 20 codes
    - Key finding: 89% of repos include guidelines, 84% conventions, 85% project info
 
-2. **ETH Zurich Study** — Context file effectiveness (arxiv.org/abs/2602.11988)
+2. **ETH Zurich Study** - Context file effectiveness (arxiv.org/abs/2602.11988)
    - LLM-generated context files REDUCED task success by ~3%, increased cost 20%+
    - Human-curated files: marginal 4% improvement, still worth it
-   - Architecture overviews are redundant — agents find them independently
+   - Architecture overviews are redundant - agents find them independently
 
-3. **AGENTS.md Standard** — Linux Foundation / Agentic AI Foundation
+3. **AGENTS.md Standard** - Linux Foundation / Agentic AI Foundation
    - Cross-tool standard (Codex, Copilot, Cursor, Windsurf, Claude Code)
    - Key pattern: three-tier permission system (Always / Ask First / Never)
    - "Don't Touch" zones for protected files/directories
@@ -26,7 +26,7 @@ and academic studies. Used to identify gaps in our steering files.
    - Consistency: match existing code style over "correct" style
 
 5. **Augment Code Guide** (augmentcode.com/guides/how-to-build-agents-md)
-   - Non-inferable details only — don't duplicate what agents can discover
+   - Non-inferable details only - don't duplicate what agents can discover
    - Commands section most important (exact flags, full invocations)
    - 150-200 line threshold before splitting into modular files
 

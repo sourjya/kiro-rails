@@ -1,5 +1,5 @@
 #!/bin/bash
-# git-commit-push.sh — commit all changes on feature branch, merge to main, push
+# git-commit-push.sh - commit all changes on feature branch, merge to main, push
 #
 # Usage: bash scripts/git-commit-push.sh "commit message"
 # Output: logs/git-commit-push.txt (overwritten each run)

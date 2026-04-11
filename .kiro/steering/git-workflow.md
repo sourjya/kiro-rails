@@ -73,7 +73,7 @@ git checkout -b feat/next-thing
 
 **Do NOT fix bugs on the current feature branch.**
 
-1. Note it down — add to `docs/bugs/`
+1. Note it down - add to `docs/bugs/`
 2. Finish or stash the current feature
 3. Create a dedicated fix branch from main
 4. Fix, test, merge
@@ -126,7 +126,7 @@ git checkout -b feat/next-thing
 
 ---
 
-## Per-File Conflict Resolution — MANDATORY
+## Per-File Conflict Resolution - MANDATORY
 
 **FORBIDDEN:**
 ```bash
