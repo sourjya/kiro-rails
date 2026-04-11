@@ -147,9 +147,10 @@ Every feature follows the spec lifecycle:
    - `requirements.md` — what the feature must do
    - `design.md` — how it will be built
    - `tasks.md` — ordered implementation steps (TDD phases)
-3. Create a `feat/<spec-name>` branch from `main`
-4. Execute tasks in order, marking progress as you go
-5. Merge to `main` when complete, then start the next spec
+3. Add the spec to `.kiro/specs/README.md` index and link it in `docs/roadmap/roadmap.md`
+4. Create a `feat/<spec-name>` branch from `main`
+5. Execute tasks in order, marking progress as you go
+6. Merge to `main` when complete, then start the next spec
 
 ### TDD Cycle (Mandatory)
 
