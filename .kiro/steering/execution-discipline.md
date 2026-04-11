@@ -12,6 +12,7 @@ These rules fill gaps not already covered by `engineering-standards.md` or `code
 - Every new dependency must have a functional justification tied to a concrete requirement, test need, or architectural concern.
 - Do not add libraries speculatively. If the standard library or an existing dependency can do the job, use it.
 - Keep dependency manifests (`pyproject.toml`, `package.json`) lean and auditable.
+- **Python dependencies are managed exclusively via uv and pyproject.toml.** Never use `requirements.txt`, `pip install`, `pip freeze`, or `poetry`. Add deps with `uv add <package>`. The lockfile is `uv.lock`.
 
 ## Design Principles
 
