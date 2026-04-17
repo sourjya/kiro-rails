@@ -2,51 +2,6 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-## Why Use This Template
-
-AI coding agents (Kiro, Claude Code, Cursor, Windsurf, Cline) are powerful but stateless - they don't remember your engineering standards between sessions. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc file structures, ignoring changelogs, or producing inconsistent code across features.
-
-This template solves that by encoding your engineering standards as **steering files** - persistent context documents that your agent reads on every interaction. The agent doesn't just write code; it follows your team's rules about how code should be written, tested, documented, and deployed.
-
-**What changes when you add these steering files:**
-
-| Without steering | With steering |
-|-----------------|---------------|
-| Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
-| Ad-hoc folder structure | Layer-first backend, feature-sliced frontend, enforced |
-| Secrets slip into code | Pre-commit hooks catch credentials automatically |
-| No changelogs | Agent updates changelog on every meaningful change |
-| `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
-| Magic numbers everywhere | Centralized constants - zero embedded literals |
-| Agent refactors unrelated code | Change scope discipline - only touch what was asked |
-| Vague specs | Spec quality standards enforced before any code is written |
-
-The steering files work with any MCP-compatible agent. They're designed for Kiro but the principles apply to any AI-assisted development workflow.
-
-What you get:
-
-- Mandatory TDD (RED → GREEN → REFACTOR) enforced via steering rules
-- Spec-driven development workflow (requirements → design → tasks)
-- Automated quality hooks that run on every file edit and commit
-- A complete documentation taxonomy with 13 purpose-specific directories
-- Git workflow rules that prevent direct commits to `main`
-- Security review process with OWASP-aligned audit categories
-- Changelog management with automatic rolling archives
-- Bug tracking workflow with mandatory regression tests
-- Observability-first design rules for pipelines and background processes
-- Spec quality standards (NON-NEGOTIABLE) for requirements, design, and tasks
-- Versioning and release process with semver, git tagging, and release checklist
-- Maintainability review prompt with 30-point audit scope
-- Reusable component architecture with design-time reuse mindset
-- Infrastructure abstraction with adapter pattern for all external services
-- Centralized configuration and constants - zero embedded literals
-- Comprehensive code commenting standards for human and AI readability
-- PostgreSQL database conventions with least-privilege access patterns
-- Error handling standards - explicit errors, no silent swallowing, contextual messages
-- Performance guidelines - caching, pagination, N+1 prevention, timeouts
-- Permission boundaries - three-tier system (Always / Ask First / Never)
-- Consistency and change scope discipline - match existing patterns, minimal changes only
-
 ## Quick Start
 
 ```bash
@@ -90,6 +45,51 @@ rm -rf .git && git init
 # 5. Initial commit
 git add -A && git commit -m "feat: initialize from kiro-rails"
 ```
+
+## Why Use This Template
+
+AI coding agents (Kiro, Claude Code, Cursor, Windsurf, Cline) are powerful but stateless - they don't remember your engineering standards between sessions. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc file structures, ignoring changelogs, or producing inconsistent code across features.
+
+This template solves that by encoding your engineering standards as **[steering files](https://kiro.dev/docs/steering/)** - persistent context documents that your agent reads on every interaction. The agent doesn't just write code; it follows your team's rules about how code should be written, tested, documented, and deployed.
+
+**What changes when you add these steering files:**
+
+| Category | Without steering | With steering |
+|----------|-----------------|---------------|
+| 📁 Core | Ad-hoc folder structure | Layer-first backend, feature-sliced frontend, enforced |
+| 📁 Core | Magic numbers everywhere | Centralized constants - zero embedded literals |
+| 🧪 Testing | Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
+| 🔒 Security | Secrets slip into code | Pre-commit [hooks](https://kiro.dev/docs/hooks/) catch credentials automatically |
+| 🎨 Visual | `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
+| 📋 Process | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
+| 📝 Process | No changelogs | Agent updates changelog on every meaningful change |
+| 🔧 Process | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
+
+The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
+
+What you get:
+
+- Mandatory TDD (RED → GREEN → REFACTOR) enforced via steering rules
+- Spec-driven development workflow (requirements → design → tasks)
+- Automated quality hooks that run on every file edit and commit
+- A complete documentation taxonomy with 13 purpose-specific directories
+- Git workflow rules that prevent direct commits to `main`
+- Security review process with OWASP-aligned audit categories
+- Changelog management with automatic rolling archives
+- Bug tracking workflow with mandatory regression tests
+- Observability-first design rules for pipelines and background processes
+- Spec quality standards (NON-NEGOTIABLE) for requirements, design, and tasks
+- Versioning and release process with semver, git tagging, and release checklist
+- Maintainability review prompt with 30-point audit scope
+- Reusable component architecture with design-time reuse mindset
+- Infrastructure abstraction with adapter pattern for all external services
+- Centralized configuration and constants - zero embedded literals
+- Comprehensive code commenting standards for human and AI readability
+- PostgreSQL database conventions with least-privilege access patterns
+- Error handling standards - explicit errors, no silent swallowing, contextual messages
+- Performance guidelines - caching, pagination, N+1 prevention, timeouts
+- Permission boundaries - three-tier system (Always / Ask First / Never)
+- Consistency and change scope discipline - match existing patterns, minimal changes only
 
 ## Project Structure
 
