@@ -88,7 +88,7 @@ rm -rf .git && git init
 # 4. Register your ports in ~/coding/PORT_REGISTRY.md
 
 # 5. Initial commit
-git add -A && git commit -m "feat: initialize from kiro-project-starter"
+git add -A && git commit -m "feat: initialize from kiro-rails"
 ```
 
 ## Project Structure

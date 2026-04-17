@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Kiro Project Starter - One-click installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/ChaosLabz/kiro-project-starter/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 
 REPO="sourjya/kiro-rails"
 BRANCH="main"
