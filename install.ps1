@@ -34,6 +34,9 @@ $ManagedFiles = @(
     ".kiro/prompts/review-code-maintainability.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
+    "docs/decisions/ADR-000-template.md"
+    "docs/bugs/BUG-000-template.md"
+    "docs/roadmap/roadmap.md"
 )
 
 $StaleFiles = @(
