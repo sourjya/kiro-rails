@@ -1,31 +1,22 @@
-# Roadmap
+# Project Roadmap
 
-<!-- CUSTOMIZE: Replace with your project's roadmap -->
+## Current Version
 
-## Completed
+v0.1.0 (pre-release)
 
-| Phase | Description | Specs | ADRs |
-|-------|-------------|-------|------|
+## Milestones
 
-## In Progress
-
-| Phase | Description | Target | Specs | ADRs |
-|-------|-------------|--------|-------|------|
-
-## Planned
-
-| Phase | Description | Target | Dependencies |
-|-------|-------------|--------|-------------|
-
-## Deferred / Future
-
-| Feature | Idea Doc | Notes |
-|---------|----------|-------|
+| Milestone | Target Date | Specs | ADRs | Status |
+|-----------|-------------|-------|------|--------|
+| M1: Project Setup | YYYY-MM-DD | - | [ADR-001](../decisions/ADR-001-tech-stack.md) | Not Started |
+| M2: Core Feature | YYYY-MM-DD | `feat/feature-name` | - | Not Started |
 
 ## Security Reviews
 
-Per ADR, security reviews run every 2-3 specs. Use `.kiro/prompts/security-review.md`.
+| SRR | Date | Scope | Findings | Report |
+|-----|------|-------|----------|--------|
+| SRR-001 | YYYY-MM-DD | Initial review | - | [Report](../security/SRR-001-YYYY-MM-DD.md) |
 
-| Review | Date | Scope | Report |
-|--------|------|-------|--------|
-| - | - | No reviews yet | - |
+## Completed
+
+_None yet._

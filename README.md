@@ -1,6 +1,11 @@
 # Kiro Rails
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/sourjya/kiro-rails)](https://github.com/sourjya/kiro-rails/commits/main)
+
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
+
+**What's included:** 14 steering files · 4 automated hooks · 2 review prompts · 1 security agent · 1 TDD task template · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -9,12 +14,12 @@ cd your-project
 curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 ```
 
-This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy — without cloning the repo. Existing files are never overwritten, so it's safe to re-run.
+This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. Safe to re-run: on upgrade, managed files (hooks, prompts, agents, templates) are updated automatically while your customized steering files are preserved. Stale files from previous versions are cleaned up.
 
 **Then customize for your stack.** The steering files ship with generic defaults (Python/FastAPI + TypeScript/React, placeholder ports). Look for `<!-- CUSTOMIZE -->` comments in these two files and update them for your project:
 
-- `.kiro/steering/engineering-standards.md` — runtime, directory structure, dev server ports
-- `.kiro/steering/project-conventions.md` — project-specific rules, ports, database config
+- `.kiro/steering/engineering-standards.md`  - runtime, directory structure, dev server ports
+- `.kiro/steering/project-conventions.md`  - project-specific rules, ports, database config
 
 > Alternatively, fork the full repo: `git clone https://github.com/sourjya/kiro-rails.git your-project && cd your-project && rm -rf .git && git init`
 
@@ -119,7 +124,7 @@ logs/                   # Command output logs (gitignored)
 
 ## Steering Files
 
-Steering files in `.kiro/steering/` control how Kiro behaves in your project. Each file is a self-contained instruction set for one aspect of engineering discipline. The agent reads all `inclusion: always` files regardless, so splitting doesn't add context — it just organizes it. Smaller focused files are easier for the agent to reason about than a monolith where TDD rules sit next to themed dialog rules.
+Steering files in `.kiro/steering/` control how Kiro behaves in your project. Each file is a self-contained instruction set for one aspect of engineering discipline. The agent reads all `inclusion: always` files regardless, so splitting doesn't add context  - it just organizes it. Smaller focused files are easier for the agent to reason about than a monolith where TDD rules sit next to themed dialog rules.
 
 They are included based on their `inclusion` setting:
 
@@ -218,6 +223,14 @@ Periodic security reviews use the `code-security-reviewer` agent with a 12-categ
 4. Configure database conventions in `database-conventions.md` for your DB engine
 5. Create your first ADR in `docs/decisions/ADR-001-tech-stack.md`
 6. Build your roadmap in `docs/roadmap/roadmap.md`
+
+## Future Features
+
+- **Interactive installer** - `npx create-kiro-project` with prompts for stack selection (Python/Node/Go, frontend framework, database engine)
+- **Stack presets** - strip frontend sections for backend-only projects, strip Python for TS-only, etc.
+- **`kiro-rails doctor`** - validates steering files are consistent (checks for broken cross-references, missing `<!-- CUSTOMIZE -->` values)
+- **Community steering modules** - contributed files for Docker, CI/CD, monorepos, and other common concerns
+- **IDE structure screenshot** - visual diagram showing the `.kiro/` structure in an IDE
 
 ## Research
 
