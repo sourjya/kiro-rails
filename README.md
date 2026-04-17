@@ -37,9 +37,9 @@ This template solves that by encoding your engineering standards as **[steering 
 | 🧪 Testing | Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
 | 🔒 Security | Secrets slip into code | Pre-commit [hooks](https://kiro.dev/docs/hooks/) catch credentials automatically |
 | 🎨 Visual | `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
+| 📄 Docs | No decision records | ADRs (Architecture Decision Records) linked to roadmap milestones |
 | 📋 Process | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
 | 📝 Process | No changelogs | Agent updates changelog on every meaningful change |
-| 📄 Docs | No decision records | ADRs (Architecture Decision Records) linked to roadmap milestones |
 | 🔧 Process | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
