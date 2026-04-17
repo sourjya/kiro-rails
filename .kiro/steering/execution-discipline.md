@@ -137,24 +137,6 @@ All documentation must be placed in the appropriate `docs/` subdirectory based o
 
 Every ADR must be linked in `docs/roadmap/roadmap.md` at the sprint/milestone row where the decision was made.
 
-## Pre-Commit Enforcement
-
-- No secrets in committed files
-- Formatting and lint checks pass
-- Changelog has been updated when source changes warrant it
-- Use Kiro hooks or git hooks to automate these checks
-
-## Git Branching - MANDATORY
-
-**All work must happen on a feature branch, never directly on `main`.**
-**One branch per spec/feature. Merge to main before starting the next one. No exceptions.**
-
-See `.kiro/steering/git-workflow.md` for complete branching rules.
-
-### ADR Roadmap Linking - MANDATORY
-
-Every ADR must be linked in `docs/roadmap/roadmap.md` at the sprint/milestone row where the decision was made.
-
 **Rules:**
 - Link ADRs in chronological order within each row
 - Only link ADRs that actually exist on disk

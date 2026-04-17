@@ -1,6 +1,6 @@
-# Kiro Project Starter
+# Kiro Rails
 
-An opinionated project template for [Kiro](https://kiro.dev)-driven development. It provides a complete scaffolding of steering files, automated hooks, documentation taxonomy, and workflow scripts so that every new project starts with enforced engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - out of the box.
+An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
 ## Why Use This Template
 
@@ -52,16 +52,30 @@ What you get:
 ```bash
 # One-line install into your existing project
 cd ~/coding/your-project
-curl -fsSL https://raw.githubusercontent.com/ChaosLabz/kiro-project-starter/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 ```
 
 This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. Existing files are never overwritten.
+
+**What the installer does:**
+
+1. Creates `.kiro/steering/`, `.kiro/hooks/`, `.kiro/agents/`, `.kiro/prompts/`, `.kiro/templates/`, `.kiro/settings/`, `.kiro/specs/`
+2. Creates 13 `docs/` subdirectories (decisions, architecture, roadmap, changelogs, bugs, ideas, technical-debt, testing, runbooks, references, engineering, security)
+3. Creates `scripts/` and `logs/` directories
+4. Downloads 9 steering files, 4 hooks, 1 agent config, 3 prompts, 1 task template, and 1 git script
+5. Skips any file that already exists in your project - safe to re-run
+
+**What it does NOT do:** modify existing files, touch your source code, install dependencies, or initialize git.
+
+**After installing**, customize for your stack:
+- `.kiro/steering/engineering-standards.md` - set your runtime, directory structure, dev server ports
+- `.kiro/steering/project-conventions.md` - set project-specific rules, ports, database config
 
 **Or clone the full template:**
 
 ```bash
 # 1. Clone or copy the template
-cp -r ~/coding/kiro-project-starter ~/coding/your-project
+cp -r ~/coding/kiro-rails ~/coding/your-project
 cd ~/coding/your-project
 
 # 2. Reinitialize git

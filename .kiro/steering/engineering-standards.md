@@ -348,8 +348,7 @@ The ONLY exceptions where you may write code before tests:
 
 ## Documentation Requirements
 
-- All modules, classes, and functions must have docstrings/JSDoc
-- Comments explain intent, tradeoffs, and "why" - not syntax or "what"
+- See `code-commenting-standards.md` for docstring and comment rules
 - Changelog updated before every meaningful commit
 - All docs live in docs/ directory (except README.md)
 
