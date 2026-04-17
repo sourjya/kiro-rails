@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** 14 steering files · 4 automated hooks · 2 review prompts · 1 security agent · 1 TDD task template · 3 doc templates · 13 docs directories
+**What's included:** [14 steering files](.kiro/steering/) · [4 automated hooks](.kiro/hooks/) · [2 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -39,6 +39,7 @@ This template solves that by encoding your engineering standards as **[steering 
 | 🎨 Visual | `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
 | 📋 Process | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
 | 📝 Process | No changelogs | Agent updates changelog on every meaningful change |
+| 📄 Docs | No decision records | ADRs (Architecture Decision Records) linked to roadmap milestones |
 | 🔧 Process | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
@@ -66,6 +67,20 @@ What you get:
 - Performance guidelines - caching, pagination, N+1 prevention, timeouts
 - Permission boundaries - three-tier system (Always / Ask First / Never)
 - Consistency and change scope discipline - match existing patterns, minimal changes only
+
+### Documentation That Writes Itself
+
+Most teams say "we should document things" but have no enforcement. Kiro-rails makes documentation a side effect of the normal workflow - the agent does it automatically because the steering files and hooks require it.
+
+**Changelogs are automated, not optional.** The `changelog-maintenance` hook fires on every code edit and reminds the agent to update `CHANGELOG.md`. When it exceeds 500 lines, it auto-archives to a dated file. Entries are consolidated by feature, not one-line-per-commit noise.
+
+**Architecture Decision Records (ADRs)** capture the *why* behind technical choices - what was decided, what alternatives were considered, and what the consequences are. Kiro-rails mandates ADRs before major implementations and wires them into the roadmap so decisions are traceable to the milestone where they were made. Ships with a ready-to-use [template](docs/decisions/ADR-000-template.md).
+
+**Roadmap is a living document.** Specs link to milestones, ADRs link to roadmap rows, security reviews have their own tracking table. Plan changes require updating the roadmap and documenting the reason.
+
+**Bug tracking has teeth.** Every bug gets a [numbered document](docs/bugs/BUG-000-template.md) with reproduction steps, root cause, and fix description. Regression tests are non-negotiable. Bug documents link to the roadmap for traceability.
+
+**13 purpose-specific directories prevent the junk drawer.** Each `docs/` subdirectory has a defined purpose and placement rules. No files in `docs/` root. Ideas graduate from `docs/ideas/` to specs, then to archive.
 
 ## Project Structure
 
