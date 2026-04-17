@@ -133,7 +133,7 @@ if (Test-Path $overridesLocal) {
 
     # Interactive prompts
     Write-Host ""
-    $configure = Read-Host "Configure project settings now? [Y/n]"
+    $configure = Read-Host "Configure project settings now? You can skip and edit .kiro\steering\user-project-overrides.md later. [Y/n]"
     if ($configure -eq "" -or $configure -match "^[Yy]") {
         Write-Host ""
         Write-Host "Press Enter to skip any section."

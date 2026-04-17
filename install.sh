@@ -169,7 +169,7 @@ else
   # Interactive prompts (skip if not a terminal, e.g. piped install)
   if [ -t 0 ]; then
     echo ""
-    read -rp "Configure project settings now? [Y/n] " configure
+    read -rp "Configure project settings now? You can skip and edit .kiro/steering/user-project-overrides.md later. [Y/n] " configure
     configure="${configure:-Y}"
 
     if [[ "$configure" =~ ^[Yy] ]]; then
