@@ -6,9 +6,9 @@ inclusion: always
 
 Runtime environment, folder structure, and development server configuration.
 
-<!-- CUSTOMIZE: Update for your project's tech stack -->
-
 ## Runtime and Environment
+
+Defaults below. Override in `user-project-overrides.md` for your stack.
 
 - **Backend**: Python 3.12+ with FastAPI
 - **Frontend**: TypeScript with React + Vite
@@ -115,6 +115,7 @@ The directory structures above are defaults. Adapt them to your stack:
 
 ## Local Development Servers
 
-<!-- CUSTOMIZE: Update ports for your project -->
-- Backend: FastAPI + uvicorn on port XXXX
-- Frontend: Vite dev server on port XXXX
+Defaults below. Override in `user-project-overrides.md` for your ports.
+
+- Backend: default port 8000
+- Frontend: default port 5173

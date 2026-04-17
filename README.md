@@ -14,12 +14,11 @@ cd your-project
 curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 ```
 
-This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. Safe to re-run: on upgrade, managed files (hooks, prompts, agents, templates) are updated automatically while your customized steering files are preserved. Stale files from previous versions are cleaned up.
+This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. On fresh install, the installer prompts for your tech stack, ports, and database engine. Safe to re-run: on upgrade, all managed files are updated automatically while `user-project-overrides.md` (your only customization file) is never touched. Stale files from previous versions are cleaned up.
 
-**Then customize for your stack.** The steering files ship with generic defaults (Python/FastAPI + TypeScript/React, placeholder ports). Look for `<!-- CUSTOMIZE -->` comments in these two files and update them for your project:
+**Customization:** All steering files are managed and overwritten on upgrade. Your project-specific settings go in one file:
 
-- `.kiro/steering/engineering-standards.md`  - runtime, directory structure, dev server ports
-- `.kiro/steering/project-conventions.md`  - project-specific rules, ports, database config
+- `.kiro/steering/user-project-overrides.md` - tech stack, ports, database engine, code style, domain constants
 
 > Alternatively, fork the full repo: `git clone https://github.com/sourjya/kiro-rails.git your-project && cd your-project && rm -rf .git && git init`
 
@@ -86,7 +85,8 @@ What you get:
 │   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
-│   └── ux-expert-persona.md          # On-demand UX expert persona (manual)
+│   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
+│   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
 │   ├── changelog-maintenance         # Pre-commit: ensures changelog updated + rolls at 500 lines
@@ -147,10 +147,9 @@ They are included based on their `inclusion` setting:
 
 ### Customization Points
 
-Files marked with `<!-- CUSTOMIZE -->` comments need project-specific values:
+All steering files above are managed and overwritten on upgrade. Project-specific settings go in one file:
 
-- `code-organization.md` - backend/frontend tech stack, directory structure, dev server ports
-- `project-conventions.md` - project-specific rules, domain constants, code style
+- `user-project-overrides.md` - tech stack, ports, database engine, code style, domain constants
 
 ## Automated Hooks
 
@@ -217,12 +216,11 @@ Periodic security reviews use the `code-security-reviewer` agent with a 12-categ
 
 ## Customizing for Your Project
 
-1. Update tech stack in `engineering-standards.md` (Python/FastAPI + TypeScript/React is the default)
+1. Edit `user-project-overrides.md` - set your tech stack, ports, and database engine
 2. Adjust directory structures if your project differs from the default layout
-3. Add project-specific steering rules to `project-conventions.md`
-4. Configure database conventions in `database-conventions.md` for your DB engine
-5. Create your first ADR in `docs/decisions/ADR-001-tech-stack.md`
-6. Build your roadmap in `docs/roadmap/roadmap.md`
+3. Add project-specific rules to `user-project-overrides.md`
+4. Create your first ADR in `docs/decisions/ADR-001-tech-stack.md`
+5. Build your roadmap in `docs/roadmap/roadmap.md`
 
 ## Future Features
 

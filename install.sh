@@ -5,8 +5,8 @@ set -euo pipefail
 # Usage: curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 #
 # Behavior:
-#   Fresh install  - downloads everything, writes version file
-#   Upgrade        - overwrites managed files, skips customizable files, removes stale files
+#   Fresh install  - downloads everything, prompts for project overrides, writes version file
+#   Upgrade        - overwrites all managed files, never touches user-project-overrides.md
 #   Manual install - detects existing files without version, treats as upgrade from v0.0.0
 
 REPO="sourjya/kiro-rails"
@@ -14,20 +14,13 @@ BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
 CURRENT_VERSION="0.2.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
+OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
 # ──────────────────────────────────────────────
-# Customizable files - users edit these, SKIP on upgrade
-# ──────────────────────────────────────────────
-CUSTOMIZABLE_FILES=(
-  .kiro/steering/code-organization.md
-  .kiro/steering/project-conventions.md
-  .kiro/steering/database-conventions.md
-)
-
-# ──────────────────────────────────────────────
-# Managed files - we own these, OVERWRITE on upgrade
+# All managed files - overwritten on every upgrade
 # ──────────────────────────────────────────────
 MANAGED_FILES=(
+  .kiro/steering/code-organization.md
   .kiro/steering/testing-standards.md
   .kiro/steering/reusable-architecture.md
   .kiro/steering/error-handling-performance.md
@@ -35,6 +28,8 @@ MANAGED_FILES=(
   .kiro/steering/documentation-standards.md
   .kiro/steering/git-workflow.md
   .kiro/steering/code-commenting-standards.md
+  .kiro/steering/project-conventions.md
+  .kiro/steering/database-conventions.md
   .kiro/steering/import-path-rules.md
   .kiro/steering/naming-conventions.md
   .kiro/steering/versioning.md
@@ -51,8 +46,7 @@ MANAGED_FILES=(
 )
 
 # ──────────────────────────────────────────────
-# Stale files - removed during upgrade (keyed by the version that removed them)
-# Add entries here when files are renamed or deleted in a new release.
+# Stale files - removed during upgrade
 # ──────────────────────────────────────────────
 STALE_FILES=(
   # Removed in 0.2.0: monolith steering files split into focused files
@@ -64,33 +58,20 @@ STALE_FILES=(
   .kiro/prompts/review-maintainability.md
   .kiro/prompts/review-security.md
   .kiro/prompts/review-security-periodic.md
+  # Removed in 0.2.0: customizable files replaced by user-project-overrides.md
+  # (only remove if they match the old template exactly - skip if user edited them)
 )
 
 # ──────────────────────────────────────────────
 # Directories to create
 # ──────────────────────────────────────────────
 DIRS=(
-  .kiro/steering
-  .kiro/hooks
-  .kiro/agents
-  .kiro/prompts
-  .kiro/specs
-  .kiro/templates
-  .kiro/settings
-  docs/decisions
-  docs/architecture
-  docs/roadmap
-  docs/changelogs
-  docs/bugs
-  docs/ideas
-  docs/technical-debt
-  docs/testing
-  docs/runbooks
-  docs/references
-  docs/engineering
-  docs/security
-  scripts
-  logs
+  .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts
+  .kiro/specs .kiro/templates .kiro/settings
+  docs/decisions docs/architecture docs/roadmap docs/changelogs
+  docs/bugs docs/ideas docs/technical-debt docs/testing
+  docs/runbooks docs/references docs/engineering docs/security
+  scripts logs
 )
 
 # ──────────────────────────────────────────────
@@ -116,7 +97,6 @@ if [ -f "$VERSION_FILE" ]; then
   install_type="upgrade"
   echo "Upgrading Kiro Rails: v$installed_version -> v$CURRENT_VERSION"
 elif ls .kiro/steering/*.md &>/dev/null 2>&1; then
-  # Files exist but no version file - manual install or pre-versioning install
   install_type="upgrade"
   installed_version="0.0.0"
   echo "Detected existing Kiro Rails files (no version file). Upgrading to v$CURRENT_VERSION"
@@ -132,58 +112,26 @@ for dir in "${DIRS[@]}"; do
 done
 
 # ──────────────────────────────────────────────
-# Download files
+# Download managed files
 # ──────────────────────────────────────────────
 downloaded=0
-skipped=0
 updated=0
 failed=0
 
-download_file() {
-  local file="$1"
-  if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
-    return 0
-  else
-    echo "  Warning: could not download $file"
-    return 1
-  fi
-}
-
-# Customizable files: download only if missing (never overwrite user edits)
-for file in "${CUSTOMIZABLE_FILES[@]}"; do
-  if [ -f "$file" ]; then
-    skipped=$((skipped + 1))
-  else
-    if download_file "$file"; then
-      downloaded=$((downloaded + 1))
-    else
-      failed=$((failed + 1))
-    fi
-  fi
-done
-
-# Managed files: download if missing (fresh) or overwrite (upgrade)
 for file in "${MANAGED_FILES[@]}"; do
-  if [ "$install_type" = "fresh" ]; then
-    if download_file "$file"; then
-      downloaded=$((downloaded + 1))
+  if [ -f "$file" ] && [ "$install_type" = "upgrade" ]; then
+    if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
+      updated=$((updated + 1))
     else
+      echo "  Warning: could not download $file"
       failed=$((failed + 1))
     fi
   else
-    # Upgrade: always overwrite managed files
-    if [ -f "$file" ]; then
-      if download_file "$file"; then
-        updated=$((updated + 1))
-      else
-        failed=$((failed + 1))
-      fi
+    if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
+      downloaded=$((downloaded + 1))
     else
-      if download_file "$file"; then
-        downloaded=$((downloaded + 1))
-      else
-        failed=$((failed + 1))
-      fi
+      echo "  Warning: could not download $file"
+      failed=$((failed + 1))
     fi
   fi
 done
@@ -208,6 +156,80 @@ fi
 chmod +x scripts/*.sh 2>/dev/null || true
 
 # ──────────────────────────────────────────────
+# User project overrides - never overwrite, prompt on fresh install
+# ──────────────────────────────────────────────
+if [ -f "$OVERRIDES_FILE" ]; then
+  echo ""
+  echo "  user-project-overrides.md exists - not modified."
+else
+  # Download the template first
+  curl -fsSL "$BASE_URL/$OVERRIDES_FILE" -o "$OVERRIDES_FILE" 2>/dev/null
+  downloaded=$((downloaded + 1))
+
+  # Interactive prompts (skip if not a terminal, e.g. piped install)
+  if [ -t 0 ]; then
+    echo ""
+    echo "── Project Configuration (press Enter to skip any question) ──"
+    echo ""
+
+    # Tech Stack
+    read -rp "Backend stack? (e.g., Python 3.12+ with FastAPI): " backend_stack
+    read -rp "Frontend stack? (e.g., TypeScript with React + Vite): " frontend_stack
+
+    if [ -n "$backend_stack" ] || [ -n "$frontend_stack" ]; then
+      tech_block="## Tech Stack\n"
+      [ -n "$backend_stack" ] && tech_block+="- **Backend**: $backend_stack\n"
+      [ -n "$frontend_stack" ] && tech_block+="- **Frontend**: $frontend_stack\n"
+      sed -i "s|## Tech Stack|${tech_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+      # Remove the commented example block
+      sed -i '/<!-- Uncomment and set your stack:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+    fi
+
+    # Ports
+    read -rp "Backend port? (default: 8000): " backend_port
+    read -rp "Frontend port? (default: 5173): " frontend_port
+
+    if [ -n "$backend_port" ] || [ -n "$frontend_port" ]; then
+      bp="${backend_port:-8000}"
+      fp="${frontend_port:-5173}"
+      ports_block="## Dev Server Ports\n- Backend: port $bp\n- Frontend: port $fp\n"
+      sed -i "s|## Dev Server Ports|${ports_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+      sed -i '/<!-- Uncomment and set your ports:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+    fi
+
+    # Database
+    echo ""
+    echo "Database engine:"
+    echo "  1) PostgreSQL"
+    echo "  2) MySQL"
+    echo "  3) SQLite"
+    echo "  4) Skip"
+    read -rp "Choose [1-4]: " db_choice
+
+    case "$db_choice" in
+      1)
+        db_block="## Database Engine\n\n### PostgreSQL\n- Host: localhost, Port: 5432\n- Use JSONB over JSON for queryable structured data\n- Enable pg_stat_statements for query monitoring\n"
+        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+        ;;
+      2)
+        db_block="## Database Engine\n\n### MySQL\n- Host: localhost, Port: 3306\n- charset=utf8mb4, collation=utf8mb4_unicode_ci\n- Enable strict mode (STRICT_TRANS_TABLES)\n"
+        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+        ;;
+      3)
+        db_block="## Database Engine\n\n### SQLite\n- Path: ./data/app.db\n- Enable WAL mode for concurrent access\n"
+        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+        ;;
+      *) ;; # Skip
+    esac
+
+    echo ""
+  fi
+fi
+
+# ──────────────────────────────────────────────
 # Write version file
 # ──────────────────────────────────────────────
 echo "$CURRENT_VERSION" > "$VERSION_FILE"
@@ -220,12 +242,12 @@ if [ "$install_type" = "fresh" ]; then
   echo "Done! $downloaded files installed."
   echo ""
   echo "Next steps:"
-  echo "  1. Edit .kiro/steering/code-organization.md - set your tech stack and ports"
-  echo "  2. Edit .kiro/steering/project-conventions.md - set project-specific rules"
-  echo "  3. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
+  echo "  1. Review .kiro/steering/user-project-overrides.md - customize for your stack"
+  echo "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
 else
-  echo "Done! $downloaded new, $updated updated, $skipped unchanged, $removed removed."
+  echo "Done! $downloaded new, $updated updated, $removed removed."
   [ $removed -gt 0 ] && echo "  Stale files from previous versions were cleaned up."
+  echo "  user-project-overrides.md was not modified."
   echo ""
   echo "Review changes with: git diff"
 fi

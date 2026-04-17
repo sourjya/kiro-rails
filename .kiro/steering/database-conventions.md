@@ -6,8 +6,6 @@ inclusion: always
 
 Database architecture, credential management, migration rules, and ORM conventions.
 
-<!-- CUSTOMIZE: Remove sections for engines you don't use. Update migration tool references for your stack. -->
-
 ## Architecture Principles
 
 1. **One database per project** - no sharing databases across projects
@@ -25,7 +23,6 @@ Database architecture, credential management, migration rules, and ORM conventio
 
 ### .env Structure
 
-<!-- CUSTOMIZE: Update for your database engine -->
 ```bash
 # Admin (migrations, schema changes)
 DB_ADMIN_URL=<engine>://<admin_user>:<admin_password>@localhost:<port>/<project>
@@ -38,8 +35,6 @@ TEST_DATABASE_URL=<engine>://<project>_test:<test_password>@localhost:<port>/<pr
 ```
 
 ## Migration Rules
-
-<!-- CUSTOMIZE: Update for your migration tool (Alembic, Prisma Migrate, Django migrations, Knex, etc.) -->
 
 - Migrations run with **admin credentials** - they need DDL privileges
 - Application code connects with the **app user** - limited to DML
@@ -64,7 +59,6 @@ TEST_DATABASE_URL=<engine>://<project>_test:<test_password>@localhost:<port>/<pr
 
 ## Connection Pooling
 
-<!-- CUSTOMIZE: Update pool sizes for your expected load -->
 - Use connection pooling in production - never open a new connection per request
 - Set pool size based on expected concurrency and database max connections
 - Configure idle connection timeout to prevent stale connections
@@ -79,7 +73,6 @@ TEST_DATABASE_URL=<engine>://<project>_test:<test_password>@localhost:<port>/<pr
 
 ## Engine-Specific Notes
 
-<!-- CUSTOMIZE: Remove engines you don't use -->
 
 ### PostgreSQL
 - Use JSONB over JSON for queryable structured data

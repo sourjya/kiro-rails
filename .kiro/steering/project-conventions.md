@@ -5,8 +5,7 @@ inclusion: always
 # Project-Specific Conventions
 
 Rules specific to this project's codebase, tools, and architecture.
-
-<!-- CUSTOMIZE: Update this entire file for your project's specifics -->
+For project-specific overrides (tech stack, ports, database, code style), see `user-project-overrides.md`.
 
 ## Git and Terminal Workflow
 
@@ -36,7 +35,6 @@ Terminal output capture can be unreliable in this environment. Always use the st
 
 ## Environment and Tooling
 
-<!-- CUSTOMIZE: Update for your project's environment -->
 - Use the project's virtual environment for all Python work. Never install packages globally.
 - Never install packages in the global Python registry.
 
