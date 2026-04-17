@@ -14,7 +14,7 @@
 - **RED -> GREEN -> REFACTOR**: Write failing tests FIRST, then minimal implementation, then refactor
 - NEVER write implementation code before its test
 - Each phase below follows strict TDD ordering: tests before implementation
-- See engineering-standards.md for complete TDD guidelines
+- See testing-standards.md for complete TDD guidelines
 
 **Testing Strategy:**
 - Unit tests for specific examples and edge cases (write FIRST)

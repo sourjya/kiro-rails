@@ -42,11 +42,16 @@ DIRS=(
 )
 
 FILES=(
-  .kiro/steering/engineering-standards.md
-  .kiro/steering/execution-discipline.md
+  .kiro/steering/code-organization.md
+  .kiro/steering/testing-standards.md
+  .kiro/steering/reusable-architecture.md
+  .kiro/steering/error-handling-performance.md
+  .kiro/steering/change-discipline.md
+  .kiro/steering/documentation-standards.md
   .kiro/steering/git-workflow.md
   .kiro/steering/code-commenting-standards.md
   .kiro/steering/project-conventions.md
+  .kiro/steering/database-conventions.md
   .kiro/steering/import-path-rules.md
   .kiro/steering/naming-conventions.md
   .kiro/steering/versioning.md
@@ -56,9 +61,8 @@ FILES=(
   .kiro/hooks/lint-python-files.kiro.hook
   .kiro/hooks/security-checkpoint.kiro.hook
   .kiro/agents/code-security-reviewer.json
-  .kiro/prompts/code-review.md
-  .kiro/prompts/security-review.md
-  .kiro/prompts/review-maintainability.md
+  .kiro/prompts/review-code-security.md
+  .kiro/prompts/review-code-maintainability.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
 )

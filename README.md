@@ -5,46 +5,18 @@ An opinionated project template for [Kiro](https://kiro.dev)-driven development.
 ## Quick Start
 
 ```bash
-# One-line install into your existing project
-cd ~/coding/your-project
+cd your-project
 curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash
 ```
 
-This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. Existing files are never overwritten.
+This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy — without cloning the repo. Existing files are never overwritten, so it's safe to re-run.
 
-**What the installer does:**
+**Then customize for your stack.** The steering files ship with generic defaults (Python/FastAPI + TypeScript/React, placeholder ports). Look for `<!-- CUSTOMIZE -->` comments in these two files and update them for your project:
 
-1. Creates `.kiro/steering/`, `.kiro/hooks/`, `.kiro/agents/`, `.kiro/prompts/`, `.kiro/templates/`, `.kiro/settings/`, `.kiro/specs/`
-2. Creates 13 `docs/` subdirectories (decisions, architecture, roadmap, changelogs, bugs, ideas, technical-debt, testing, runbooks, references, engineering, security)
-3. Creates `scripts/` and `logs/` directories
-4. Downloads 9 steering files, 4 hooks, 1 agent config, 3 prompts, 1 task template, and 1 git script
-5. Skips any file that already exists in your project - safe to re-run
+- `.kiro/steering/engineering-standards.md` — runtime, directory structure, dev server ports
+- `.kiro/steering/project-conventions.md` — project-specific rules, ports, database config
 
-**What it does NOT do:** modify existing files, touch your source code, install dependencies, or initialize git.
-
-**After installing**, customize for your stack:
-- `.kiro/steering/engineering-standards.md` - set your runtime, directory structure, dev server ports
-- `.kiro/steering/project-conventions.md` - set project-specific rules, ports, database config
-
-**Or clone the full template:**
-
-```bash
-# 1. Clone or copy the template
-cp -r ~/coding/kiro-rails ~/coding/your-project
-cd ~/coding/your-project
-
-# 2. Reinitialize git
-rm -rf .git && git init
-
-# 3. Customize steering files for your stack
-#    - .kiro/steering/engineering-standards.md  → runtime, directory structure, ports
-#    - .kiro/steering/project-conventions.md    → project-specific rules, ports, venv
-
-# 4. Register your ports in ~/coding/PORT_REGISTRY.md
-
-# 5. Initial commit
-git add -A && git commit -m "feat: initialize from kiro-rails"
-```
+> Alternatively, fork the full repo: `git clone https://github.com/sourjya/kiro-rails.git your-project && cd your-project && rm -rf .git && git init`
 
 ## Why Use This Template
 
@@ -96,11 +68,16 @@ What you get:
 ```
 .kiro/
 ├── steering/           # AI behavioral rules (always-on and on-demand)
-│   ├── engineering-standards.md      # TDD, folder organization, reusable architecture, infrastructure abstraction, centralized config, test organization, task-first discipline, commit rules
-│   ├── execution-discipline.md       # Dependency minimalism, docs taxonomy, bug workflow, observability, spec quality standards
-│   ├── git-workflow.md               # Branch types, forbidden actions, commit format
+│   ├── code-organization.md          # Runtime, folder structure, dev servers
+│   ├── testing-standards.md          # Test folders, task-first discipline, TDD
+│   ├── reusable-architecture.md      # Reuse, infra abstraction, centralized config
+│   ├── error-handling-performance.md # Error handling, performance, observability, themed dialogs
+│   ├── change-discipline.md          # Permissions, consistency, scope, deps, commits, changelog
+│   ├── documentation-standards.md    # Docs taxonomy, spec quality, API versioning, roadmap
+│   ├── git-workflow.md               # Branch types, forbidden actions, commit format, bug workflow
 │   ├── code-commenting-standards.md  # Docstrings, cross-references, section separators
-│   ├── project-conventions.md        # Project-specific rules, ports, logging
+│   ├── project-conventions.md        # Project-specific rules, code style, logging
+│   ├── database-conventions.md       # DB architecture, credentials, migrations, ORM
 │   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
@@ -113,9 +90,8 @@ What you get:
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── prompts/
-│   ├── code-review.md                # 12-category security + quality audit scope
-│   ├── security-review.md            # Periodic security review workflow
-│   └── review-maintainability.md     # 30-point maintainability + refactor audit
+│   ├── review-code-security.md            # 12-category security + quality audit scope with periodic review workflow
+│   └── review-code-maintainability.md     # 30-point maintainability + refactor audit
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
@@ -143,15 +119,22 @@ logs/                   # Command output logs (gitignored)
 
 ## Steering Files
 
-Steering files in `.kiro/steering/` control how Kiro behaves in your project. They are included based on their `inclusion` setting:
+Steering files in `.kiro/steering/` control how Kiro behaves in your project. Each file is a self-contained instruction set for one aspect of engineering discipline. The agent reads all `inclusion: always` files regardless, so splitting doesn't add context — it just organizes it. Smaller focused files are easier for the agent to reason about than a monolith where TDD rules sit next to themed dialog rules.
+
+They are included based on their `inclusion` setting:
 
 | File | Inclusion | What It Covers |
 |------|-----------|----------------|
-| [engineering-standards.md](.kiro/steering/engineering-standards.md) | always | Folder organization (layer-first backend, feature-sliced frontend, graduation policy), reusable component architecture, infrastructure abstraction (adapter pattern, factory instantiation, secure defaults, idempotency, observability), centralized config & constants, test folder organization, task-first discipline, TDD mandate, themed dialogs (no native browser dialogs), error handling, performance guidelines, permission boundaries, consistency rules, change scope discipline, commit rules |
-| [execution-discipline.md](.kiro/steering/execution-discipline.md) | always | Dependency minimalism (justify, audit, pin versions, check overlap), documentation taxonomy (13 `docs/` subdirectories with placement rules), spec quality standards, observability-first design, bug reporting workflow, API versioning, ADR-roadmap linking |
-| [git-workflow.md](.kiro/steering/git-workflow.md) | always | Branch naming (`feat/`, `fix/`, `ui/`, `test/`, `chore/`, `docs/`, `refactor/`), forbidden actions (no direct commits to main, no mixing features on one branch), conventional commit format, merge lifecycle, per-file conflict resolution |
-| [code-commenting-standards.md](.kiro/steering/code-commenting-standards.md) | always | Module/class/method/property docstrings at all visibility levels, agent-readability requirement, method justification, cross-references, enum/constant documentation, section separators |
-| [project-conventions.md](.kiro/steering/project-conventions.md) | always | Port registry, PostgreSQL database conventions (central instance, least-privilege users, Alembic migration rules), domain constants strategy, code style, command output logging |
+| [code-organization.md](.kiro/steering/code-organization.md) | always | Runtime environment, folder organization (layer-first backend, feature-sliced frontend, graduation policy), dev server ports |
+| [testing-standards.md](.kiro/steering/testing-standards.md) | always | Test folder organization, task-first discipline, TDD mandate (RED/GREEN/REFACTOR), testing requirements |
+| [reusable-architecture.md](.kiro/steering/reusable-architecture.md) | always | Reusable component architecture, infrastructure abstraction (adapter pattern, factory instantiation, secure defaults, idempotency), centralized config & constants |
+| [error-handling-performance.md](.kiro/steering/error-handling-performance.md) | always | Error handling standards, performance guidelines, themed dialogs (no native browser dialogs), observability-first design |
+| [change-discipline.md](.kiro/steering/change-discipline.md) | always | Permission boundaries, consistency rules, change scope discipline, dependency minimalism, design principles, commit discipline, changelog rolling, repo hygiene, credentials |
+| [documentation-standards.md](.kiro/steering/documentation-standards.md) | always | Documentation taxonomy (13 `docs/` subdirectories), spec quality standards, API versioning, roadmap planning, ADR-roadmap linking |
+| [git-workflow.md](.kiro/steering/git-workflow.md) | always | Branch naming, forbidden actions, conventional commit format, merge lifecycle, bug resolution workflow, per-file conflict resolution |
+| [code-commenting-standards.md](.kiro/steering/code-commenting-standards.md) | always | Module/class/method/property docstrings at all visibility levels, agent-readability requirement, cross-references, section separators |
+| [project-conventions.md](.kiro/steering/project-conventions.md) | always | Project-specific rules, code style, command output logging |
+| [database-conventions.md](.kiro/steering/database-conventions.md) | always | DB architecture, credentials, migrations, ORM conventions, transaction boundaries, connection pooling, engine-specific notes (PostgreSQL, MySQL, SQLite) |
 | [import-path-rules.md](.kiro/steering/import-path-rules.md) | always | Ban on `../../` or deeper relative imports. `@/` alias for TypeScript, package imports for Python. One-level relative imports only for tightly coupled files |
 | [naming-conventions.md](.kiro/steering/naming-conventions.md) | auto | Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`) |
 | [versioning.md](.kiro/steering/versioning.md) | auto | Semver, git tagging, release checklist, when to tag vs when not to tag, pre-1.0 beta rules |
@@ -161,8 +144,8 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 
 Files marked with `<!-- CUSTOMIZE -->` comments need project-specific values:
 
-- `engineering-standards.md` - backend/frontend tech stack, directory structure, dev server ports
-- `project-conventions.md` - port allocations, venv location, PostgreSQL database names, domain-specific rules
+- `code-organization.md` - backend/frontend tech stack, directory structure, dev server ports
+- `project-conventions.md` - project-specific rules, domain constants, code style
 
 ## Automated Hooks
 
@@ -230,9 +213,9 @@ Periodic security reviews use the `code-security-reviewer` agent with a 12-categ
 ## Customizing for Your Project
 
 1. Update tech stack in `engineering-standards.md` (Python/FastAPI + TypeScript/React is the default)
-2. Set your port allocations in `project-conventions.md` and `~/coding/PORT_REGISTRY.md`
-3. Adjust directory structures if your project differs from the default layout
-4. Add project-specific steering rules to `project-conventions.md`
+2. Adjust directory structures if your project differs from the default layout
+3. Add project-specific steering rules to `project-conventions.md`
+4. Configure database conventions in `database-conventions.md` for your DB engine
 5. Create your first ADR in `docs/decisions/ADR-001-tech-stack.md`
 6. Build your roadmap in `docs/roadmap/roadmap.md`
 
