@@ -4,7 +4,24 @@ An opinionated project template for [Kiro](https://kiro.dev)-driven development.
 
 ## Why Use This Template
 
-Starting a project with Kiro is powerful, but without guardrails the AI can drift: skipping tests, inlining secrets, creating ad-hoc file structures, or ignoring changelogs. This template solves that by encoding your engineering standards as steering files that Kiro follows on every interaction.
+AI coding agents (Kiro, Claude Code, Cursor, Windsurf, Cline) are powerful but stateless - they don't remember your engineering standards between sessions. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc file structures, ignoring changelogs, or producing inconsistent code across features.
+
+This template solves that by encoding your engineering standards as **steering files** - persistent context documents that your agent reads on every interaction. The agent doesn't just write code; it follows your team's rules about how code should be written, tested, documented, and deployed.
+
+**What changes when you add these steering files:**
+
+| Without steering | With steering |
+|-----------------|---------------|
+| Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
+| Ad-hoc folder structure | Layer-first backend, feature-sliced frontend, enforced |
+| Secrets slip into code | Pre-commit hooks catch credentials automatically |
+| No changelogs | Agent updates changelog on every meaningful change |
+| `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
+| Magic numbers everywhere | Centralized constants - zero embedded literals |
+| Agent refactors unrelated code | Change scope discipline - only touch what was asked |
+| Vague specs | Spec quality standards enforced before any code is written |
+
+The steering files work with any MCP-compatible agent. They're designed for Kiro but the principles apply to any AI-assisted development workflow.
 
 What you get:
 
@@ -16,6 +33,10 @@ What you get:
 - Security review process with OWASP-aligned audit categories
 - Changelog management with automatic rolling archives
 - Bug tracking workflow with mandatory regression tests
+- Observability-first design rules for pipelines and background processes
+- Spec quality standards (NON-NEGOTIABLE) for requirements, design, and tasks
+- Versioning and release process with semver, git tagging, and release checklist
+- Maintainability review prompt with 30-point audit scope
 - Reusable component architecture with design-time reuse mindset
 - Infrastructure abstraction with adapter pattern for all external services
 - Centralized configuration and constants - zero embedded literals
@@ -27,6 +48,16 @@ What you get:
 - Consistency and change scope discipline - match existing patterns, minimal changes only
 
 ## Quick Start
+
+```bash
+# One-line install into your existing project
+cd ~/coding/your-project
+curl -fsSL https://raw.githubusercontent.com/ChaosLabz/kiro-project-starter/main/install.sh | bash
+```
+
+This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. Existing files are never overwritten.
+
+**Or clone the full template:**
 
 ```bash
 # 1. Clone or copy the template
@@ -52,24 +83,25 @@ git add -A && git commit -m "feat: initialize from kiro-project-starter"
 .kiro/
 ├── steering/           # AI behavioral rules (always-on and on-demand)
 │   ├── engineering-standards.md      # TDD, folder organization, reusable architecture, infrastructure abstraction, centralized config, test organization, task-first discipline, commit rules
-│   ├── execution-discipline.md       # Dependency minimalism, docs taxonomy, bug workflow
+│   ├── execution-discipline.md       # Dependency minimalism, docs taxonomy, bug workflow, observability, spec quality standards
 │   ├── git-workflow.md               # Branch types, forbidden actions, commit format
 │   ├── code-commenting-standards.md  # Docstrings, cross-references, section separators
 │   ├── project-conventions.md        # Project-specific rules, ports, logging
 │   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
+│   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
 │   └── ux-expert-persona.md          # On-demand UX expert persona (manual)
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
-│   ├── changelog-check               # Reminds to update changelog when source files change
-│   ├── changelog-rolling             # Archives changelog when it exceeds 500 lines
+│   ├── changelog-maintenance         # Pre-commit: ensures changelog updated + rolls at 500 lines
 │   ├── lint-python-files             # Runs ruff check --fix on edited Python files
 │   └── security-checkpoint           # Flags security issues in auth/API/model files
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── prompts/
 │   ├── code-review.md                # 12-category security + quality audit scope
-│   └── security-review.md            # Periodic security review workflow
+│   ├── security-review.md            # Periodic security review workflow
+│   └── review-maintainability.md     # 30-point maintainability + refactor audit
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
@@ -108,6 +140,7 @@ Steering files in `.kiro/steering/` control how Kiro behaves in your project. Th
 | [project-conventions.md](.kiro/steering/project-conventions.md) | always | Port registry, PostgreSQL database conventions (central instance, least-privilege users, Alembic migration rules), domain constants strategy, code style, command output logging |
 | [import-path-rules.md](.kiro/steering/import-path-rules.md) | always | Ban on `../../` or deeper relative imports. `@/` alias for TypeScript, package imports for Python. One-level relative imports only for tightly coupled files |
 | [naming-conventions.md](.kiro/steering/naming-conventions.md) | auto | Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`) |
+| [versioning.md](.kiro/steering/versioning.md) | auto | Semver, git tagging, release checklist, when to tag vs when not to tag, pre-1.0 beta rules |
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
 
 ### Customization Points

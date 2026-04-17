@@ -133,6 +133,17 @@ All documentation must be placed in the appropriate `docs/` subdirectory based o
 6. **Resumability** - if a pipeline crashes mid-run, it must be resumable from where it stopped via database checkpointing.
 7. **Discuss architecture first** - before implementing any pipeline or background process, discuss the architecture: data flow, failure modes, retry strategy, observability hooks.
 
+### ADR Roadmap Linking - MANDATORY
+
+Every ADR must be linked in `docs/roadmap/roadmap.md` at the sprint/milestone row where the decision was made.
+
+## Pre-Commit Enforcement
+
+- No secrets in committed files
+- Formatting and lint checks pass
+- Changelog has been updated when source changes warrant it
+- Use Kiro hooks or git hooks to automate these checks
+
 ## Git Branching - MANDATORY
 
 **All work must happen on a feature branch, never directly on `main`.**
@@ -177,13 +188,6 @@ Add entry to `docs/changelogs/CHANGELOG.md` under today's date.
 
 ### Step 7: Update the bug document status
 Set `Status` to `FIXED`, fill in `Fixed` date and remaining fields.
-
-## Pre-Commit Enforcement
-
-- No secrets in committed files
-- Formatting and lint checks pass
-- Changelog has been updated when source changes warrant it
-- Use Kiro hooks or git hooks to automate these checks
 
 ## Credential Handling
 
