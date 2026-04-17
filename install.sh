@@ -169,61 +169,76 @@ else
   # Interactive prompts (skip if not a terminal, e.g. piped install)
   if [ -t 0 ]; then
     echo ""
-    echo "── Project Configuration (press Enter to skip any question) ──"
-    echo ""
+    read -rp "Configure project settings now? [Y/n] " configure
+    configure="${configure:-Y}"
 
-    # Tech Stack
-    read -rp "Backend stack? (e.g., Python 3.12+ with FastAPI): " backend_stack
-    read -rp "Frontend stack? (e.g., TypeScript with React + Vite): " frontend_stack
+    if [[ "$configure" =~ ^[Yy] ]]; then
+      echo ""
+      echo "Press Enter to skip any section."
+      echo ""
 
-    if [ -n "$backend_stack" ] || [ -n "$frontend_stack" ]; then
-      tech_block="## Tech Stack\n"
-      [ -n "$backend_stack" ] && tech_block+="- **Backend**: $backend_stack\n"
-      [ -n "$frontend_stack" ] && tech_block+="- **Frontend**: $frontend_stack\n"
-      sed -i "s|## Tech Stack|${tech_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
-      # Remove the commented example block
-      sed -i '/<!-- Uncomment and set your stack:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+      # ── Tech Stack ──
+      echo "── Tech Stack ──"
+      read -rp "  Backend? (e.g., Python 3.12+ with FastAPI): " backend_stack
+      read -rp "  Frontend? (e.g., TypeScript with React + Vite): " frontend_stack
+      if [ -n "$backend_stack" ] || [ -n "$frontend_stack" ]; then
+        tech_block="## Tech Stack\n"
+        [ -n "$backend_stack" ] && tech_block+="- **Backend**: $backend_stack\n"
+        [ -n "$frontend_stack" ] && tech_block+="- **Frontend**: $frontend_stack\n"
+        sed -i "s|## Tech Stack|${tech_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment and set your stack:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+      fi
+
+      # ── Dev Server Ports ──
+      echo ""
+      echo "── Dev Server Ports ──"
+      read -rp "  Backend port? (default: 8000): " backend_port
+      read -rp "  Frontend port? (default: 5173): " frontend_port
+      if [ -n "$backend_port" ] || [ -n "$frontend_port" ]; then
+        bp="${backend_port:-8000}"
+        fp="${frontend_port:-5173}"
+        ports_block="## Dev Server Ports\n- Backend: port $bp\n- Frontend: port $fp\n"
+        sed -i "s|## Dev Server Ports|${ports_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment and set your ports:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+      fi
+
+      # ── Database Engine ──
+      echo ""
+      echo "── Database Engine ──"
+      echo "  1) PostgreSQL  2) MySQL  3) SQLite  4) Skip"
+      read -rp "  Choose [1-4]: " db_choice
+      case "$db_choice" in
+        1) db_block="## Database Engine\n\n### PostgreSQL\n- Host: localhost, Port: 5432\n- Use JSONB over JSON for queryable structured data\n- Enable pg_stat_statements for query monitoring\n" ;;
+        2) db_block="## Database Engine\n\n### MySQL\n- Host: localhost, Port: 3306\n- charset=utf8mb4, collation=utf8mb4_unicode_ci\n- Enable strict mode (STRICT_TRANS_TABLES)\n" ;;
+        3) db_block="## Database Engine\n\n### SQLite\n- Path: ./data/app.db\n- Enable WAL mode for concurrent access\n" ;;
+        *) db_block="" ;;
+      esac
+      if [ -n "$db_block" ]; then
+        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+      fi
+
+      # ── Migration Tool ──
+      echo ""
+      echo "── Migration Tool ──"
+      echo "  1) Alembic (SQLAlchemy)  2) Prisma Migrate  3) Django Migrations  4) Knex  5) Skip"
+      read -rp "  Choose [1-5]: " mig_choice
+      case "$mig_choice" in
+        1) mig_block="## Migration Tool\n- **Alembic** (SQLAlchemy) - migrations run with admin credentials via env.py\n" ;;
+        2) mig_block="## Migration Tool\n- **Prisma Migrate** - schema.prisma is the source of truth\n" ;;
+        3) mig_block="## Migration Tool\n- **Django Migrations** - manage.py migrate with admin DB URL\n" ;;
+        4) mig_block="## Migration Tool\n- **Knex** - knexfile.js reads from .env\n" ;;
+        *) mig_block="" ;;
+      esac
+      if [ -n "$mig_block" ]; then
+        sed -i "s|## Migration Tool|${mig_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
+        sed -i '/<!-- Uncomment your migration tool:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
+      fi
+
+      echo ""
+      echo "Remaining sections (project rules, domain constants, code style, tooling)"
+      echo "can be edited directly in: .kiro/steering/user-project-overrides.md"
     fi
-
-    # Ports
-    read -rp "Backend port? (default: 8000): " backend_port
-    read -rp "Frontend port? (default: 5173): " frontend_port
-
-    if [ -n "$backend_port" ] || [ -n "$frontend_port" ]; then
-      bp="${backend_port:-8000}"
-      fp="${frontend_port:-5173}"
-      ports_block="## Dev Server Ports\n- Backend: port $bp\n- Frontend: port $fp\n"
-      sed -i "s|## Dev Server Ports|${ports_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
-      sed -i '/<!-- Uncomment and set your ports:/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
-    fi
-
-    # Database
-    echo ""
-    echo "Database engine:"
-    echo "  1) PostgreSQL"
-    echo "  2) MySQL"
-    echo "  3) SQLite"
-    echo "  4) Skip"
-    read -rp "Choose [1-4]: " db_choice
-
-    case "$db_choice" in
-      1)
-        db_block="## Database Engine\n\n### PostgreSQL\n- Host: localhost, Port: 5432\n- Use JSONB over JSON for queryable structured data\n- Enable pg_stat_statements for query monitoring\n"
-        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
-        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
-        ;;
-      2)
-        db_block="## Database Engine\n\n### MySQL\n- Host: localhost, Port: 3306\n- charset=utf8mb4, collation=utf8mb4_unicode_ci\n- Enable strict mode (STRICT_TRANS_TABLES)\n"
-        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
-        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
-        ;;
-      3)
-        db_block="## Database Engine\n\n### SQLite\n- Path: ./data/app.db\n- Enable WAL mode for concurrent access\n"
-        sed -i "s|## Database Engine|${db_block}|" "$OVERRIDES_FILE" 2>/dev/null || true
-        sed -i '/<!-- Uncomment your engine/,/-->/d' "$OVERRIDES_FILE" 2>/dev/null || true
-        ;;
-      *) ;; # Skip
-    esac
 
     echo ""
   fi
