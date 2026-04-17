@@ -16,7 +16,7 @@ curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh 
 
 > **Windows users:** PowerShell aliases `curl` to `Invoke-WebRequest`, so the above won't work. Use one of these instead:
 > - **[Git Bash](https://gitforwindows.org/) / [WSL](https://learn.microsoft.com/en-us/windows/wsl/install):** `curl -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.sh | bash`
-> - **[PowerShell](https://learn.microsoft.com/en-us/powershell/):** `irm https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.ps1 -OutFile install.ps1; .\install.ps1`
+> - **[PowerShell](https://learn.microsoft.com/en-us/powershell/):** `curl.exe -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.ps1 -o install.ps1; .\install.ps1`
 
 This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. On fresh install, the installer prompts for your tech stack, ports, and database engine. Safe to re-run: on upgrade, all managed files are updated automatically while `user-project-overrides.md` (your only customization file) is never touched. Stale files from previous versions are cleaned up.
 
