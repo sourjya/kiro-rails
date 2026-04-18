@@ -60,7 +60,7 @@ What you get:
 - Automated quality hooks that run on every file edit and commit
 - A complete documentation taxonomy with 13 purpose-specific directories
 - Git workflow rules that prevent direct commits to `main`
-- Security review process with OWASP-aligned audit categories
+- Security review process with three-tier OWASP-aligned audit (pre-commit, feature, sprint)
 - Changelog management with automatic rolling archives
 - Bug tracking workflow with mandatory regression tests
 - Observability-first design rules for pipelines and background processes
@@ -122,7 +122,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── prompts/
-│   ├── review-code-security.md            # 18-category security, quality, and dependency audit scope
+│   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
 │   └── review-code-maintainability.md     # 32-point maintainability + refactor audit
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
@@ -242,7 +242,13 @@ main ──→ feat/A ──→ merge ──→ fix/B ──→ merge ──→ 
 
 ### Security Reviews
 
-Periodic security reviews use the `code-security-reviewer` agent with an 18-category audit scope (S1-S12 security, Q1-Q3 code quality, D1-D3 dependency/supply chain). Reports go in `docs/security/` and findings are tracked in `SECURITY_LOG.md`.
+Security reviews follow a three-tier model that matches review depth to development context:
+
+- **Tier 1 (pre-commit):** Blocks secrets, unsafe execution, and auth bypass in staged files. Runs automatically on every commit.
+- **Tier 2 (feature complete):** Full OWASP S1-S13 audit plus BOLA/IDOR, cryptographic quality, and file upload security. Run manually when a feature is ready.
+- **Tier 3 (sprint end):** Full codebase scan including supply chain (D1-D5), secure headers/CORS, logging security, and rate limiting. Run manually at sprint boundaries.
+
+Reports go in `docs/security/` as `SRR-{###}-{YYYY-MM-DD}-T{tier}.md`. See `review-policy.md` for trigger rules and sequencing.
 
 ## Customizing for Your Project
 
