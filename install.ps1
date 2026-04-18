@@ -29,7 +29,9 @@ $ManagedFiles = @(
     ".kiro/hooks/comment-standards-check.kiro.hook"
     ".kiro/hooks/changelog-maintenance.kiro.hook"
     ".kiro/hooks/lint-python-files.kiro.hook"
-    ".kiro/hooks/security-checkpoint.kiro.hook"
+    ".kiro/hooks/security-tier1-precommit.kiro.hook"
+    ".kiro/hooks/security-tier2-feature.kiro.hook"
+    ".kiro/hooks/security-tier3-sprint.kiro.hook"
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/prompts/review-code-security.md"
     ".kiro/prompts/review-code-maintainability.md"
@@ -48,6 +50,7 @@ $StaleFiles = @(
     ".kiro/prompts/review-maintainability.md"
     ".kiro/prompts/review-security.md"
     ".kiro/prompts/review-security-periodic.md"
+    ".kiro/hooks/security-checkpoint.kiro.hook"
 )
 
 $Dirs = @(

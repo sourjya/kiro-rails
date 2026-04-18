@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [15 steering files](.kiro/steering/) · [4 automated hooks](.kiro/hooks/) · [2 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [15 steering files](.kiro/steering/) · [6 automated hooks](.kiro/hooks/) · [2 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -116,7 +116,9 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
 │   ├── changelog-maintenance         # Pre-commit: ensures changelog updated + rolls at 500 lines
 │   ├── lint-python-files             # Runs ruff check --fix on edited Python files
-│   └── security-checkpoint           # Flags security issues in auth/API/model files
+│   ├── security-tier1-precommit      # Pre-commit: blocks secrets, unsafe code, auth bypass
+│   ├── security-tier2-feature        # Feature complete: full OWASP + business logic audit
+│   └── security-tier3-sprint         # Sprint end: full codebase + supply chain + headers
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── prompts/
@@ -187,7 +189,9 @@ Hooks fire automatically on file edits or before tool use:
 | Changelog Check | `.py`/`.ts`/`.tsx` edited | Reminds to update `CHANGELOG.md` with a consolidated entry |
 | Changelog Rolling | `CHANGELOG.md` edited | Archives changelog to a dated file when it exceeds 500 lines |
 | Lint Python Files | `.py` edited | Runs `ruff check --fix` via `uvx` and logs output |
-| Security Checkpoint | Auth/API/model files edited | Silently verifies no secrets, proper validation, parameterized SQL |
+| Security Tier 1 | Pre-commit | Blocks secrets, unsafe execution, auth bypass in staged files |
+| Security Tier 2 | Feature complete (manual) | Full OWASP + business logic + BOLA/IDOR audit |
+| Security Tier 3 | Sprint end (manual) | Full codebase + supply chain + headers + logging security |
 
 ## Development Workflow
 

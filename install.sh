@@ -38,7 +38,9 @@ MANAGED_FILES=(
   .kiro/hooks/comment-standards-check.kiro.hook
   .kiro/hooks/changelog-maintenance.kiro.hook
   .kiro/hooks/lint-python-files.kiro.hook
-  .kiro/hooks/security-checkpoint.kiro.hook
+  .kiro/hooks/security-tier1-precommit.kiro.hook
+  .kiro/hooks/security-tier2-feature.kiro.hook
+  .kiro/hooks/security-tier3-sprint.kiro.hook
   .kiro/agents/code-security-reviewer.json
   .kiro/prompts/review-code-security.md
   .kiro/prompts/review-code-maintainability.md
@@ -62,6 +64,8 @@ STALE_FILES=(
   .kiro/prompts/review-maintainability.md
   .kiro/prompts/review-security.md
   .kiro/prompts/review-security-periodic.md
+  # Removed in 0.2.0: single security hook replaced by tiered hooks
+  .kiro/hooks/security-checkpoint.kiro.hook
   # Removed in 0.2.0: customizable files replaced by user-project-overrides.md
   # (only remove if they match the old template exactly - skip if user edited them)
 )
