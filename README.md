@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [14 steering files](.kiro/steering/) · [4 automated hooks](.kiro/hooks/) · [2 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [15 steering files](.kiro/steering/) · [4 automated hooks](.kiro/hooks/) · [2 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -110,6 +110,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
 │   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
+│   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
@@ -119,8 +120,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── prompts/
-│   ├── review-code-security.md            # 12-category security + quality audit scope with periodic review workflow
-│   └── review-code-maintainability.md     # 30-point maintainability + refactor audit
+│   ├── review-code-security.md            # 18-category security, quality, and dependency audit scope
+│   └── review-code-maintainability.md     # 32-point maintainability + refactor audit
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
@@ -168,6 +169,7 @@ They are included based on their `inclusion` setting:
 | [naming-conventions.md](.kiro/steering/naming-conventions.md) | auto | Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`) |
 | [versioning.md](.kiro/steering/versioning.md) | auto | Semver, git tagging, release checklist, when to tag vs when not to tag, pre-1.0 beta rules |
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
+| [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
 
 ### Customization Points
 
@@ -236,7 +238,7 @@ main ──→ feat/A ──→ merge ──→ fix/B ──→ merge ──→ 
 
 ### Security Reviews
 
-Periodic security reviews use the `code-security-reviewer` agent with a 12-category OWASP-aligned audit scope (S1–S9 security, Q1–Q3 code quality). Reports go in `docs/security/` and findings are tracked in `SECURITY_LOG.md`.
+Periodic security reviews use the `code-security-reviewer` agent with an 18-category audit scope (S1-S12 security, Q1-Q3 code quality, D1-D3 dependency/supply chain). Reports go in `docs/security/` and findings are tracked in `SECURITY_LOG.md`.
 
 ## Customizing for Your Project
 

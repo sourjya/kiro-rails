@@ -34,6 +34,7 @@ MANAGED_FILES=(
   .kiro/steering/naming-conventions.md
   .kiro/steering/versioning.md
   .kiro/steering/ux-expert-persona.md
+  .kiro/steering/review-policy.md
   .kiro/hooks/comment-standards-check.kiro.hook
   .kiro/hooks/changelog-maintenance.kiro.hook
   .kiro/hooks/lint-python-files.kiro.hook
