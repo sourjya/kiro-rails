@@ -113,15 +113,20 @@ function Get-RemoteFile($relativePath) {
 
 # Download managed files
 $downloaded = 0; $updated = 0; $failed = 0
+$total = $ManagedFiles.Count; $current = 0
 
 foreach ($file in $ManagedFiles) {
+    $current++
+    $name = Split-Path $file -Leaf
+    Write-Host "`r  Downloading [$current/$total] $name                    " -NoNewline
     $localPath = $file.Replace("/", "\")
     if ((Test-Path $localPath) -and $installType -eq "upgrade") {
-        if (Get-RemoteFile $file) { $updated++ } else { $failed++; Write-Host "  Warning: could not download $file" -ForegroundColor Yellow }
+        if (Get-RemoteFile $file) { $updated++ } else { $failed++; Write-Host ""; Write-Host "  Warning: could not download $file" -ForegroundColor Yellow }
     } else {
-        if (Get-RemoteFile $file) { $downloaded++ } else { $failed++; Write-Host "  Warning: could not download $file" -ForegroundColor Yellow }
+        if (Get-RemoteFile $file) { $downloaded++ } else { $failed++; Write-Host ""; Write-Host "  Warning: could not download $file" -ForegroundColor Yellow }
     }
 }
+Write-Host ""
 
 # Remove stale files
 $removed = 0

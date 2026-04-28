@@ -133,11 +133,17 @@ downloaded=0
 updated=0
 failed=0
 
+total=${#MANAGED_FILES[@]}
+current=0
+
 for file in "${MANAGED_FILES[@]}"; do
+  current=$((current + 1))
+  printf "\r  Downloading [%d/%d] %-60s" "$current" "$total" "$(basename "$file")"
   if [ -f "$file" ] && [ "$install_type" = "upgrade" ]; then
     if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
       updated=$((updated + 1))
     else
+      echo ""
       echo "  Warning: could not download $file"
       failed=$((failed + 1))
     fi
@@ -145,11 +151,13 @@ for file in "${MANAGED_FILES[@]}"; do
     if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
       downloaded=$((downloaded + 1))
     else
+      echo ""
       echo "  Warning: could not download $file"
       failed=$((failed + 1))
     fi
   fi
 done
+echo ""
 
 # ──────────────────────────────────────────────
 # Remove stale files (upgrade only)
