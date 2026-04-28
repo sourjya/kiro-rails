@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.4.0"
+CURRENT_VERSION="0.5.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
