@@ -130,6 +130,7 @@ $DocTemplates = @(
     "docs/decisions/ADR-000-template.md"
     "docs/bugs/BUG-000-template.md"
     "docs/roadmap/roadmap.md"
+    ".kiro/settings/mcp.json"
 )
 foreach ($file in $DocTemplates) {
     $localPath = $file.Replace("/", "\")

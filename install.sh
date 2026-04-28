@@ -163,6 +163,7 @@ DOC_TEMPLATES=(
   docs/decisions/ADR-000-template.md
   docs/bugs/BUG-000-template.md
   docs/roadmap/roadmap.md
+  .kiro/settings/mcp.json
 )
 
 for file in "${DOC_TEMPLATES[@]}"; do
