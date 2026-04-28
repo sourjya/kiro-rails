@@ -53,9 +53,6 @@ MANAGED_FILES=(
   .kiro/prompts/review-cicd-pipeline.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
-  docs/decisions/ADR-000-template.md
-  docs/bugs/BUG-000-template.md
-  docs/roadmap/roadmap.md
 )
 
 # ──────────────────────────────────────────────
@@ -158,6 +155,23 @@ for file in "${MANAGED_FILES[@]}"; do
   fi
 done
 echo ""
+
+# ──────────────────────────────────────────────
+# Doc templates - download only if missing (never overwrite user content)
+# ──────────────────────────────────────────────
+DOC_TEMPLATES=(
+  docs/decisions/ADR-000-template.md
+  docs/bugs/BUG-000-template.md
+  docs/roadmap/roadmap.md
+)
+
+for file in "${DOC_TEMPLATES[@]}"; do
+  if [ ! -f "$file" ]; then
+    if curl -fsSL "$BASE_URL/$file" -o "$file" 2>/dev/null; then
+      downloaded=$((downloaded + 1))
+    fi
+  fi
+done
 
 # ──────────────────────────────────────────────
 # Remove stale files (upgrade only)

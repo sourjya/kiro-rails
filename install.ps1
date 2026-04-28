@@ -44,9 +44,6 @@ $ManagedFiles = @(
     ".kiro/prompts/review-cicd-pipeline.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
-    "docs/decisions/ADR-000-template.md"
-    "docs/bugs/BUG-000-template.md"
-    "docs/roadmap/roadmap.md"
 )
 
 $StaleFiles = @(
@@ -127,6 +124,19 @@ foreach ($file in $ManagedFiles) {
     }
 }
 Write-Host ""
+
+# Doc templates - download only if missing (never overwrite user content)
+$DocTemplates = @(
+    "docs/decisions/ADR-000-template.md"
+    "docs/bugs/BUG-000-template.md"
+    "docs/roadmap/roadmap.md"
+)
+foreach ($file in $DocTemplates) {
+    $localPath = $file.Replace("/", "\")
+    if (-not (Test-Path $localPath)) {
+        if (Get-RemoteFile $file) { $downloaded++ }
+    }
+}
 
 # Remove stale files
 $removed = 0
