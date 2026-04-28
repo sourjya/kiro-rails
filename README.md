@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [15 steering files](.kiro/steering/) · [6 automated hooks](.kiro/hooks/) · [4 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [15 steering files](.kiro/steering/) · [6 automated hooks](.kiro/hooks/) · [9 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -125,7 +125,12 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
 │   ├── review-code-maintainability.md     # 32-point maintainability + refactor audit
 │   ├── review-test-quality.md             # Test suite quality, coverage gaps, flakiness audit
-│   └── review-css-architecture.md         # CSS/styling consistency, tokens, specificity audit
+│   ├── review-css-architecture.md         # CSS/styling consistency, tokens, specificity audit
+│   ├── review-api-contracts.md            # API contract consistency, error schemas, versioning
+│   ├── review-dependency-risk.md          # Dependency bloat, license, supply chain, vendor lock-in
+│   ├── review-observability.md            # Logging, tracing, metrics, SLI/SLO, 3 AM test
+│   ├── review-iac-consistency.md          # IaC security, naming, tags, Lambda sizing, drift
+│   └── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
