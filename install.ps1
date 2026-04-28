@@ -35,6 +35,8 @@ $ManagedFiles = @(
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/prompts/review-code-security.md"
     ".kiro/prompts/review-code-maintainability.md"
+    ".kiro/prompts/review-test-quality.md"
+    ".kiro/prompts/review-css-architecture.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
     "docs/decisions/ADR-000-template.md"
