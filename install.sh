@@ -51,6 +51,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-observability.md
   .kiro/prompts/review-iac-consistency.md
   .kiro/prompts/review-cicd-pipeline.md
+  .kiro/prompts/review-frontend-performance.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
 )
