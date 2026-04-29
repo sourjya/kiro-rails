@@ -79,27 +79,53 @@ Scan the codebase for known performance anti-patterns:
 Use Chrome DevTools MCP tools to measure actual performance:
 
 **Core Web Vitals:**
-- Run `lighthouse_audit(device: "mobile")` for baseline scores
-- Record page load trace to identify LCP element and render-blocking resources
-- Analyze LCP breakdown: `renderDelay` vs `resourceLoadDelay` vs `elementRenderDelay`
+```
+# Lighthouse audit - baseline scores
+lighthouse_audit(device: "mobile")
+
+# Page load trace - identify LCP element, render-blocking resources
+navigate_page(url: "http://localhost:5173")
+performance_start_trace(reload: true)
+# After auto-stop, analyze:
+performance_analyze_insight(insightSetId: "...", insightName: "LCPBreakdown")
+performance_analyze_insight(insightSetId: "...", insightName: "DocumentLatency")
+```
 
 **Interaction Performance (INP):**
-- Record a trace during user interaction (click, type, scroll)
-- Identify long tasks >50ms, layout thrashing, forced reflows
-- Measure input delay, processing duration, and presentation delay separately
+```
+# Record an interaction - measure responsiveness
+performance_start_trace(reload: false, autoStop: false)
+# Perform the interaction (click, type, etc.)
+click(uid: "target-element-uid")
+performance_stop_trace()
+# Look for: long tasks > 50ms, layout thrashing, forced reflows
+```
 
 **Simulated Slow Device:**
-- Throttle CPU (6x slowdown) and network (Fast 3G) to simulate real-world conditions
-- Re-run Lighthouse and interaction tests under throttling
+```
+# Throttle to simulate real-world conditions
+emulate(cpuThrottlingRate: 6, networkConditions: "Fast 3G")
+# Re-run Lighthouse and interaction tests under throttling
+lighthouse_audit(device: "mobile")
+```
 
 **Memory Leaks:**
-- Take heap snapshots before and after repeated navigation/interaction cycles
-- Compare for detached DOM trees, growing arrays, unreleased closures
+```
+# Heap snapshot comparison
+take_memory_snapshot(filePath: "before.heapsnapshot")
+# Navigate around, open/close panels, then return
+take_memory_snapshot(filePath: "after.heapsnapshot")
+# Compare: look for detached DOM trees, growing arrays
+```
 
 **Paint Performance:**
-- Check if scrolling causes repaints outside the scroll area
-- Check if hovering an item repaints the entire list or just the item
-- Verify animations run on compositor thread (no layout/paint in Performance panel)
+```
+# Take screenshot, then scroll/interact and take another
+take_screenshot(filePath: "paint-check.png")
+# Check: does scrolling cause repaints outside the scroll area?
+# Check: does hovering an item repaint the entire list or just the item?
+# Verify animations run on compositor thread (no layout/paint in Performance panel)
+```
 
 ---
 
