@@ -99,14 +99,27 @@ foreach ($dir in $Dirs) {
     if (-not (Test-Path $localDir)) { [void](New-Item -ItemType Directory -Path $localDir -Force) }
 }
 
-# Download using curl.exe (ships with Windows 10+, avoids AV flagging)
+# Download helper - tries curl.exe first, falls back to Invoke-WebRequest
+$useCurl = $true
+try { $null = & curl.exe --version 2>&1 } catch { $useCurl = $false }
+if ($LASTEXITCODE -ne 0) { $useCurl = $false }
+
 function Get-RemoteFile($relativePath) {
     $url = "$BaseUrl/$relativePath"
     $localPath = $relativePath.Replace("/", "\")
     $parentDir = Split-Path $localPath -Parent
     if ($parentDir -and -not (Test-Path $parentDir)) { [void](New-Item -ItemType Directory -Path $parentDir -Force) }
-    $result = & curl.exe -fsSL $url -o $localPath 2>&1
-    return $LASTEXITCODE -eq 0
+    try {
+        if ($script:useCurl) {
+            $null = & curl.exe -fsSL $url -o $localPath 2>&1
+            return $LASTEXITCODE -eq 0
+        } else {
+            Invoke-WebRequest -Uri $url -OutFile $localPath -UseBasicParsing -ErrorAction Stop
+            return $true
+        }
+    } catch {
+        return $false
+    }
 }
 
 # Download managed files

@@ -23,6 +23,8 @@ cd your-project
 curl.exe -fsSL https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.ps1 -o install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1; Remove-Item install.ps1
 ```
 
+> If `curl.exe` is blocked by corporate policy, use: `Invoke-WebRequest -Uri "https://raw.githubusercontent.com/sourjya/kiro-rails/main/install.ps1" -OutFile install.ps1; powershell -ExecutionPolicy Bypass -File install.ps1; Remove-Item install.ps1`
+
 This downloads all steering files, hooks, prompts, templates, and creates the `docs/` taxonomy - without cloning the repo. On fresh install, the installer prompts for your tech stack, ports, and database engine. Safe to re-run: on upgrade, all managed files are updated automatically while `user-project-overrides.md` (your only customization file) is never touched. Stale files from previous versions are cleaned up.
 
 **Customization:** All steering files are managed and overwritten on upgrade. Your project-specific settings go in one file:
