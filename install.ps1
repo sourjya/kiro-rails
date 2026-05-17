@@ -43,6 +43,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-iac-consistency.md"
     ".kiro/prompts/review-cicd-pipeline.md"
     ".kiro/prompts/review-frontend-performance.md"
+    ".kiro/prompts/review-ux-audit.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
 )
