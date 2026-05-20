@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [17 steering files](.kiro/steering/) · [9 automated hooks](.kiro/hooks/) · [12 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 skill](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [17 steering files](.kiro/steering/) · [12 automated hooks](.kiro/hooks/) · [12 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 skill](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -136,7 +136,10 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── security-tier3-sprint         # Sprint end: full codebase + supply chain + headers
 │   ├── fix-spiral-detector           # Prompt submit: warns if 3+ consecutive fix commits detected
 │   ├── type-check-on-stop            # Agent stop: runs tsc/ruff after agent finishes responding
-│   └── package-manifest-verify       # File edit: verifies package.json/pyproject.toml includes
+│   ├── package-manifest-verify       # File edit: verifies package.json/pyproject.toml includes
+│   ├── changelog-consolidation-reminder # Prompt submit: warns if 10+ commits since last changelog
+│   ├── bug-doc-completion-check      # File edit: verifies bug doc fields are complete
+│   └── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
 ├── skills/
@@ -228,6 +231,9 @@ Hooks fire automatically on file edits or before tool use:
 | Fix Spiral Detector | Prompt submit | Warns if 3+ consecutive `fix:` commits detected — triggers root cause analysis |
 | Type Check on Stop | Agent stop | Runs `tsc --noEmit` or `ruff check` after agent finishes responding |
 | Package Manifest Verify | `package.json`/`pyproject.toml` edited | Runs `npm pack --dry-run` to verify published artifact includes expected files |
+| Changelog Consolidation | Prompt submit | Warns if 10+ commits since last changelog update — triggers consolidation |
+| Bug Doc Completion | `docs/bugs/BUG-*.md` edited | Verifies root cause, fix, regression tests, and status are filled |
+| ADR Trigger | Infrastructure files edited | Asks if the change warrants an Architecture Decision Record |
 
 ## Development Workflow
 

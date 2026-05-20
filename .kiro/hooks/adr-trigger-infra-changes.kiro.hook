@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "ADR Trigger on Infrastructure Changes",
+  "description": "After saving infrastructure or config files, asks whether the change represents an architectural decision worth recording as an ADR.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/docker-compose*.yml",
+      "**/Dockerfile*",
+      "**/infrastructure/**",
+      "**/*.tf",
+      "**/Caddyfile",
+      "**/nginx.conf",
+      "**/.github/workflows/**"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "An infrastructure or deployment configuration file was just modified. Determine if this change represents a significant architectural decision that should be recorded.\n\nA change warrants an ADR if it:\n- Introduces a new service, database, or external dependency\n- Changes deployment topology (new container, new serverless function, new queue)\n- Switches providers or tools (e.g., nginx → Caddy, PostgreSQL → DynamoDB)\n- Adds or modifies CI/CD pipeline stages that affect release process\n- Changes authentication or networking architecture\n\nA change does NOT warrant an ADR if it:\n- Is a minor config tweak (port change, env var addition, resource limit adjustment)\n- Is a bug fix to existing infrastructure\n- Is a version bump of an existing dependency\n\nIf an ADR is warranted: check docs/decisions/ for the next ADR number and suggest creating it. Format: ADR-###-short-description.md.\n\nIf not warranted: respond with just 'OK'."
+  }
+}

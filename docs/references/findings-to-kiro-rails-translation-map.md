@@ -265,3 +265,41 @@
 - [kiro.dev/docs/powers/create](https://kiro.dev/docs/powers/create/) — Powers packaging format
 - [kiro.dev/docs/specs/bugfix-specs](https://kiro.dev/docs/specs/bugfix-specs/) — Bugfix spec workflow
 - [kiro.dev/docs/hooks/best-practices](https://kiro.dev/docs/hooks/best-practices/) — Hook design best practices
+
+---
+
+## Addendum: Periodic Documentation Update Hooks (Approved 2026-05-21)
+
+### Design Rationale
+
+Documentation rots because updates are decoupled from the moment changes happen. The solution is to trigger documentation checks at the exact moment when the relevant context is fresh — not on a schedule, but at natural workflow boundaries.
+
+### Hook 1: Changelog Consolidation Reminder
+
+**Trigger:** UserPromptSubmit (shell)
+**Logic:** Check if 10+ commits exist since CHANGELOG.md was last modified. If yes, append a reminder.
+**Justification:** Changelogs become useless when they're either a raw commit log or months behind. This catches the sweet spot — enough commits to consolidate meaningfully, triggered at the moment the user starts a new interaction (low noise, high relevance). Shell action = zero credits.
+**Noise level:** Near-zero. Only fires when genuinely behind.
+
+### Hook 2: Bug Document Completion Check
+
+**Trigger:** File Save on `docs/bugs/BUG-*.md`
+**Logic:** After saving a bug doc, verify all required fields are filled (root cause, fix description, regression tests, status).
+**Justification:** Bug docs are created at report time but often abandoned after the fix ships. This fires at the natural moment — when someone edits the bug doc (presumably to update it after fixing). Catches incomplete docs before they go stale. Agent prompt = costs credits but only fires on bug doc edits (rare).
+**Noise level:** Low. Only fires when editing bug docs.
+
+### Hook 3: ADR Trigger on Infrastructure Changes
+
+**Trigger:** File Save on infrastructure/config files (`docker-compose.yml`, `**/infrastructure/**`, `Dockerfile`, `*.tf`, `Caddyfile`)
+**Logic:** After saving an infrastructure file, ask if this represents an architectural decision worth recording.
+**Justification:** ADRs capture the "why" behind decisions. The hardest part is remembering to write them. This fires at the exact moment a decision is being implemented — when context is fresh and the "why" is still in the developer's head. Agent prompt = costs credits but infra file edits are infrequent.
+**Noise level:** Low. Infrastructure files change rarely.
+
+### Rejected Alternatives
+
+| Approach | Why Rejected |
+|---|---|
+| Timer-based (every N hours) | Kiro has no cron/timer trigger. Would require external scheduler. |
+| Post Task Execution for arch docs | Too noisy — fires after every spec task, most of which don't change architecture. |
+| AgentSpawn stale docs check | Good idea but heavy — scanning all docs for broken links on every session start adds latency. Better as a manual trigger or cached with long TTL. |
+| Roadmap sync on tag creation | No "git tag" trigger exists in Kiro hooks. Better as manual `/roadmap-sync` skill. |

@@ -20,6 +20,9 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 - **Fix Spiral Detector hook** (UserPromptSubmit) — checks git log for 3+ consecutive fix commits, appends root-cause-analysis warning
 - **Type Check on Stop hook** (Agent Stop) — runs `tsc --noEmit` or `ruff check` after agent finishes responding
 - **Package Manifest Verify hook** (File Edit on package.json/pyproject.toml) — runs `npm pack --dry-run` to verify published artifact
+- **Changelog Consolidation Reminder hook** (UserPromptSubmit) — warns if 10+ commits since last changelog update, triggers consolidation
+- **Bug Doc Completion Check hook** (File Edit on BUG-*.md) — verifies root cause, fix, regression tests, and status fields are filled
+- **ADR Trigger hook** (File Edit on infrastructure files) — suggests creating an Architecture Decision Record when docker-compose, Dockerfile, Terraform, CI/CD workflows are modified
 - **Completeness Verification phase** in TDD task template — mandatory final phase checking error/loading/empty states, persistence, destructive action UX, API contract verification, cache invalidation
 
 ### Strengthened

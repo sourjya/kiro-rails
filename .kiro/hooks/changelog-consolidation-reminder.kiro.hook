@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Changelog Consolidation Reminder",
+  "description": "On prompt submit, checks if 10+ commits exist since CHANGELOG.md was last modified. If behind, reminds to consolidate entries.",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'CHANGELOG=\"docs/changelogs/CHANGELOG.md\"; if [ ! -f \"$CHANGELOG\" ]; then echo \"OK\"; exit 0; fi; LAST_MOD=$(git log -1 --format=%H -- \"$CHANGELOG\" 2>/dev/null); if [ -z \"$LAST_MOD\" ]; then echo \"OK\"; exit 0; fi; COMMITS_SINCE=$(git rev-list --count \"$LAST_MOD\"..HEAD 2>/dev/null); if [ \"$COMMITS_SINCE\" -ge 10 ]; then echo \"📝 CHANGELOG BEHIND: $COMMITS_SINCE commits since last changelog update. Consolidate recent changes into docs/changelogs/CHANGELOG.md grouped by feature (not per-commit). Run: git log --oneline $LAST_MOD..HEAD\"; else echo \"OK\"; fi'"
+  }
+}
