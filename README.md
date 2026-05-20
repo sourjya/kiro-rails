@@ -68,12 +68,12 @@ What you get:
 - Observability-first design rules for pipelines and background processes
 - Spec quality standards (NON-NEGOTIABLE) for requirements, design, and tasks
 - Versioning and release process with semver, git tagging, and release checklist
-- Maintainability review prompt with 30-point audit scope
+- Maintainability review prompt with 33-point audit scope
 - Reusable component architecture with design-time reuse mindset
 - Infrastructure abstraction with adapter pattern for all external services
 - Centralized configuration and constants - zero embedded literals
 - Comprehensive code commenting standards for human and AI readability
-- PostgreSQL database conventions with least-privilege access patterns
+- Database conventions with least-privilege access patterns
 - Error handling standards - explicit errors, no silent swallowing, contextual messages
 - Performance guidelines - caching, pagination, N+1 prevention, timeouts
 - Permission boundaries - three-tier system (Always / Ask First / Never)
@@ -134,8 +134,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-iac-consistency.md          # IaC security, naming, tags, Lambda sizing, drift
 │   ├── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
-│   └── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
-│   └── review-spec-readiness.md          # Pre-build spec hardening — 18 lenses, predicted issues, roadmap revision
+│   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
+│   └── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
