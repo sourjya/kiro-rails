@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [15 steering files](.kiro/steering/) · [6 automated hooks](.kiro/hooks/) · [12 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [17 steering files](.kiro/steering/) · [9 automated hooks](.kiro/hooks/) · [12 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 skill](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
 
 ## Quick Start
 
@@ -52,6 +52,11 @@ This template solves that by encoding your engineering standards as **[steering 
 | 📋 Process | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
 | 📝 Process | No changelogs | Agent updates changelog on every meaningful change |
 | 🔧 Process | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
+| 🔄 Process | Fix-on-fix spirals (7+ commits) | Fix depth rule - stop after 2 failed fixes, map all paths |
+| 🔌 API | Frontend crashes on wrong response shape | Contract-first development - define schema before implementing |
+| ⚡ Async | Race conditions from fire-and-forget | Async discipline - `mutateAsync` + await for dependent ops |
+| 💾 State | State lost on page reload | Explicit persistence strategy required for all state |
+| 📦 Packaging | Files missing from npm publish | Package manifest verification hook catches it automatically |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
 
@@ -78,6 +83,12 @@ What you get:
 - Performance guidelines - caching, pagination, N+1 prevention, timeouts
 - Permission boundaries - three-tier system (Always / Ask First / Never)
 - Consistency and change scope discipline - match existing patterns, minimal changes only
+- Fix spiral detection - automatic warning when iterative debugging detected
+- Contract-first API development - define response schemas before implementing
+- Async discipline - sequenced operations, no fire-and-forget before dependent ops
+- State persistence rules - explicit strategy for all state that must survive reload
+- Auth implementation skill - comprehensive SSO/OAuth checklist with all edge cases
+- Package manifest verification - catches missing files before publish
 
 ### Documentation That Writes Itself
 
@@ -111,6 +122,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
+│   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching (fileMatch: tsx/jsx)
+│   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
@@ -120,9 +133,15 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── lint-python-files             # Runs ruff check --fix on edited Python files
 │   ├── security-tier1-precommit      # Pre-commit: blocks secrets, unsafe code, auth bypass
 │   ├── security-tier2-feature        # Feature complete: full OWASP + business logic audit
-│   └── security-tier3-sprint         # Sprint end: full codebase + supply chain + headers
+│   ├── security-tier3-sprint         # Sprint end: full codebase + supply chain + headers
+│   ├── fix-spiral-detector           # Prompt submit: warns if 3+ consecutive fix commits detected
+│   ├── type-check-on-stop            # Agent stop: runs tsc/ruff after agent finishes responding
+│   └── package-manifest-verify       # File edit: verifies package.json/pyproject.toml includes
 ├── agents/
 │   └── code-security-reviewer.json   # Restricted-tool security auditor agent
+├── skills/
+│   └── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
+│       └── SKILL.md
 ├── prompts/
 │   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
 │   ├── review-code-maintainability.md     # 32-point maintainability + refactor audit
@@ -182,6 +201,8 @@ They are included based on their `inclusion` setting:
 | [import-path-rules.md](.kiro/steering/import-path-rules.md) | always | Ban on `../../` or deeper relative imports. `@/` alias for TypeScript, package imports for Python. One-level relative imports only for tightly coupled files |
 | [naming-conventions.md](.kiro/steering/naming-conventions.md) | auto | Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`) |
 | [versioning.md](.kiro/steering/versioning.md) | auto | Semver, git tagging, release checklist, when to tag vs when not to tag, pre-1.0 beta rules |
+| [frontend-patterns.md](.kiro/steering/frontend-patterns.md) | fileMatch | React hooks rules, event propagation, CSS flex/grid layout, cache invalidation, component completeness checklist (loaded for `*.tsx`/`*.jsx` files) |
+| [api-contract-discipline.md](.kiro/steering/api-contract-discipline.md) | fileMatch | Contract-first development, response shape verification, error response contracts, rate limiting guidance (loaded for `api/`, `routes/`, `services/` files) |
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
 
@@ -204,6 +225,9 @@ Hooks fire automatically on file edits or before tool use:
 | Security Tier 1 | Pre-commit | Blocks secrets, unsafe execution, auth bypass in staged files |
 | Security Tier 2 | Feature complete (manual) | Full OWASP + business logic + BOLA/IDOR audit |
 | Security Tier 3 | Sprint end (manual) | Full codebase + supply chain + headers + logging security |
+| Fix Spiral Detector | Prompt submit | Warns if 3+ consecutive `fix:` commits detected — triggers root cause analysis |
+| Type Check on Stop | Agent stop | Runs `tsc --noEmit` or `ruff check` after agent finishes responding |
+| Package Manifest Verify | `package.json`/`pyproject.toml` edited | Runs `npm pack --dry-run` to verify published artifact includes expected files |
 
 ## Development Workflow
 

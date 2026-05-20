@@ -78,6 +78,26 @@
 
 **If the answer to any of these is NO, STOP and write the test first.**
 
+---
+
+### Final Phase: Completeness Verification
+
+**This phase is NON-NEGOTIABLE. Do not skip it.**
+
+- [ ] **Error states** — every API call has a visible error state (not just console.log)
+- [ ] **Loading states** — every async operation shows a loading indicator
+- [ ] **Empty states** — every list/collection has an empty state message
+- [ ] **Persistence** — any state that should survive page reload is persisted (localStorage, database, URL params). Intentionally ephemeral state is documented.
+- [ ] **Destructive actions** — delete/remove operations have confirmation dialogs with clear action labels
+- [ ] **Themed components** — no native `<select>`, `window.alert()`, `window.confirm()`, or `title` attributes
+- [ ] **API contract verified** — frontend types match actual backend response shape (log and verify)
+- [ ] **Cache invalidation** — after mutations, affected queries are invalidated or refetched
+- [ ] **All tests passing** — `npm test` / `pytest` green
+- [ ] **No type errors** — `tsc --noEmit` / `ruff check` clean
+- [ ] **Changelog updated** — entry added for user-visible changes
+
+---
+
 ## Task Status Legend
 
 - `[ ]` = Not started

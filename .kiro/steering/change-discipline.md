@@ -54,6 +54,40 @@ Rules governing what you can change, how changes must be scoped, dependency mana
 4. **Scope creep is a bug** - if implementation reveals a needed change outside the current scope, document it as a separate task. Don't silently expand the change.
 5. **Review your diff before committing** - every line in the diff should relate to the task. If something doesn't, revert it.
 
+## Fix Depth Rule — MANDATORY
+
+**If a fix introduces a new failure, STOP. Do not chain fixes blindly.**
+
+### Rules
+
+1. **Two-fix limit** — if your second fix attempt for the same issue introduces yet another failure, STOP immediately.
+2. **Map all paths** — before attempting fix #3, read the FULL integration context: all related code paths, all consumers, all edge cases. Draw the complete picture.
+3. **Root cause, not symptoms** — each failed fix is evidence you're treating a symptom. Step back and identify the actual root cause.
+4. **Document what you tried** — before the third attempt, write down: what fix #1 did, why it failed, what fix #2 did, why it failed. The pattern reveals the real problem.
+5. **Ask for help** — if you cannot identify the root cause after mapping all paths, say so. Don't keep guessing.
+
+## Copy-Paste Verification — MANDATORY
+
+**After copying code from another context, verify EVERY field makes sense in the new context.**
+
+### Rules
+
+1. **Review all values** — default values, field names, identifiers, paths, URLs, error messages. Each must be correct for the NEW context, not the source.
+2. **Check return types** — if you copied a function that returns `isConnected: true`, ask: is that the correct default HERE?
+3. **Check message objects** — if constructing a new object based on a similar one, verify ALL required fields are included. Don't drop fields.
+4. **Check config references** — if the copied code references a config file, manifest, or package.json entry, verify that entry exists for the new context.
+
+## Package Manifest Verification — MANDATORY
+
+**After creating any file that should be published or deployed, verify it's included in the manifest.**
+
+### Rules
+
+1. **npm `files` array** — after creating new directories or entry points, verify they're listed in `package.json` `files`. Run `npm pack --dry-run` to confirm.
+2. **pyproject.toml `include`** — after creating new Python modules, verify they're included in the package build.
+3. **bin entries** — after creating CLI entry points, verify the `bin` field in package.json points to the correct file.
+4. **After adding any import** — verify the dependency is declared in the manifest (package.json or pyproject.toml). Don't use undeclared packages.
+
 ## Dependency Minimalism
 
 - Every new dependency must have a functional justification tied to a concrete requirement, test need, or architectural concern.

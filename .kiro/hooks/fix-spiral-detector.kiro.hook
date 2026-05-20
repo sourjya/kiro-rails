@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Fix Spiral Detector",
+  "description": "On prompt submit, checks git log for 3+ consecutive fix commits. If detected, appends a warning to step back and map all code paths before attempting another fix.",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'FIXES=$(git log --oneline -5 2>/dev/null | grep -c \"^[a-f0-9]\\+ fix\"); if [ \"$FIXES\" -ge 3 ]; then echo \"⚠️ FIX SPIRAL DETECTED: $FIXES consecutive fix commits found in last 5 commits. BEFORE attempting another fix: 1) Map ALL code paths through the affected system. 2) Document what fix #1 and #2 did and why they failed. 3) Identify the ROOT CAUSE, not another symptom. See change-discipline.md Fix Depth Rule.\"; else echo \"OK\"; fi'"
+  }
+}

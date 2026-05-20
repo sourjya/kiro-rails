@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.6.0"
+CURRENT_VERSION="0.7.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -34,12 +34,18 @@ MANAGED_FILES=(
   .kiro/steering/naming-conventions.md
   .kiro/steering/versioning.md
   .kiro/steering/review-policy.md
+  .kiro/steering/frontend-patterns.md
+  .kiro/steering/api-contract-discipline.md
   .kiro/hooks/comment-standards-check.kiro.hook
   .kiro/hooks/changelog-maintenance.kiro.hook
   .kiro/hooks/lint-python-files.kiro.hook
   .kiro/hooks/security-tier1-precommit.kiro.hook
   .kiro/hooks/security-tier2-feature.kiro.hook
   .kiro/hooks/security-tier3-sprint.kiro.hook
+  .kiro/hooks/fix-spiral-detector.kiro.hook
+  .kiro/hooks/type-check-on-stop.kiro.hook
+  .kiro/hooks/package-manifest-verify.kiro.hook
+  .kiro/skills/auth-implementation/SKILL.md
   .kiro/agents/code-security-reviewer.json
   .kiro/prompts/review-code-security.md
   .kiro/prompts/review-code-maintainability.md
@@ -288,6 +294,89 @@ fi
 # Write version file
 # ──────────────────────────────────────────────
 echo "$CURRENT_VERSION" > "$VERSION_FILE"
+
+# ──────────────────────────────────────────────
+# Dependency check
+# ──────────────────────────────────────────────
+echo ""
+echo "Dependency check:"
+
+dep_ok=0
+dep_degraded=0
+
+# git (required)
+if command -v git &>/dev/null; then
+  echo "  ✓ git $(git --version 2>/dev/null | sed 's/git version //')"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  ✗ git (not found) — fix-spiral-detector, security hooks, git-commit-push.sh will not work"
+  echo "    Install: https://git-scm.com/downloads"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+# node/npm (for TypeScript projects)
+if command -v node &>/dev/null; then
+  echo "  ✓ node $(node --version 2>/dev/null)"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  ✗ node (not found) — type-check-on-stop, package-manifest-verify skip TypeScript checks"
+  echo "    Install: https://nodejs.org/"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+if command -v npm &>/dev/null; then
+  echo "  ✓ npm $(npm --version 2>/dev/null)"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  ✗ npm (not found) — package-manifest-verify cannot run npm pack --dry-run"
+  echo "    Install: https://nodejs.org/ (bundled with Node.js)"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+# TypeScript compiler
+if command -v tsc &>/dev/null || (command -v npx &>/dev/null && npx tsc --version &>/dev/null 2>&1); then
+  tsc_ver=$(npx tsc --version 2>/dev/null || tsc --version 2>/dev/null)
+  echo "  ✓ tsc ($tsc_ver)"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  · tsc (not found) — type-check-on-stop will skip TypeScript checks"
+  echo "    Install per-project: npm install -D typescript"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+# uv/uvx (for Python projects)
+if command -v uvx &>/dev/null; then
+  echo "  ✓ uvx ($(uvx --version 2>/dev/null || echo 'available'))"
+  dep_ok=$((dep_ok + 1))
+elif command -v uv &>/dev/null; then
+  echo "  ✓ uv $(uv --version 2>/dev/null) (uvx available via uv tool run)"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  · uvx (not found) — lint-python-files hook will not work"
+  echo "    Install: https://docs.astral.sh/uv/getting-started/installation/"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+# ruff
+if command -v ruff &>/dev/null; then
+  echo "  ✓ ruff $(ruff --version 2>/dev/null | head -1)"
+  dep_ok=$((dep_ok + 1))
+elif command -v uvx &>/dev/null; then
+  echo "  · ruff (via uvx) — lint-python-files will use uvx ruff"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  · ruff (not found) — type-check-on-stop will skip Python checks"
+  echo "    Install: https://docs.astral.sh/ruff/installation/"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
+echo ""
+if [ $dep_degraded -eq 0 ]; then
+  echo "All hooks fully operational ($dep_ok dependencies found)."
+else
+  echo "$dep_ok dependencies found, $dep_degraded optional dependencies missing."
+  echo "Missing dependencies only affect specific hooks — steering files work regardless."
+fi
 
 # ──────────────────────────────────────────────
 # Summary

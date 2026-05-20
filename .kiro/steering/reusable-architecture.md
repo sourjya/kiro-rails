@@ -92,6 +92,18 @@ Every infrastructure adapter must emit structured logs for every operation:
 
 **ZERO embedded literals.** All configuration values, magic numbers, string constants, and environment-dependent settings must live in dedicated, centralized locations - never scattered across modules.
 
+## State Persistence — MANDATORY
+
+**Every piece of state must have an explicit persistence strategy.**
+
+### Rules
+
+1. **Ask "what happens on reload?"** — for any state introduced by a feature, explicitly decide: does it survive page reload? If yes, where is it stored?
+2. **Module-level variables are ephemeral** — they are destroyed on page reload, content script reload, or server restart. If state must persist, use: localStorage, sessionStorage, IndexedDB, chrome.storage, database, or URL params.
+3. **Single source of truth** — never store the same state in multiple locations (e.g., memory + localStorage + database). Pick one authoritative source and derive the rest.
+4. **Document intentional ephemerality** — if state is deliberately ephemeral (e.g., a hover state, animation frame), add a comment: `// Ephemeral: resets on reload (intentional)`.
+5. **Sync state on startup** — if persistent state exists (localStorage, database), load it on component mount / app startup. Don't start with empty state and wait for a user action to hydrate.
+
 ### Configuration Hierarchy
 
 ```

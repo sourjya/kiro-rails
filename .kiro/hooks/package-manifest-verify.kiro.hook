@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Package Manifest Verify",
+  "description": "After writing to package.json or pyproject.toml, verifies the published artifact includes expected files.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/package.json",
+      "**/pyproject.toml"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'if [ -f package.json ] && grep -q '\"files\"' package.json 2>/dev/null; then echo \"=== npm pack dry-run ===\"; npm pack --dry-run 2>&1 | tail -20; elif [ -f pyproject.toml ]; then echo \"OK - verify pyproject.toml includes are correct\"; else echo \"OK\"; fi'"
+  }
+}

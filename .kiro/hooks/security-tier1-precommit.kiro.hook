@@ -30,6 +30,8 @@ CRITICAL (block commit):
 HIGH (block commit):
 - T1-S8: New API endpoints missing auth decorators or guards
 - T1-S9: Raw exception messages or stack traces returned in API responses
+- T1-S10: Exception details (traceback, internal paths, SQL) exposed in HTTP error responses — use generic messages with correlation IDs instead
+- T1-S11: New route handlers accepting user input without any validation (no Pydantic model, no Zod schema, no manual check)
 
 MEDIUM (warn but allow):
 - T1-S10: New FastAPI routes without Pydantic model validation on request bodies

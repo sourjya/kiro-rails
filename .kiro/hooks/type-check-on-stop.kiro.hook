@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Type Check on Agent Stop",
+  "description": "After agent finishes responding, runs type-check to catch import errors and type mismatches introduced during the turn.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'if [ -f tsconfig.json ]; then npx tsc --noEmit 2>&1 | head -20; elif [ -f pyproject.toml ] && command -v ruff &>/dev/null; then ruff check . --select E,F --no-fix 2>&1 | head -20; else echo \"OK\"; fi'",
+    "timeout": 30
+  }
+}
