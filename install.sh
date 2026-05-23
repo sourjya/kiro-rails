@@ -50,7 +50,12 @@ MANAGED_FILES=(
   .kiro/hooks/bug-doc-completion-check.kiro.hook
   .kiro/hooks/adr-trigger-infra-changes.kiro.hook
   .kiro/hooks/ux-preflight-gate.kiro.hook
+  .kiro/hooks/spec-validation-gate.kiro.hook
   .kiro/skills/auth-implementation/SKILL.md
+  .kiro/skills/spec-propose/SKILL.md
+  .kiro/skills/spec-implement/SKILL.md
+  .kiro/skills/spec-verify/SKILL.md
+  .kiro/skills/spec-archive/SKILL.md
   .kiro/agents/code-security-reviewer.json
   .kiro/agents/ux-red-team.json
   .kiro/prompts/review-code-security.md
@@ -68,6 +73,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-spec-readiness.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
+  scripts/export-to-tools.sh
 )
 
 # ──────────────────────────────────────────────
@@ -96,6 +102,8 @@ DIRS=(
   .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts
   .kiro/specs .kiro/templates .kiro/settings
   .kiro/skills/auth-implementation
+  .kiro/skills/spec-propose .kiro/skills/spec-implement
+  .kiro/skills/spec-verify .kiro/skills/spec-archive
   docs/decisions docs/architecture docs/roadmap docs/changelogs
   docs/bugs docs/ideas docs/technical-debt docs/testing
   docs/runbooks docs/references docs/engineering docs/security

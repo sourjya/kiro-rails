@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [17 steering files](.kiro/steering/) · [12 automated hooks](.kiro/hooks/) · [12 review prompts](.kiro/prompts/) · [1 security agent](.kiro/agents/) · [1 skill](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories
+**What's included:** [17 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [13 review prompts](.kiro/prompts/) · [2 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
 ## Quick Start
 
@@ -292,6 +292,41 @@ Security reviews follow a three-tier model that matches review depth to developm
 
 Reports go in `docs/security/` as `SRR-{###}-{YYYY-MM-DD}-T{tier}.md`. See `review-policy.md` for trigger rules and sequencing.
 
+## Spec Workflow Skills
+
+Kiro-rails includes four workflow skills that provide a structured spec-before-code lifecycle — similar to [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s propose/apply/archive pattern, but integrated with Kiro's native skill system and enforced by the spec validation hook.
+
+| Skill | Purpose | Trigger |
+|-------|---------|---------|
+| `spec-propose` | Create a structured spec folder (proposal → requirements → design → tasks) | Starting new work |
+| `spec-implement` | Implement against the spec using TDD, checking off tasks as you go | After proposal is approved |
+| `spec-verify` | Verify implementation against acceptance criteria, generate coverage report | After implementation is complete |
+| `spec-archive` | Move completed spec to `docs/architecture/specs/`, update index | After verification passes |
+
+The `spec-validation-gate` hook fires automatically when any file in `.kiro/specs/` is edited, validating:
+- Folder completeness (all 4 artifacts present)
+- Proposal has required sections (Problem Statement, Proposed Solution, Scope)
+- Requirements have testable acceptance criteria
+- Tasks use checkbox format and are atomic
+
+## Multi-Tool Export
+
+While kiro-rails is designed for Kiro, the engineering standards are valuable in any AI coding tool. The export script generates equivalent config files for other assistants:
+
+```bash
+./scripts/export-to-tools.sh --all
+```
+
+This generates:
+- `.cursorrules` — for [Cursor](https://cursor.com)
+- `.claude/CLAUDE.md` — for [Claude Code](https://claude.ai)
+- `.github/copilot-instructions.md` — for [GitHub Copilot](https://github.com/features/copilot)
+- `AGENTS.md` — for [Codex](https://openai.com/codex), [Cline](https://github.com/cline/cline), and other AGENTS.md-compatible tools
+
+You can also export to a single tool: `--cursor`, `--claude`, `--copilot`, or `--codex`.
+
+The generated files concatenate all steering files (with `user-project-overrides.md` first) into the target tool's expected format. Regenerate after any steering file change.
+
 ## Customizing for Your Project
 
 1. Edit `user-project-overrides.md` - set your tech stack, ports, and database engine
@@ -317,6 +352,12 @@ Key sources:
 - [ETH Zurich - Context file effectiveness study](https://arxiv.org/abs/2602.11988) - human-curated vs auto-generated rules
 - [AGENTS.md Standard](https://github.com/agentsmd/agents.md) - Linux Foundation cross-tool specification
 - [Augment Code - How to Build Your AGENTS.md](https://www.augmentcode.com/guides/how-to-build-agents-md) - patterns from 2,500+ repos
+
+## Acknowledgments
+
+The spec workflow skills and multi-tool export features were inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) by [Fission AI](https://fission.ai). Their work on schema-driven spec workflows, multi-tool adapter generation, and the propose/apply/archive lifecycle informed our approach to structured planning within kiro-rails. We adapted these ideas to work with Kiro's native skill system and always-on enforcement model rather than opt-in CLI commands.
+
+Additional inspiration from [Boris Tane's writing](https://boristane.com) on spec-before-code workflows in AI-assisted development.
 
 ## License
 
