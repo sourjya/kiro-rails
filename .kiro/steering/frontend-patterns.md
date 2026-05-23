@@ -45,3 +45,16 @@ Before marking any UI component or feature task as done, verify:
 4. **Persistence** — does any state need to survive page reload? If yes, where is it persisted?
 5. **Destructive actions** — do delete/remove actions have confirmation dialogs with undo?
 6. **Themed components only** — no native `<select>`, `window.alert()`, `window.confirm()`, or `title` attributes. Use the design system.
+
+## UX Non-Negotiables — MANDATORY
+
+These rules apply to ALL frontend layout and interaction decisions. Violations are bugs.
+
+1. **Interaction locality** — controls must be near the object they affect. Never place a section menu at the far-right edge when the section title is on the left. Actions go before or beside their target.
+2. **Primary content gets primary space** — descriptions, comments, and form fields are content, not metadata. They get dominant width and vertical breathing room. Never squeeze content below metadata.
+3. **No decorative borders unless they encode state** — thick colored borders with no functional meaning are visual noise. Use subtle background, shadow, or tokenized selection treatment.
+4. **Minimum readable text size** — body text minimum 14px. Content text (descriptions, comments) preferred 15-16px. Comments are content, not admin data.
+5. **First-glance test** — within 3 seconds, user must know: what am I viewing, what is most important, what can I do next.
+6. **Density matches task type** — data grids: compact is acceptable. Reading, comments, task detail, forms: spacious is required.
+7. **Copy the reason, not just the surface** — when borrowing a pattern from another product, preserve WHY it works (interaction model, hierarchy, locality). Don't copy the visual and break the interaction.
+8. **No `justify-between` for section actions** — section-level controls use leading or adjacent placement. Never push primary section controls to the far-right trailing slot unless they affect the entire page.

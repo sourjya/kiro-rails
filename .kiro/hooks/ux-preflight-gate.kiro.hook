@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "UX Preflight Gate",
+  "description": "Before starting a spec task, checks if it involves UI work. If yes, verifies a UX Intent Block exists for this phase. Skips silently for backend-only tasks.",
+  "version": "1",
+  "when": {
+    "type": "preTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Determine if the task about to execute involves frontend/UI work (creating or modifying .tsx, .jsx, .css, .scss files, or any visual component).\n\nIf this is NOT a UI task (backend, database, config, tests-only, docs), respond with just 'OK' and take no further action.\n\nIf this IS a UI task, check the current spec's tasks.md for a UX Intent Block for this phase. A UX Intent Block contains: Screen, Primary user, Primary task, Most frequent action, Interaction placement rule, Density rule, Visual hierarchy.\n\nIf a UX Intent Block exists for this phase: respond 'OK - UX Intent defined' and proceed.\n\nIf NO UX Intent Block exists: produce a brief one (5 lines max) based on the task description and spec context, then proceed. Do not block the task — just ensure the intent is documented before coding begins."
+  }
+}

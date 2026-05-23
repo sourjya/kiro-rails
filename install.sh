@@ -36,6 +36,7 @@ MANAGED_FILES=(
   .kiro/steering/review-policy.md
   .kiro/steering/frontend-patterns.md
   .kiro/steering/api-contract-discipline.md
+  .kiro/steering/ux-pattern-registry.md
   .kiro/hooks/comment-standards-check.kiro.hook
   .kiro/hooks/changelog-maintenance.kiro.hook
   .kiro/hooks/lint-python-files.kiro.hook
@@ -48,8 +49,10 @@ MANAGED_FILES=(
   .kiro/hooks/changelog-consolidation-reminder.kiro.hook
   .kiro/hooks/bug-doc-completion-check.kiro.hook
   .kiro/hooks/adr-trigger-infra-changes.kiro.hook
+  .kiro/hooks/ux-preflight-gate.kiro.hook
   .kiro/skills/auth-implementation/SKILL.md
   .kiro/agents/code-security-reviewer.json
+  .kiro/agents/ux-red-team.json
   .kiro/prompts/review-code-security.md
   .kiro/prompts/review-code-maintainability.md
   .kiro/prompts/review-test-quality.md
@@ -61,6 +64,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-cicd-pipeline.md
   .kiro/prompts/review-frontend-performance.md
   .kiro/prompts/review-ux-audit.md
+  .kiro/prompts/review-ux-preflight.md
   .kiro/prompts/review-spec-readiness.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh

@@ -69,6 +69,29 @@
 
 ---
 
+### [UI Phase Template — use for any phase that modifies frontend]
+
+#### UX Intent (required before coding any UI)
+
+```
+Screen:
+Primary user:
+Primary task:
+Most frequent action:
+Least acceptable friction:
+Reference pattern (product + screen):
+Interaction placement rule:
+Density rule:
+Visual hierarchy (rank top 3 elements):
+Do not change:
+```
+
+#### Step N: [Component Name] - TDD Cycle
+
+[Follow standard RED/GREEN/REFACTOR structure above]
+
+---
+
 ## TDD Reminders
 
 **Before writing ANY implementation code, ask yourself:**
