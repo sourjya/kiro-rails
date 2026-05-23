@@ -357,8 +357,6 @@ Key sources:
 
 The spec workflow skills and multi-tool export features were inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) by [Fission AI](https://fission.ai). Their work on schema-driven spec workflows, multi-tool adapter generation, and the propose/apply/archive lifecycle informed our approach to structured planning within kiro-rails. We adapted these ideas to work with Kiro's native skill system and always-on enforcement model rather than opt-in CLI commands.
 
-Additional inspiration from [Boris Tane's writing](https://boristane.com) on spec-before-code workflows in AI-assisted development.
-
 ## License
 
 MIT License
