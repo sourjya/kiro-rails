@@ -72,6 +72,7 @@ $StaleFiles = @(
 $Dirs = @(
     ".kiro/steering"; ".kiro/hooks"; ".kiro/agents"; ".kiro/prompts"
     ".kiro/specs"; ".kiro/templates"; ".kiro/settings"
+    ".kiro/skills/auth-implementation"
     "docs/decisions"; "docs/architecture"; "docs/roadmap"; "docs/changelogs"
     "docs/bugs"; "docs/ideas"; "docs/technical-debt"; "docs/testing"
     "docs/runbooks"; "docs/references"; "docs/engineering"; "docs/security"
