@@ -115,6 +115,8 @@ Do not change:
 - [ ] **Themed components** — no native `<select>`, `window.alert()`, `window.confirm()`, or `title` attributes
 - [ ] **API contract verified** — frontend types match actual backend response shape (log and verify)
 - [ ] **Cache invalidation** — after mutations, affected queries are invalidated or refetched
+- [ ] **Prop parity** — if reusing/extracting a shared component, every prop the original passes is matched (no empty defaults)
+- [ ] **Visual verification** — rendered output verified (or explicitly listed what user must check if verification unavailable)
 - [ ] **All tests passing** — `npm test` / `pytest` green
 - [ ] **No type errors** — `tsc --noEmit` / `ruff check` clean
 - [ ] **Changelog updated** — entry added for user-visible changes

@@ -36,6 +36,34 @@ Rules for React/JSX development. Loaded only when working on frontend component 
 3. **Error + retry on 401** — if a query gets a 401, don't let `staleTime` prevent retry. Set `retry: false` for auth-dependent queries or clear the query cache on auth state change.
 4. **Optimistic updates need rollback** — if using optimistic updates, always implement the `onError` rollback. Don't leave stale optimistic state on failure.
 
+## Component Extraction & Reuse — MANDATORY
+
+When extracting a shared component from an existing implementation, or when a new consumer adopts a shared component:
+
+1. **Prop parity audit** — before declaring a consumer "done", list every prop the original passes and verify the new consumer passes equivalent values. Empty props (`{}`, `[]`, `false`) are the #1 source of "it compiles but looks wrong."
+2. **Compare against the source, not against "compiles"** — the acceptance criterion is "behaves like the original", not "TypeScript is happy." Open both the source and the new consumer side-by-side.
+3. **Test with real data** — never verify a component extraction with empty/default data only. Use the same data the original consumer uses.
+4. **Layout wrapper parity** — verify the new consumer uses the same layout container (full-width, max-width, padding) as the original. A component inside `max-w-4xl` looks nothing like the same component at full width.
+5. **Interactive behavior parity** — hover states, click handlers, optimistic updates, undo/toast patterns. If the original has them, the new consumer needs them too (or explicitly documents why not).
+
+## Completion Verification — MANDATORY
+
+**`tsc --noEmit` + `vite build` passing is NECESSARY but NOT SUFFICIENT for UI work.**
+
+Build tools verify types, imports, and syntax. They do NOT verify:
+- Visual output matches expectations
+- Props carry correct values (not empty defaults)
+- Layout fills the expected space
+- Interactive behavior works
+- The page looks like what the user asked for
+
+### Rules
+
+1. **Never declare UI work "done" based solely on build output** — you must verify the rendered result visually or explicitly state what you could not verify.
+2. **When visual verification is unavailable** — say so honestly. List specific things the user should check: "I cannot verify visually. Please confirm: (1) status pills show colors, (2) delete button appears on hover, (3) table fills full width." Never say "risk is minimal" without evidence.
+3. **The user sees pixels, not types** — a shared component architecture is worthless if the consumer passes wrong props. The last 5% (correct props, correct layout, correct behavior) is what makes the feature work.
+4. **Speculation is not verification** — "it should work" and "the risk is minimal" are not acceptable substitutes for actually checking. If you haven't verified, say "I haven't verified this."
+
 ## Component Completeness — MANDATORY
 
 Before marking any UI component or feature task as done, verify:

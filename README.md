@@ -57,6 +57,7 @@ This template solves that by encoding your engineering standards as **[steering 
 | ⚡ Async | Race conditions from fire-and-forget | Async discipline - `mutateAsync` + await for dependent ops |
 | 💾 State | State lost on page reload | Explicit persistence strategy required for all state |
 | 📦 Packaging | Files missing from npm publish | Package manifest verification hook catches it automatically |
+| 🧩 Reuse | Extracted component passes empty props, looks broken | Prop parity audit mandatory - compare every prop against the original |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
 
@@ -89,6 +90,8 @@ What you get:
 - State persistence rules - explicit strategy for all state that must survive reload
 - Auth implementation skill - comprehensive SSO/OAuth checklist with all edge cases
 - Package manifest verification - catches missing files before publish
+- Reusable component architecture with design-time reuse mindset
+- Infrastructure abstraction with adapter pattern for all external services
 
 ### Documentation That Writes Itself
 
@@ -122,7 +125,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── import-path-rules.md          # No deep relative imports - use aliases
 │   ├── naming-conventions.md         # Test file naming mirrors source (auto-included)
 │   ├── versioning.md                 # Semver, git tagging, release checklist (auto-included)
-│   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching (fileMatch: tsx/jsx)
+│   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching, component extraction, completion verification (fileMatch: tsx/jsx)
 │   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
@@ -204,7 +207,7 @@ They are included based on their `inclusion` setting:
 | [import-path-rules.md](.kiro/steering/import-path-rules.md) | always | Ban on `../../` or deeper relative imports. `@/` alias for TypeScript, package imports for Python. One-level relative imports only for tightly coupled files |
 | [naming-conventions.md](.kiro/steering/naming-conventions.md) | auto | Test file names mirror source file names (`auth_service.py` → `test_auth_service.py`, `auth.service.ts` → `auth.service.test.ts`) |
 | [versioning.md](.kiro/steering/versioning.md) | auto | Semver, git tagging, release checklist, when to tag vs when not to tag, pre-1.0 beta rules |
-| [frontend-patterns.md](.kiro/steering/frontend-patterns.md) | fileMatch | React hooks rules, event propagation, CSS flex/grid layout, cache invalidation, component completeness checklist (loaded for `*.tsx`/`*.jsx` files) |
+| [frontend-patterns.md](.kiro/steering/frontend-patterns.md) | fileMatch | React hooks rules, event propagation, CSS flex/grid layout, cache invalidation, component extraction & reuse (prop parity), completion verification (build ≠ done), component completeness checklist (loaded for `*.tsx`/`*.jsx` files) |
 | [api-contract-discipline.md](.kiro/steering/api-contract-discipline.md) | fileMatch | Contract-first development, response shape verification, error response contracts, rate limiting guidance (loaded for `api/`, `routes/`, `services/` files) |
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
