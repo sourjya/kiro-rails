@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.8.0"
+CURRENT_VERSION="0.9.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -34,6 +34,7 @@ MANAGED_FILES=(
   .kiro/steering/naming-conventions.md
   .kiro/steering/versioning.md
   .kiro/steering/review-policy.md
+  .kiro/steering/chokepoint-logging.md
   .kiro/steering/frontend-patterns.md
   .kiro/steering/api-contract-discipline.md
   .kiro/steering/ux-pattern-registry.md
@@ -58,6 +59,7 @@ MANAGED_FILES=(
   .kiro/skills/spec-archive/SKILL.md
   .kiro/agents/code-security-reviewer.json
   .kiro/agents/ux-red-team.json
+  .kiro/agents/security-verifier.json
   .kiro/prompts/review-code-security.md
   .kiro/prompts/review-code-maintainability.md
   .kiro/prompts/review-test-quality.md

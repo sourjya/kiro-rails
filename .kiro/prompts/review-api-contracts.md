@@ -1,3 +1,5 @@
+Before scanning, read `docs/decisions/` ADRs and any API design docs if they exist. Use documented contract decisions (intentional envelope exceptions, versioning strategy) to distinguish intentional design from accidental inconsistency.
+
 Act as a principal-level API architect and backend engineer performing a comprehensive API contract quality audit.
 
 Your mission is not to verify that endpoints return data. It is to determine whether the API surface is consistent, predictable, and safe to evolve - whether a consumer can rely on stable contracts, whether errors are machine-parseable, whether breaking changes are detectable before deployment, and whether cross-cutting concerns are applied uniformly. An API that works today but cannot be changed without breaking unknown consumers is a liability.
@@ -46,6 +48,15 @@ Do not report a finding as isolated without first checking whether it is systemi
 Treat the API surface as a contract landscape. Group related findings into themes.
 
 ---
+
+## Verification Pass
+
+After producing findings, re-examine each HIGH-priority finding adversarially:
+
+1. Check `docs/decisions/` ADRs — is this "inconsistency" actually a documented intentional exception?
+2. Check if the endpoint is internal-only (single consumer, deployed atomically) — lower severity
+3. Check if a middleware or shared handler already enforces the concern globally — finding may be invalid
+4. Downgrade findings where the inconsistency is documented or where the fix would break existing consumers
 
 ## Operating Constraints
 

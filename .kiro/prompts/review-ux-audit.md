@@ -9,6 +9,8 @@ inclusion: manual
 
 # UX Audit - Frontend Codebase Review
 
+Before scanning, read `docs/decisions/` ADRs and any UX/design documentation if they exist. Use documented UX decisions to distinguish intentional pattern choices from accidental inconsistency.
+
 ## Input block (fill before running)
 
 PRODUCT_TYPE: [Required - e.g. SaaS dashboard, developer tool, admin panel]

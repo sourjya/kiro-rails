@@ -88,14 +88,19 @@ When a bug is identified, follow this workflow in full:
 1. **Assign a bug number** - check `docs/bugs/` for the highest existing `BUG-###` number and increment by 1
 2. **Create the bug document** - `docs/bugs/BUG-###-short-description.md` with: ID, Severity, Status, Description, Reproduction steps, Root cause, Fix description, Files changed, Regression tests added
 3. **Fix the bug** - minimal and targeted fix on a `fix/bug-###-description` branch. Do not refactor unrelated code.
-4. **Add regression tests - NON-NEGOTIABLE** - every bug fix requires both negative AND positive regression tests:
+4. **Variant search - NON-NEGOTIABLE** - after identifying the root cause:
+   - Search for the same pattern at all other call sites in the codebase
+   - Search for the same vulnerability class elsewhere (e.g., if you found one SQL injection, search for all raw SQL)
+   - Document: "Variant search: checked [locations]. Found [N] additional instances."
+   - Fix ALL variants in the same branch, not just the reported instance
+5. **Add regression tests - NON-NEGOTIABLE** - every bug fix requires both negative AND positive regression tests:
    - **Negative test**: reproduces the bug, must FAIL on unfixed code (RED phase)
    - **Positive test**: confirms the fix, passes after fix (GREEN phase)
    - Named after the bug: `test_bug###_<description>` (Python) or `it('BUG-###: <description>')` (TypeScript)
    - Never mark a bug `FIXED` without regression tests committed in the same change
-5. **Link to the roadmap** - add a reference in the roadmap or spec tasks for traceability
-6. **Update the changelog** - add entry to `docs/changelogs/CHANGELOG.md` under today's date
-7. **Update the bug document status** - set `Status` to `FIXED`, fill in `Fixed` date and remaining fields
+6. **Link to the roadmap** - add a reference in the roadmap or spec tasks for traceability
+7. **Update the changelog** - add entry to `docs/changelogs/CHANGELOG.md` under today's date
+8. **Update the bug document status** - set `Status` to `FIXED`, fill in `Fixed` date and remaining fields
 
 ---
 

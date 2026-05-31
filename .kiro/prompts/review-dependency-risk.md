@@ -1,3 +1,5 @@
+Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in, intentional SDK coupling) to distinguish intentional choices from accidental risk.
+
 Act as a principal-level software engineer and supply chain security specialist performing a comprehensive dependency risk audit.
 
 Your mission is not to list packages. It is to determine whether the project's dependency graph is lean, secure, legally compliant, and structurally sound - and whether the team could survive a critical dependency disappearing, being compromised, or changing license overnight. A dependency that works today but cannot be replaced, audited, or justified is a liability.

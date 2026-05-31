@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-05-31 — v0.9.0
+
+### Added (from Anthropic "Using LLMs to Secure Source Code" gap analysis + cross-project steering audit)
+
+- **Severity Calibration Rubric** in `review-code-security.md` — structured questions (reachability, attacker control, preconditions, authentication, impact type, blast radius) that must be answered before assigning severity to any T2/T3 finding
+- **Deduplication Rules** in `review-code-security.md` — group findings by root cause, report missing global protections once (not per-endpoint), same file + same category + lines within 10 = one finding
+- **Verification Pass** in `review-code-security.md` — after producing findings, adversarially re-examine each HIGH+ finding assuming it is a false positive; search for compensating controls; downgrade or remove disproved findings
+- **Verification Pass** in `review-code-maintainability.md` — check if "duplication" is intentional (documented in ADRs), if proposed abstraction would create worse coupling, if fix cost exceeds maintenance cost
+- **Verification Pass** in `review-api-contracts.md` — check if "inconsistency" is documented intentional exception, if endpoint is internal-only, if middleware already enforces the concern globally
+- **Context-reading preamble** added to all 13 review prompts — each prompt now reads `docs/decisions/` ADRs and domain-specific docs before scanning; documented exceptions are not flagged as findings
+- **Security Verifier agent** (`.kiro/agents/security-verifier.json`) — adversarial read-only agent that assumes each finding is a false positive and searches for compensating controls. Reports DISPROVED/CONFIRMED/DOWNGRADE per finding.
+- **Chokepoint Logging steering** (`.kiro/steering/chokepoint-logging.md`) — log recurring errors on attempt #2+, categorize by pattern (ROUTE_ORDERING, CSS_OVERSIGHT, TYPE_MISMATCH, STATE_SYNC, RACE_CONDITION, etc.), promote to steering rules after 3 occurrences. Generalized from coreiq.
+- **Variant Analysis** in bug resolution workflow (`git-workflow.md`) — after identifying root cause, search for same pattern at all other call sites and same vulnerability class elsewhere; fix ALL variants in the same branch
+
+### Changed
+
+- Review prompt count unchanged (13) but all now include context-reading preamble
+- Agent count: 2 → 3 (added security-verifier)
+- Steering file count: 17 → 18 (added chokepoint-logging)
+- Bug resolution workflow: 7 steps → 8 steps (variant search inserted as step 4)
+
 ## 2026-05-21 — v0.7.0
 
 ### Added (from cross-codebase bug pattern analysis of 120+ bugs across 13 projects)

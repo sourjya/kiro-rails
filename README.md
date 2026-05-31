@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [17 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [13 review prompts](.kiro/prompts/) · [2 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
+**What's included:** [18 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [13 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
 ## Quick Start
 
@@ -129,6 +129,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
+│   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
@@ -144,7 +145,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── bug-doc-completion-check      # File edit: verifies bug doc fields are complete
 │   └── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
 ├── agents/
-│   └── code-security-reviewer.json   # Restricted-tool security auditor agent
+│   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
+│   └── security-verifier.json        # Adversarial agent that disproves false positives
 ├── skills/
 │   └── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
 │       └── SKILL.md
@@ -211,6 +213,7 @@ They are included based on their `inclusion` setting:
 | [api-contract-discipline.md](.kiro/steering/api-contract-discipline.md) | fileMatch | Contract-first development, response shape verification, error response contracts, rate limiting guidance (loaded for `api/`, `routes/`, `services/` files) |
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
+| [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
 
 ### Customization Points
 
@@ -350,7 +353,10 @@ The generated files concatenate all steering files (with `user-project-overrides
 
 The steering rules in this template were informed by cross-tool research into AI coding agent conventions. See [docs/references/steering-research-2026-04-11.md](docs/references/steering-research-2026-04-11.md) for sources, methodology, and gap analysis.
 
+The security review system (v0.9.0+) was significantly influenced by Anthropic's ["Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) (May 2026), which describes a 6-step find-and-fix loop: Threat Model, Sandbox, Discovery, Verification, Triage, and Patching. Their key insight — that discovery is now trivially parallelizable but the bottleneck has shifted to verification and triage — directly shaped our adversarial verification model. We adopted their two-agent approach (discovery agent + independent verifier that assumes findings are false positives), their severity calibration rubric (reachability, preconditions, blast radius), their deduplication-by-root-cause rules, and their variant analysis requirement after patching. Their finding that teams with an adversarial verifier roughly halved false positive rates validated our decision to ship a dedicated `security-verifier` agent alongside the `code-security-reviewer`. See [docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md](docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md) for the full gap analysis.
+
 Key sources:
+- [Anthropic - "Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) - 6-step security loop, adversarial verification, severity calibration
 - [MSR 2026 - "Beyond the Prompt: An Empirical Study of Cursor Rules"](https://arxiv.org/html/2512.18925v2) - taxonomy of 401 repos
 - [ETH Zurich - Context file effectiveness study](https://arxiv.org/abs/2602.11988) - human-curated vs auto-generated rules
 - [AGENTS.md Standard](https://github.com/agentsmd/agents.md) - Linux Foundation cross-tool specification

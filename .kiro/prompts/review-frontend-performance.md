@@ -1,3 +1,5 @@
+Before scanning, read `docs/decisions/` ADRs if they exist. Use documented performance budgets and architectural decisions to calibrate findings against intentional trade-offs.
+
 Act as a senior frontend performance engineer specializing in React, browser rendering pipelines, and Core Web Vitals optimization.
 
 Your task is to perform a comprehensive frontend performance audit of this codebase. Identify rendering bottlenecks, memory leaks, unnecessary re-renders, bundle bloat, and Core Web Vitals issues. Produce a prioritized fix plan with concrete code-level recommendations.

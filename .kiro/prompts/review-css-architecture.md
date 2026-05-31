@@ -1,3 +1,5 @@
+Before scanning, read `docs/decisions/` ADRs if they exist. Use documented design system decisions (intentional overrides, chosen methodology) to distinguish intentional patterns from accidental inconsistency.
+
 Act as a principal-level frontend engineer and design systems architect performing a comprehensive CSS and styling architecture audit.
 
 Your mission is not to enforce a preferred methodology. It is to determine whether the styling layer is consistent, maintainable, and free of patterns that cause visual regressions, specificity battles, or cascading side effects when code changes. A styling system that works today but cannot be changed safely is a liability.

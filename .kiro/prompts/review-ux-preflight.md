@@ -9,6 +9,8 @@ inclusion: manual
 
 # UX Preflight Review
 
+Before reviewing, read `docs/decisions/` ADRs and any UX/design documentation if they exist. Use documented UX decisions to calibrate recommendations.
+
 Run this BEFORE writing implementation code for any UI feature or screen modification.
 
 ## Input (fill before running)

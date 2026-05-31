@@ -9,6 +9,28 @@ The security review system follows a three-tier model - one prompt, three hooks,
 
 ---
 
+## Threat Modeling — Recommended Before First Review
+
+Before running your first Tier 2 or Tier 3 security review, build a threat model for the project using the [AWS Labs Threat Modeling MCP Server](https://github.com/awslabs/threat-modeling-mcp-server). This produces a structured threat model (assets, trust boundaries, threat actors, data flows) that the security review prompts can reference to reduce false positives.
+
+**Setup:** Add to `.kiro/settings/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "threat-modeling": {
+      "command": "uvx",
+      "args": ["threat-modeling-mcp-server"]
+    }
+  }
+}
+```
+
+**Workflow:** Run the threat modeling process → export to `docs/security/THREAT_MODEL.md` or `.threatmodel/` → the security review prompt reads it before scanning.
+
+Without a threat model, the reviewer infers trust boundaries from code alone, which is the primary cause of false positives.
+
+---
+
 ## Tier 1 - Pre-Commit (Every Commit)
 
 **Hook:** `security-tier1-precommit.json`
@@ -96,6 +118,43 @@ When both a security review and a maintainability review are due at the same che
 2. Maintainability review second
 
 Security findings may surface structural issues that the maintainability review should account for.
+
+---
+
+## Adversarial Verification — Reducing False Positives
+
+Security reviews use a two-pass approach to reduce false positives:
+
+### Pass 1: Discovery (built into the security prompt)
+
+The `code-security-reviewer` agent scans the codebase and produces findings with the severity calibration rubric and self-verification pass built into the prompt.
+
+### Pass 2: Independent Verification (separate agent)
+
+For Tier 2 and Tier 3 reviews, after the discovery pass produces findings, spawn the `security-verifier` agent to adversarially disprove them:
+
+**Instruction to include in T2/T3 review workflow:**
+
+```
+After producing the SRR findings above, invoke the security-verifier agent
+with ONLY the list of HIGH+ findings (no reasoning, no context from this review).
+The verifier will independently search the codebase for compensating controls
+and report DISPROVED / CONFIRMED / DOWNGRADE for each finding.
+Update the SRR with the verification results before finalizing.
+```
+
+### When to use each approach
+
+| Context | Verification approach |
+|---------|----------------------|
+| Tier 1 (pre-commit) | None — speed matters, findings are high-confidence patterns |
+| Tier 2 (feature complete) | Self-verification pass (built into prompt) |
+| Tier 3 (sprint end) | Self-verification + spawn `security-verifier` agent for HIGH+ findings |
+| Pre-release or post-incident | Full independent verification — spawn verifier for ALL findings |
+
+### Why two agents matter
+
+The same agent that finds an issue is biased toward confirming it (confirmation bias). A separate agent with no access to the discovery reasoning and instructions to *disprove* each finding roughly halves false positives (per Anthropic's "Using LLMs to Secure Source Code" research, May 2026).
 
 ---
 

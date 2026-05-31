@@ -1,3 +1,5 @@
+Before scanning, read `docs/decisions/` ADRs if they exist. Use documented architectural decisions to distinguish intentional patterns from accidental inconsistency. Do not flag documented exceptions as findings.
+
 Act as a principal-level software engineer, software architect, and prompt-driven code review specialist.
 
 Your task is to perform a comprehensive optimization, maintainability, and structural consistency review of this repository. Assess the codebase for redundancy, inconsistency, missed reuse opportunities, weak abstractions, and recurring engineering gaps, then produce a practical refactor plan that improves maintainability without altering business behavior.
@@ -76,6 +78,15 @@ Use this method while analyzing:
 6. Quantify the spread of a problem whenever possible, such as how many files, modules, or call sites are affected.
 7. Distinguish root-cause design issues from surface-level duplicates.
 8. Call out when a symptom appears in many places but should be solved centrally once.
+
+## Verification Pass
+
+After producing findings, re-examine each HIGH-priority finding adversarially:
+
+1. Check `docs/decisions/` ADRs — is this "duplication" actually an intentional fork documented in a decision record?
+2. Check if the "inconsistency" serves different requirements in different contexts
+3. Check if the proposed abstraction would create coupling worse than the current duplication
+4. Downgrade findings where the current pattern is intentional or where the fix cost exceeds the maintenance cost
 
 ## Operating Constraints
 
