@@ -7,6 +7,35 @@ An opinionated project template for [Kiro](https://kiro.dev)-driven development.
 
 **What's included:** [18 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
+## Why Use This Template
+
+AI coding agents (Kiro, Claude Code, Cursor, Windsurf, Cline) are powerful but stateless - they don't remember your engineering standards between sessions. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc file structures, ignoring changelogs, or producing inconsistent code across features.
+
+This template solves that by encoding your engineering standards as **[steering files](https://kiro.dev/docs/steering/)** - persistent context documents that your agent reads on every interaction. The agent doesn't just write code; it follows your team's rules about how code should be written, tested, documented, and deployed.
+
+**What changes when you add these steering files:**
+
+| Category | Without steering | With steering |
+|----------|-----------------|---------------|
+| 📁 Structure | Ad-hoc folder structure | Layer-first backend, feature-sliced frontend, enforced |
+| 📁 Structure | Magic numbers everywhere | Centralized constants - zero embedded literals |
+| 🧪 Testing | Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
+| 🔒 Security | Secrets slip into code | Pre-commit [hooks](https://kiro.dev/docs/hooks/) catch credentials automatically |
+| 🔒 Security | AI features ship without audit | OWASP-aligned agentic surface review (ASI01-10, MCP Top 10) |
+| 🎨 Frontend | `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
+| 🎨 Frontend | Extracted component passes empty props, looks broken | Prop parity audit mandatory - compare every prop against the original |
+| 🔌 API | Frontend crashes on wrong response shape | Contract-first development - define schema before implementing |
+| ⚡ Async | Race conditions from fire-and-forget | Async discipline - `mutateAsync` + await for dependent ops |
+| 💾 State | State lost on page reload | Explicit persistence strategy required for all state |
+| 📦 Packaging | Files missing from npm publish | Package manifest verification hook catches it automatically |
+| 📋 Specs | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
+| 📄 Docs | No decision records | ADRs (Architecture Decision Records) linked to roadmap milestones |
+| 📝 Docs | No changelogs | Agent updates changelog on every meaningful change |
+| 🔧 Discipline | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
+| 🔄 Discipline | Fix-on-fix spirals (7+ commits) | Fix depth rule - stop after 2 failed fixes, map all paths |
+
+The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
+
 ## Quick Start
 
 **Linux / macOS / [Git Bash](https://gitforwindows.org/) / [WSL](https://learn.microsoft.com/en-us/windows/wsl/install):**
@@ -33,67 +62,16 @@ This downloads all steering files, hooks, prompts, templates, and creates the `d
 
 > Alternatively, fork the full repo: `git clone https://github.com/sourjya/kiro-rails.git your-project && cd your-project && rm -rf .git && git init`
 
-## Why Use This Template
-
-AI coding agents (Kiro, Claude Code, Cursor, Windsurf, Cline) are powerful but stateless - they don't remember your engineering standards between sessions. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc file structures, ignoring changelogs, or producing inconsistent code across features.
-
-This template solves that by encoding your engineering standards as **[steering files](https://kiro.dev/docs/steering/)** - persistent context documents that your agent reads on every interaction. The agent doesn't just write code; it follows your team's rules about how code should be written, tested, documented, and deployed.
-
-**What changes when you add these steering files:**
-
-| Category | Without steering | With steering |
-|----------|-----------------|---------------|
-| 📁 Core | Ad-hoc folder structure | Layer-first backend, feature-sliced frontend, enforced |
-| 📁 Core | Magic numbers everywhere | Centralized constants - zero embedded literals |
-| 🧪 Testing | Agent writes tests sometimes | TDD is mandatory - RED/GREEN/REFACTOR every time |
-| 🔒 Security | Secrets slip into code | Pre-commit [hooks](https://kiro.dev/docs/hooks/) catch credentials automatically |
-| 🎨 Visual | `window.alert()` in UI code | Themed dialogs only - native browser dialogs forbidden |
-| 📄 Docs | No decision records | ADRs (Architecture Decision Records) linked to roadmap milestones |
-| 📋 Process | Vague specs | [Spec](https://kiro.dev/docs/specs/) quality standards enforced before any code is written |
-| 📝 Process | No changelogs | Agent updates changelog on every meaningful change |
-| 🔧 Process | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
-| 🔄 Process | Fix-on-fix spirals (7+ commits) | Fix depth rule - stop after 2 failed fixes, map all paths |
-| 🔌 API | Frontend crashes on wrong response shape | Contract-first development - define schema before implementing |
-| ⚡ Async | Race conditions from fire-and-forget | Async discipline - `mutateAsync` + await for dependent ops |
-| 💾 State | State lost on page reload | Explicit persistence strategy required for all state |
-| 📦 Packaging | Files missing from npm publish | Package manifest verification hook catches it automatically |
-| 🧩 Reuse | Extracted component passes empty props, looks broken | Prop parity audit mandatory - compare every prop against the original |
-
-The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
-
 What you get:
 
-- Mandatory TDD (RED → GREEN → REFACTOR) enforced via steering rules
-- Spec-driven development workflow (requirements → design → tasks)
-- Automated quality hooks that run on every file edit and commit
-- A complete documentation taxonomy with 13 purpose-specific directories
-- Git workflow rules that prevent direct commits to `main`
-- Security review process with three-tier OWASP-aligned audit (pre-commit, feature, sprint)
-- Changelog management with automatic rolling archives
-- Bug tracking workflow with mandatory regression tests
-- Observability-first design rules for pipelines and background processes
-- Spec quality standards (NON-NEGOTIABLE) for requirements, design, and tasks
-- Versioning and release process with semver, git tagging, and release checklist
-- Maintainability review prompt with 33-point audit scope
-- Reusable component architecture with design-time reuse mindset
-- Infrastructure abstraction with adapter pattern for all external services
-- Centralized configuration and constants - zero embedded literals
-- Comprehensive code commenting standards for human and AI readability
-- Database conventions with least-privilege access patterns
-- Error handling standards - explicit errors, no silent swallowing, contextual messages
-- Performance guidelines - caching, pagination, N+1 prevention, timeouts
-- Permission boundaries - three-tier system (Always / Ask First / Never)
-- Consistency and change scope discipline - match existing patterns, minimal changes only
-- Fix spiral detection - automatic warning when iterative debugging detected
-- Contract-first API development - define response schemas before implementing
-- Async discipline - sequenced operations, no fire-and-forget before dependent ops
-- State persistence rules - explicit strategy for all state that must survive reload
-- Auth implementation skill - comprehensive SSO/OAuth checklist with all edge cases
-- Package manifest verification - catches missing files before publish
-- Reusable component architecture with design-time reuse mindset
-- Infrastructure abstraction with adapter pattern for all external services
+- **Code quality** — TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 13-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
+- **Security** — three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
+- **Architecture** — reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
+- **Observability** — error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
+- **Discipline** — permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, consistency rules, dependency minimalism, code commenting standards
+- **Tooling** — auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
-### Documentation That Writes Itself
+## Documentation That Writes Itself
 
 Most teams say "we should document things" but have no enforcement. Kiro-rails makes documentation a side effect of the normal workflow - the agent does it automatically because the steering files and hooks require it.
 
