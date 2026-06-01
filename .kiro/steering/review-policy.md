@@ -165,6 +165,7 @@ The same agent that finds an issue is biased toward confirming it (confirmation 
 | Security Tier 1 | Inline only | No file |
 | Security Tier 2 | `docs/security/` | `SRR-{###}-{YYYY-MM-DD}-T2.md` |
 | Security Tier 3 | `docs/security/` | `SRR-{###}-{YYYY-MM-DD}-T3.md` |
+| AI Surface Review | `docs/security/` | `AISR-{###}-{YYYY-MM-DD}.md` |
 | Maintainability | `docs/reviews/` | `MRR-{###}-{YYYY-MM-DD}.md` |
 | Dep snapshot | `docs/security/` | `dep-snapshot-{YYYY-MM-DD}.md` |
 

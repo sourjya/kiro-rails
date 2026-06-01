@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-01 — v0.9.1
+
+### Added (from Claude-BugHunter adaptation + cross-repo audit)
+
+- **AI/Agentic Surface Review prompt** (`.kiro/prompts/review-ai-agent-surface.md`) — comprehensive security audit for AI-powered features aligned to OWASP Top 10 for Agentic Applications (ASI01-10), LLM Applications (2025), and MCP Top 10. Covers: prompt injection/goal hijack, tool scope/misuse, agent identity/privilege, MCP supply chain, code execution, memory poisoning, inter-agent comms, confidence gating, action provenance, cascading failures. Includes severity calibration, verification pass, gap-finding behavior, three-property test (attributable, reversible, gated), and agent surface matrix. Reports as `AISR-{###}-{YYYY-MM-DD}.md`. Informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter)'s `hunt-llm-ai` skill and 7-Question validation gate.
+- **Security Enhancement Spec** (`docs/references/kiro-rails-security-enhancement-spec.md`) — research document covering the Claude-BugHunter adaptation plan: what translates to kiro-rails (per-vuln-class review checklists, validation gates, AI surface review), what doesn't (offensive recon, red-team tooling), and proposed future skills (security-hunt/, security-triage/).
+- **Cross-Repo Audit** (`docs/references/cross-repo-audit-2026-06-01.md`) — full audit of 3 internal production repos documenting what's already synchronized, what's project-specific, evolution history of each agent/prompt/skill, and decision criteria for inclusion.
+- **AISR report type** in `review-policy.md` output convention table — `AISR-{###}-{YYYY-MM-DD}.md` for AI Surface Reviews.
+- **Claude-BugHunter acknowledgment** in README — credits Sachin Sharma's per-vulnerability-class skill architecture and 7-Question validation gate.
+
+### Changed
+
+- Review prompt count: 13 → 14 (added review-ai-agent-surface.md)
+- README "What's included" line updated to reflect 14 prompts
+
 ## 2026-05-31 — v0.9.0
 
 ### Added (from Anthropic "Using LLMs to Secure Source Code" gap analysis + cross-project steering audit)
@@ -15,7 +30,7 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 - **Verification Pass** in `review-api-contracts.md` — check if "inconsistency" is documented intentional exception, if endpoint is internal-only, if middleware already enforces the concern globally
 - **Context-reading preamble** added to all 13 review prompts — each prompt now reads `docs/decisions/` ADRs and domain-specific docs before scanning; documented exceptions are not flagged as findings
 - **Security Verifier agent** (`.kiro/agents/security-verifier.json`) — adversarial read-only agent that assumes each finding is a false positive and searches for compensating controls. Reports DISPROVED/CONFIRMED/DOWNGRADE per finding.
-- **Chokepoint Logging steering** (`.kiro/steering/chokepoint-logging.md`) — log recurring errors on attempt #2+, categorize by pattern (ROUTE_ORDERING, CSS_OVERSIGHT, TYPE_MISMATCH, STATE_SYNC, RACE_CONDITION, etc.), promote to steering rules after 3 occurrences. Generalized from coreiq.
+- **Chokepoint Logging steering** (`.kiro/steering/chokepoint-logging.md`) — log recurring errors on attempt #2+, categorize by pattern (ROUTE_ORDERING, CSS_OVERSIGHT, TYPE_MISMATCH, STATE_SYNC, RACE_CONDITION, etc.), promote to steering rules after 3 occurrences. Generalized from internal projects.
 - **Variant Analysis** in bug resolution workflow (`git-workflow.md`) — after identifying root cause, search for same pattern at all other call sites and same vulnerability class elsewhere; fix ALL variants in the same branch
 
 ### Changed

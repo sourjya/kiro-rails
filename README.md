@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [18 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [13 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
+**What's included:** [18 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
 ## Quick Start
 
@@ -162,7 +162,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
 │   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
-│   └── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
+│   ├── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
+│   └── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases
@@ -365,6 +366,8 @@ Key sources:
 ## Acknowledgments
 
 The spec workflow skills and multi-tool export features were inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) by [Fission AI](https://fission.ai). Their work on schema-driven spec workflows, multi-tool adapter generation, and the propose/apply/archive lifecycle informed our approach to structured planning within kiro-rails. We adapted these ideas to work with Kiro's native skill system and always-on enforcement model rather than opt-in CLI commands.
+
+The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart — a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
 
 ## License
 
