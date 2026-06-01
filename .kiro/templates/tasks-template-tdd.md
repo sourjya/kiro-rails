@@ -69,7 +69,7 @@
 
 ---
 
-### [UI Phase Template — use for any phase that modifies frontend]
+### [UI Phase Template - use for any phase that modifies frontend]
 
 #### UX Intent (required before coding any UI)
 
@@ -107,19 +107,19 @@ Do not change:
 
 **This phase is NON-NEGOTIABLE. Do not skip it.**
 
-- [ ] **Error states** — every API call has a visible error state (not just console.log)
-- [ ] **Loading states** — every async operation shows a loading indicator
-- [ ] **Empty states** — every list/collection has an empty state message
-- [ ] **Persistence** — any state that should survive page reload is persisted (localStorage, database, URL params). Intentionally ephemeral state is documented.
-- [ ] **Destructive actions** — delete/remove operations have confirmation dialogs with clear action labels
-- [ ] **Themed components** — no native `<select>`, `window.alert()`, `window.confirm()`, or `title` attributes
-- [ ] **API contract verified** — frontend types match actual backend response shape (log and verify)
-- [ ] **Cache invalidation** — after mutations, affected queries are invalidated or refetched
-- [ ] **Prop parity** — if reusing/extracting a shared component, every prop the original passes is matched (no empty defaults)
-- [ ] **Visual verification** — rendered output verified (or explicitly listed what user must check if verification unavailable)
-- [ ] **All tests passing** — `npm test` / `pytest` green
-- [ ] **No type errors** — `tsc --noEmit` / `ruff check` clean
-- [ ] **Changelog updated** — entry added for user-visible changes
+- [ ] **Error states** - every API call has a visible error state (not just console.log)
+- [ ] **Loading states** - every async operation shows a loading indicator
+- [ ] **Empty states** - every list/collection has an empty state message
+- [ ] **Persistence** - any state that should survive page reload is persisted (localStorage, database, URL params). Intentionally ephemeral state is documented.
+- [ ] **Destructive actions** - delete/remove operations have confirmation dialogs with clear action labels
+- [ ] **Themed components** - no native `<select>`, `window.alert()`, `window.confirm()`, or `title` attributes
+- [ ] **API contract verified** - frontend types match actual backend response shape (log and verify)
+- [ ] **Cache invalidation** - after mutations, affected queries are invalidated or refetched
+- [ ] **Prop parity** - if reusing/extracting a shared component, every prop the original passes is matched (no empty defaults)
+- [ ] **Visual verification** - rendered output verified (or explicitly listed what user must check if verification unavailable)
+- [ ] **All tests passing** - `npm test` / `pytest` green
+- [ ] **No type errors** - `tsc --noEmit` / `ruff check` clean
+- [ ] **Changelog updated** - entry added for user-visible changes
 
 ---
 

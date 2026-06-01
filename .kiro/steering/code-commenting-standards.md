@@ -96,13 +96,13 @@ When code depends on or mirrors code in another module, add a cross-reference:
 
 Document why each value exists, not just what it is. If a constant's value was chosen for a specific reason (protocol requirement, performance threshold, external API contract), state that reason.
 
-## Comment-Safe Patterns — MANDATORY
+## Comment-Safe Patterns - MANDATORY
 
 **Never write comments that break the parser.**
 
 ### Rules
 
-1. **No unescaped `*/` inside JSDoc/block comments** — glob patterns like `**/*.ts` contain `*/` which prematurely closes the comment block. Use backticks or rephrase: `` `**/*.ts` `` or "all TypeScript files recursively".
-2. **No unescaped `/*` that opens a nested comment** — some languages don't support nested block comments. A stray `/*` inside a comment creates a parsing error.
-3. **Regex in comments must be in backticks** — patterns like `/api\/v[0-9]+/` can confuse parsers. Always wrap in inline code: `` `/api\/v[0-9]+/` ``.
-4. **Test your comments compile** — if you write a comment containing special characters, verify the file still parses. A broken comment is worse than no comment.
+1. **No unescaped `*/` inside JSDoc/block comments** - glob patterns like `**/*.ts` contain `*/` which prematurely closes the comment block. Use backticks or rephrase: `` `**/*.ts` `` or "all TypeScript files recursively".
+2. **No unescaped `/*` that opens a nested comment** - some languages don't support nested block comments. A stray `/*` inside a comment creates a parsing error.
+3. **Regex in comments must be in backticks** - patterns like `/api\/v[0-9]+/` can confuse parsers. Always wrap in inline code: `` `/api\/v[0-9]+/` ``.
+4. **Test your comments compile** - if you write a comment containing special characters, verify the file still parses. A broken comment is worse than no comment.

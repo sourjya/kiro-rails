@@ -60,9 +60,9 @@ List specific risks this implementation introduces. Examples: "section menu push
 ### 10. Decision
 
 Output ONE of:
-- **PROCEED** — no UX risks identified, implementation can begin
-- **REVISE** — minor issues found, list required corrections, then proceed
-- **BLOCK** — significant UX violations, must redesign before coding
+- **PROCEED** - no UX risks identified, implementation can begin
+- **REVISE** - minor issues found, list required corrections, then proceed
+- **BLOCK** - significant UX violations, must redesign before coding
 
 ---
 

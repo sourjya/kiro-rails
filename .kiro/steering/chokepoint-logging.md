@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Chokepoint Logging — MANDATORY
+# Chokepoint Logging - MANDATORY
 
 A chokepoint is any error, crash, or near-miss that required multiple attempts to fix or revealed a gap in process. Logging them creates institutional memory that prevents the same class of bug from recurring.
 
@@ -50,10 +50,10 @@ Add new categories as they emerge.
 ## Periodic Analysis
 
 At the end of each sprint (or every 20 chokepoints), review the log for:
-1. **Recurring patterns** — promote to steering rules
-2. **Tooling gaps** — file as feature requests or create scripts
-3. **Test gaps** — add regression tests or smoke tests
-4. **Process gaps** — update documentation or checklists
+1. **Recurring patterns** - promote to steering rules
+2. **Tooling gaps** - file as feature requests or create scripts
+3. **Test gaps** - add regression tests or smoke tests
+4. **Process gaps** - update documentation or checklists
 
 ## Guardrail Promotion
 

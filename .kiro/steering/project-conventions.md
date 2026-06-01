@@ -51,14 +51,14 @@ python -m pytest tests/ -v --tb=short 2>&1 | tee logs/test_results.log
 - All command logs: `logs/`
 
 
-## Reusable Utility Scripts — MANDATORY
+## Reusable Utility Scripts - MANDATORY
 
 **When the first need arises for any repeated operation, write a parameterized reusable script with logging and error checking. Then use that script going forward. No ad-hoc multi-line shell commands for operations that will be repeated.**
 
 ### Rules
 
 1. **First need = script.** The moment you do something manually that could recur (restart a service, run a migration, deploy, seed data, check health), write a script in `scripts/`.
-2. **Parameterized.** Scripts accept arguments (service name, environment, etc.) — not hardcoded for one case.
+2. **Parameterized.** Scripts accept arguments (service name, environment, etc.) - not hardcoded for one case.
 3. **Verbose with logging.** Scripts log what they're doing with timestamps. On failure, they print useful diagnostics.
 4. **Error checking.** Scripts use `set -uo pipefail`, check exit codes, and fail loudly.
 5. **Reuse.** Once a script exists, always use it. Never rewrite the same logic inline.
@@ -67,7 +67,7 @@ python -m pytest tests/ -v --tb=short 2>&1 | tee logs/test_results.log
 ### Anti-Patterns (BANNED)
 
 ```bash
-# WRONG — ad-hoc multi-line restart
+# WRONG - ad-hoc multi-line restart
 fuser -k 8060/tcp 2>/dev/null
 sleep 2
 cd /path/to/project && nohup .venv/bin/python -m uvicorn ...
@@ -75,7 +75,7 @@ echo $! > logs/server.pid
 sleep 5
 curl -s http://localhost:PORT/health
 
-# CORRECT — one-liner using the script
+# CORRECT - one-liner using the script
 bash scripts/restart-service.sh service-name
 ```
 

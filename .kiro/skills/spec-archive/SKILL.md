@@ -9,10 +9,10 @@ Archive a completed spec after it passes verification.
 
 ## Steps
 
-1. **Verify completion** — all tasks checked, verification passed
-2. **Move to archive** — relocate from `.kiro/specs/<name>/` to `docs/architecture/specs/<name>/`
-3. **Update registry** — add entry to the spec index
-4. **Clean up** — remove the active spec folder
+1. **Verify completion** - all tasks checked, verification passed
+2. **Move to archive** - relocate from `.kiro/specs/<name>/` to `docs/architecture/specs/<name>/`
+3. **Update registry** - add entry to the spec index
+4. **Clean up** - remove the active spec folder
 
 ## Process
 
@@ -60,7 +60,7 @@ Append to `docs/architecture/specs/INDEX.md` (create if missing):
 
 ## Rules
 
-1. **Never archive a failing spec** — verification must pass first
-2. **Preserve history** — the archive is the source of truth for "what was built and why"
-3. **Link to implementation** — include branch/commit/PR reference in metadata
-4. **Keep the index current** — every archived spec must appear in INDEX.md
+1. **Never archive a failing spec** - verification must pass first
+2. **Preserve history** - the archive is the source of truth for "what was built and why"
+3. **Link to implementation** - include branch/commit/PR reference in metadata
+4. **Keep the index current** - every archived spec must appear in INDEX.md

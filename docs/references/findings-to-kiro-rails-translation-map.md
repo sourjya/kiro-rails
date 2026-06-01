@@ -39,7 +39,7 @@
 | Approach | Mechanism | Justification |
 |---|---|---|
 | **Primary** | **Hook: Post Task Execution** | Fires after EVERY spec task completes. Agent prompt asks: "Verify this task has: error state, loading state, empty state, persistence across reload, undo for destructive actions. If any are missing, add them before marking complete." This catches incompleteness at the atomic task level. |
-| **Secondary** | **Steering (always)** | Add a "Completeness Checklist" section to existing `testing-standards.md`. Always-on means the agent sees it every turn. But steering alone is passive — the agent can ignore it under pressure. |
+| **Secondary** | **Steering (always)** | Add a "Completeness Checklist" section to existing `testing-standards.md`. Always-on means the agent sees it every turn. But steering alone is passive - the agent can ignore it under pressure. |
 | **Why not a skill?** | Skills activate on semantic match. Completeness applies to ALL implementation, not a specific workflow. Always-on steering + post-task hook is more reliable. |
 
 ---
@@ -117,7 +117,7 @@
 | Approach | Mechanism | Justification |
 |---|---|---|
 | **Primary** | **Steering (always)** | Add to `change-discipline.md`. Short rule: "After copying code from another context, review EVERY field/value. Check defaults, identifiers, paths, URLs." Always-on because copy-paste happens everywhere. |
-| **Why not a hook?** | Copy-paste is undetectable by hooks — there's no "paste" event. The agent needs the discipline rule in context before it copies. |
+| **Why not a hook?** | Copy-paste is undetectable by hooks - there's no "paste" event. The agent needs the discipline rule in context before it copies. |
 
 ---
 
@@ -216,7 +216,7 @@
 
 | Template | Change |
 |---|---|
-| `.kiro/templates/tasks-template-tdd.md` | Add mandatory final phase: "Completeness Verification" — verify error/loading/empty states, persistence across reload, undo for destructive actions |
+| `.kiro/templates/tasks-template-tdd.md` | Add mandatory final phase: "Completeness Verification" - verify error/loading/empty states, persistence across reload, undo for destructive actions |
 
 ### Existing Hooks to Strengthen
 
@@ -235,13 +235,13 @@
 
 ### Decision 2: Completeness check mechanism
 **Choice:** Bake into the TDD task template as a mandatory final phase
-**Rationale:** No hook needed. Every spec's tasks.md gets a final phase: "Phase N: Completeness Verification — verify error/loading/empty states, persistence across reload, undo for destructive actions." The agent executes it as a normal task. Zero noise, guaranteed execution because it's part of the spec workflow.
-**Rejected:** Post Task Execution hook (too noisy — fires after every task), manual trigger (easy to forget).
+**Rationale:** No hook needed. Every spec's tasks.md gets a final phase: "Phase N: Completeness Verification - verify error/loading/empty states, persistence across reload, undo for destructive actions." The agent executes it as a normal task. Zero noise, guaranteed execution because it's part of the spec workflow.
+**Rejected:** Post Task Execution hook (too noisy - fires after every task), manual trigger (easy to forget).
 
 ### Decision 3: Auth implementation guidance
 **Choice:** Skill (`.kiro/skills/auth-implementation/SKILL.md`)
 **Rationale:** Skills work in both IDE and CLI. Auth is a specialized domain with large context that shouldn't load every turn. Activates on keywords: "auth", "SSO", "OAuth", "OIDC", "login", "redirect", "token".
-**Rejected:** Steering (auto) — skills are more portable and follow the open Agent Skills standard.
+**Rejected:** Steering (auto) - skills are more portable and follow the open Agent Skills standard.
 
 ### Decision 4: Import/type resolution check
 **Choice:** Agent Stop hook with shell action: `tsc --noEmit 2>&1 | head -20`
@@ -250,21 +250,21 @@
 
 ### Decision 5: Fix spiral detector
 **Choice:** UserPromptSubmit hook with shell action checking `git log --oneline -5`
-**Rationale:** Runs when the user sends a message — checks if 3+ consecutive `fix:` commits exist on the same topic. If detected, appends a warning to the prompt context. Zero overhead during autonomous agent execution. Only fires on human interaction.
+**Rationale:** Runs when the user sends a message - checks if 3+ consecutive `fix:` commits exist on the same topic. If detected, appends a warning to the prompt context. Zero overhead during autonomous agent execution. Only fires on human interaction.
 **Rejected:** Agent Stop (100ms every turn), Pre Tool Use on write (annoying mid-flow).
 
 ---
 
 ## Sources
 
-- [kiro.dev/docs/steering](https://kiro.dev/docs/steering/) — Inclusion modes (always, fileMatch, auto, manual)
-- [kiro.dev/docs/hooks](https://kiro.dev/docs/hooks/) — IDE hook types and actions
-- [kiro.dev/docs/cli/hooks](https://kiro.dev/docs/cli/hooks/) — CLI hook types (AgentSpawn, PreToolUse, PostToolUse, Stop, UserPromptSubmit)
-- [kiro.dev/docs/cli/skills](https://kiro.dev/docs/cli/skills/) — Skills format and activation
-- [kiro.dev/docs/cli/custom-agents/creating](https://kiro.dev/docs/cli/custom-agents/creating/) — Custom agent configuration
-- [kiro.dev/docs/powers/create](https://kiro.dev/docs/powers/create/) — Powers packaging format
-- [kiro.dev/docs/specs/bugfix-specs](https://kiro.dev/docs/specs/bugfix-specs/) — Bugfix spec workflow
-- [kiro.dev/docs/hooks/best-practices](https://kiro.dev/docs/hooks/best-practices/) — Hook design best practices
+- [kiro.dev/docs/steering](https://kiro.dev/docs/steering/) - Inclusion modes (always, fileMatch, auto, manual)
+- [kiro.dev/docs/hooks](https://kiro.dev/docs/hooks/) - IDE hook types and actions
+- [kiro.dev/docs/cli/hooks](https://kiro.dev/docs/cli/hooks/) - CLI hook types (AgentSpawn, PreToolUse, PostToolUse, Stop, UserPromptSubmit)
+- [kiro.dev/docs/cli/skills](https://kiro.dev/docs/cli/skills/) - Skills format and activation
+- [kiro.dev/docs/cli/custom-agents/creating](https://kiro.dev/docs/cli/custom-agents/creating/) - Custom agent configuration
+- [kiro.dev/docs/powers/create](https://kiro.dev/docs/powers/create/) - Powers packaging format
+- [kiro.dev/docs/specs/bugfix-specs](https://kiro.dev/docs/specs/bugfix-specs/) - Bugfix spec workflow
+- [kiro.dev/docs/hooks/best-practices](https://kiro.dev/docs/hooks/best-practices/) - Hook design best practices
 
 ---
 
@@ -272,27 +272,27 @@
 
 ### Design Rationale
 
-Documentation rots because updates are decoupled from the moment changes happen. The solution is to trigger documentation checks at the exact moment when the relevant context is fresh — not on a schedule, but at natural workflow boundaries.
+Documentation rots because updates are decoupled from the moment changes happen. The solution is to trigger documentation checks at the exact moment when the relevant context is fresh - not on a schedule, but at natural workflow boundaries.
 
 ### Hook 1: Changelog Consolidation Reminder
 
 **Trigger:** UserPromptSubmit (shell)
 **Logic:** Check if 10+ commits exist since CHANGELOG.md was last modified. If yes, append a reminder.
-**Justification:** Changelogs become useless when they're either a raw commit log or months behind. This catches the sweet spot — enough commits to consolidate meaningfully, triggered at the moment the user starts a new interaction (low noise, high relevance). Shell action = zero credits.
+**Justification:** Changelogs become useless when they're either a raw commit log or months behind. This catches the sweet spot - enough commits to consolidate meaningfully, triggered at the moment the user starts a new interaction (low noise, high relevance). Shell action = zero credits.
 **Noise level:** Near-zero. Only fires when genuinely behind.
 
 ### Hook 2: Bug Document Completion Check
 
 **Trigger:** File Save on `docs/bugs/BUG-*.md`
 **Logic:** After saving a bug doc, verify all required fields are filled (root cause, fix description, regression tests, status).
-**Justification:** Bug docs are created at report time but often abandoned after the fix ships. This fires at the natural moment — when someone edits the bug doc (presumably to update it after fixing). Catches incomplete docs before they go stale. Agent prompt = costs credits but only fires on bug doc edits (rare).
+**Justification:** Bug docs are created at report time but often abandoned after the fix ships. This fires at the natural moment - when someone edits the bug doc (presumably to update it after fixing). Catches incomplete docs before they go stale. Agent prompt = costs credits but only fires on bug doc edits (rare).
 **Noise level:** Low. Only fires when editing bug docs.
 
 ### Hook 3: ADR Trigger on Infrastructure Changes
 
 **Trigger:** File Save on infrastructure/config files (`docker-compose.yml`, `**/infrastructure/**`, `Dockerfile`, `*.tf`, `Caddyfile`)
 **Logic:** After saving an infrastructure file, ask if this represents an architectural decision worth recording.
-**Justification:** ADRs capture the "why" behind decisions. The hardest part is remembering to write them. This fires at the exact moment a decision is being implemented — when context is fresh and the "why" is still in the developer's head. Agent prompt = costs credits but infra file edits are infrequent.
+**Justification:** ADRs capture the "why" behind decisions. The hardest part is remembering to write them. This fires at the exact moment a decision is being implemented - when context is fresh and the "why" is still in the developer's head. Agent prompt = costs credits but infra file edits are infrequent.
 **Noise level:** Low. Infrastructure files change rarely.
 
 ### Rejected Alternatives
@@ -300,6 +300,6 @@ Documentation rots because updates are decoupled from the moment changes happen.
 | Approach | Why Rejected |
 |---|---|
 | Timer-based (every N hours) | Kiro has no cron/timer trigger. Would require external scheduler. |
-| Post Task Execution for arch docs | Too noisy — fires after every spec task, most of which don't change architecture. |
-| AgentSpawn stale docs check | Good idea but heavy — scanning all docs for broken links on every session start adds latency. Better as a manual trigger or cached with long TTL. |
+| Post Task Execution for arch docs | Too noisy - fires after every spec task, most of which don't change architecture. |
+| AgentSpawn stale docs check | Good idea but heavy - scanning all docs for broken links on every session start adds latency. Better as a manual trigger or cached with long TTL. |
 | Roadmap sync on tag creation | No "git tag" trigger exists in Kiro hooks. Better as manual `/roadmap-sync` skill. |

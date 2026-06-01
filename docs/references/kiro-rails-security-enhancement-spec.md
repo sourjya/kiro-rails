@@ -4,7 +4,7 @@
 
 **Date:** 2026-06-01
 **Source:** [elementalsouls/Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) (MIT, v2.0)
-**Author:** Sachin Sharma — Bug Hunting & GenAI Security Research
+**Author:** Sachin Sharma - Bug Hunting & GenAI Security Research
 
 ---
 
@@ -14,7 +14,7 @@ A 51-skill bundle for Claude Code's skills system, designed for bug hunting and 
 
 - **6-phase engagement flow:** Scope → Recon → Hunt → Validate → Capture → Report
 - **28 hunt-* skills:** Per-vulnerability-class detection patterns curated from 681 disclosed HackerOne reports across 24 vulnerability classes
-- **7-Question Gate (triage-validation):** A non-optional validation step before any finding is reported — prevents false positives and wasted effort
+- **7-Question Gate (triage-validation):** A non-optional validation step before any finding is reported - prevents false positives and wasted effort
 - **Auto-loading by keyword:** Skills trigger when the user describes what they're testing; no explicit invocation needed
 - **Enterprise platform attack chains:** M365/Entra, Okta, vCenter, VPN appliances, SharePoint
 - **Engagement folder scaffolding:** Structured workspace per target with scope.md, findings/, evidence/
@@ -66,7 +66,7 @@ Claude-BugHunter is offensive (external attack surface). Kiro-rails is defensive
 
 **BugHunter concept:** The `hunt-llm-ai` skill covers prompt injection, ASCII smuggling, and ASI01-10 from the attacker's perspective.
 
-**Kiro-rails adaptation:** The `review-ai-agent-surface.md` prompt — a comprehensive defensive audit for AI-powered features, aligned to OWASP Top 10 for Agentic Apps, LLM Apps, and MCP Top 10. This is the defender's counterpart to BugHunter's `hunt-llm-ai`.
+**Kiro-rails adaptation:** The `review-ai-agent-surface.md` prompt - a comprehensive defensive audit for AI-powered features, aligned to OWASP Top 10 for Agentic Apps, LLM Apps, and MCP Top 10. This is the defender's counterpart to BugHunter's `hunt-llm-ai`.
 
 **Status:** Implemented. Added as `.kiro/prompts/review-ai-agent-surface.md`.
 
@@ -74,7 +74,7 @@ Claude-BugHunter is offensive (external attack surface). Kiro-rails is defensive
 
 **BugHunter concept:** `hunt <target>` creates a structured folder with scope.md, findings/, evidence/, CLAUDE.md.
 
-**Kiro-rails adaptation:** We already have this via the docs/security/ structure and SRR report numbering. No additional scaffolding needed — our existing convention (SECURITY_LOG.md, SRR-###, AISR-###) serves the same purpose.
+**Kiro-rails adaptation:** We already have this via the docs/security/ structure and SRR report numbering. No additional scaffolding needed - our existing convention (SECURITY_LOG.md, SRR-###, AISR-###) serves the same purpose.
 
 ---
 
@@ -127,17 +127,17 @@ The AISR prompt fires when a feature:
 
 ## Future Work (Not This PR)
 
-1. **`security-hunt/` skill** — per-vulnerability-class defensive review checklists that auto-activate on file patterns
-2. **`security-triage/` skill** — formalized 7-Question Gate for security findings validation
-3. **Threat model integration** — the AISR prompt already reads `docs/security/THREAT_MODEL.md`; ensure the threat modeling MCP server output feeds into it
-4. **hunt-llm-ai patterns** — extract the defensive subset of BugHunter's LLM/AI hunting patterns into our security-hunt skill
+1. **`security-hunt/` skill** - per-vulnerability-class defensive review checklists that auto-activate on file patterns
+2. **`security-triage/` skill** - formalized 7-Question Gate for security findings validation
+3. **Threat model integration** - the AISR prompt already reads `docs/security/THREAT_MODEL.md`; ensure the threat modeling MCP server output feeds into it
+4. **hunt-llm-ai patterns** - extract the defensive subset of BugHunter's LLM/AI hunting patterns into our security-hunt skill
 
 ---
 
 ## References
 
-- [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) — MIT, Sachin Sharma
+- [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) - MIT, Sachin Sharma
 - [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications/) (ASI01-ASI10, Dec 2025)
 - [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/) (2025)
 - [OWASP MCP Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/MCP_Security_Cheat_Sheet.html)
-- [Anthropic — "Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) (May 2026)
+- [Anthropic - "Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) (May 2026)

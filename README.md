@@ -64,12 +64,12 @@ This downloads all steering files, hooks, prompts, templates, and creates the `d
 
 What you get:
 
-- **Code quality** — TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 13-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
-- **Security** — three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
-- **Architecture** — reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
-- **Observability** — error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
-- **Discipline** — permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, consistency rules, dependency minimalism, code commenting standards
-- **Tooling** — auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
+- **Code quality** - TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 13-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
+- **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
+- **Architecture** - reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
+- **Observability** - error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
+- **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, consistency rules, dependency minimalism, code commenting standards
+- **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
 ## Documentation That Writes Itself
 
@@ -213,10 +213,10 @@ Hooks fire automatically on file edits or before tool use:
 | Security Tier 1 | Pre-commit | Blocks secrets, unsafe execution, auth bypass in staged files |
 | Security Tier 2 | Feature complete (manual) | Full OWASP + business logic + BOLA/IDOR audit |
 | Security Tier 3 | Sprint end (manual) | Full codebase + supply chain + headers + logging security |
-| Fix Spiral Detector | Prompt submit | Warns if 3+ consecutive `fix:` commits detected — triggers root cause analysis |
+| Fix Spiral Detector | Prompt submit | Warns if 3+ consecutive `fix:` commits detected - triggers root cause analysis |
 | Type Check on Stop | Agent stop | Runs `tsc --noEmit` or `ruff check` after agent finishes responding |
 | Package Manifest Verify | `package.json`/`pyproject.toml` edited | Runs `npm pack --dry-run` to verify published artifact includes expected files |
-| Changelog Consolidation | Prompt submit | Warns if 10+ commits since last changelog update — triggers consolidation |
+| Changelog Consolidation | Prompt submit | Warns if 10+ commits since last changelog update - triggers consolidation |
 | Bug Doc Completion | `docs/bugs/BUG-*.md` edited | Verifies root cause, fix, regression tests, and status are filled |
 | ADR Trigger | Infrastructure files edited | Asks if the change warrants an Architecture Decision Record |
 
@@ -279,7 +279,7 @@ Reports go in `docs/security/` as `SRR-{###}-{YYYY-MM-DD}-T{tier}.md`. See `revi
 
 ## Spec Workflow Skills
 
-Kiro-rails includes four workflow skills that provide a structured spec-before-code lifecycle — similar to [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s propose/apply/archive pattern, but integrated with Kiro's native skill system and enforced by the spec validation hook.
+Kiro-rails includes four workflow skills that provide a structured spec-before-code lifecycle - similar to [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s propose/apply/archive pattern, but integrated with Kiro's native skill system and enforced by the spec validation hook.
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
@@ -303,10 +303,10 @@ While kiro-rails is designed for Kiro, the engineering standards are valuable in
 ```
 
 This generates:
-- `.cursorrules` — for [Cursor](https://cursor.com)
-- `.claude/CLAUDE.md` — for [Claude Code](https://claude.ai)
-- `.github/copilot-instructions.md` — for [GitHub Copilot](https://github.com/features/copilot)
-- `AGENTS.md` — for [Codex](https://openai.com/codex), [Cline](https://github.com/cline/cline), and other AGENTS.md-compatible tools
+- `.cursorrules` - for [Cursor](https://cursor.com)
+- `.claude/CLAUDE.md` - for [Claude Code](https://claude.ai)
+- `.github/copilot-instructions.md` - for [GitHub Copilot](https://github.com/features/copilot)
+- `AGENTS.md` - for [Codex](https://openai.com/codex), [Cline](https://github.com/cline/cline), and other AGENTS.md-compatible tools
 
 You can also export to a single tool: `--cursor`, `--claude`, `--copilot`, or `--codex`.
 
@@ -332,7 +332,7 @@ The generated files concatenate all steering files (with `user-project-overrides
 
 The steering rules in this template were informed by cross-tool research into AI coding agent conventions. See [docs/references/steering-research-2026-04-11.md](docs/references/steering-research-2026-04-11.md) for sources, methodology, and gap analysis.
 
-The security review system (v0.9.0+) was significantly influenced by Anthropic's ["Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) (May 2026), which describes a 6-step find-and-fix loop: Threat Model, Sandbox, Discovery, Verification, Triage, and Patching. Their key insight — that discovery is now trivially parallelizable but the bottleneck has shifted to verification and triage — directly shaped our adversarial verification model. We adopted their two-agent approach (discovery agent + independent verifier that assumes findings are false positives), their severity calibration rubric (reachability, preconditions, blast radius), their deduplication-by-root-cause rules, and their variant analysis requirement after patching. Their finding that teams with an adversarial verifier roughly halved false positive rates validated our decision to ship a dedicated `security-verifier` agent alongside the `code-security-reviewer`. See [docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md](docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md) for the full gap analysis.
+The security review system (v0.9.0+) was significantly influenced by Anthropic's ["Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) (May 2026), which describes a 6-step find-and-fix loop: Threat Model, Sandbox, Discovery, Verification, Triage, and Patching. Their key insight - that discovery is now trivially parallelizable but the bottleneck has shifted to verification and triage - directly shaped our adversarial verification model. We adopted their two-agent approach (discovery agent + independent verifier that assumes findings are false positives), their severity calibration rubric (reachability, preconditions, blast radius), their deduplication-by-root-cause rules, and their variant analysis requirement after patching. Their finding that teams with an adversarial verifier roughly halved false positive rates validated our decision to ship a dedicated `security-verifier` agent alongside the `code-security-reviewer`. See [docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md](docs/security/gap-analysis-anthropic-llm-security-2026-05-31.md) for the full gap analysis.
 
 Key sources:
 - [Anthropic - "Using LLMs to Secure Source Code"](https://claude.com/blog/using-llms-to-secure-source-code) - 6-step security loop, adversarial verification, severity calibration
@@ -345,7 +345,7 @@ Key sources:
 
 The spec workflow skills and multi-tool export features were inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) by [Fission AI](https://fission.ai). Their work on schema-driven spec workflows, multi-tool adapter generation, and the propose/apply/archive lifecycle informed our approach to structured planning within kiro-rails. We adapted these ideas to work with Kiro's native skill system and always-on enforcement model rather than opt-in CLI commands.
 
-The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart — a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
+The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart - a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
 
 ## License
 

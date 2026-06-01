@@ -9,7 +9,7 @@ When the user wants to propose a new feature or change, create a structured spec
 
 ## Steps
 
-1. **Ask clarifying questions** — understand scope, constraints, affected areas
+1. **Ask clarifying questions** - understand scope, constraints, affected areas
 2. **Create the spec folder** at `.kiro/specs/<feature-name>/`
 3. **Generate all artifacts** in order:
 
@@ -115,8 +115,8 @@ Use the TDD template from `.kiro/templates/tasks-template-tdd.md` if available. 
 
 ## Rules
 
-1. **Never skip the proposal** — even for "small" changes, write at minimum a 3-sentence proposal
-2. **Requirements must be testable** — every requirement needs acceptance criteria
-3. **Design must reference requirements** — trace each design decision to a requirement
-4. **Tasks must be atomic** — each task should be completable in one session
+1. **Never skip the proposal** - even for "small" changes, write at minimum a 3-sentence proposal
+2. **Requirements must be testable** - every requirement needs acceptance criteria
+3. **Design must reference requirements** - trace each design decision to a requirement
+4. **Tasks must be atomic** - each task should be completable in one session
 5. **Get user confirmation** on the proposal before proceeding to requirements

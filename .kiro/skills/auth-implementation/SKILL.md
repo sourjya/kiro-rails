@@ -40,12 +40,12 @@ When implementing any authentication flow, ALL of the following paths must be ha
 
 ## Implementation Rules
 
-1. **`redirect_uri` must be dynamic** — use `window.location.origin` + callback path. Never hardcode `localhost`.
-2. **State parameter** — always include a random `state` param to prevent CSRF. Verify it on callback.
-3. **Token storage** — access tokens in memory (short-lived), refresh tokens in httpOnly cookies or secure storage. Never localStorage for refresh tokens.
-4. **Logout must clear ALL state** — tokens, cached user info, query cache, any auth-dependent state.
-5. **401 handling** — on 401 response, attempt ONE silent refresh. If that fails, redirect to login. Don't retry indefinitely.
-6. **Multi-tab sync** — if user logs out in one tab, other tabs should detect it (via storage event or BroadcastChannel).
+1. **`redirect_uri` must be dynamic** - use `window.location.origin` + callback path. Never hardcode `localhost`.
+2. **State parameter** - always include a random `state` param to prevent CSRF. Verify it on callback.
+3. **Token storage** - access tokens in memory (short-lived), refresh tokens in httpOnly cookies or secure storage. Never localStorage for refresh tokens.
+4. **Logout must clear ALL state** - tokens, cached user info, query cache, any auth-dependent state.
+5. **401 handling** - on 401 response, attempt ONE silent refresh. If that fails, redirect to login. Don't retry indefinitely.
+6. **Multi-tab sync** - if user logs out in one tab, other tabs should detect it (via storage event or BroadcastChannel).
 
 ## Testing Requirements
 

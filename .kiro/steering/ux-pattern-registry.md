@@ -16,7 +16,7 @@ Before implementing any major screen, find the matching pattern below. If no pat
 
 **Layout:**
 - Large title at top, full width
-- Metadata (status, assignee, dates) secondary — compact row or sidebar
+- Metadata (status, assignee, dates) secondary - compact row or sidebar
 - Description and comments get primary content space (dominant height)
 - Activity/comments must not be visually minimized
 
@@ -24,7 +24,7 @@ Before implementing any major screen, find the matching pattern below. If no pat
 - Section controls adjacent to section headers (leading or beside)
 - Content canvas gets 60%+ of viewport height
 - Comments rendered at body text size (15-16px), not small/muted
-- Subtle selection state — no thick decorative borders
+- Subtle selection state - no thick decorative borders
 
 **Reference:** Asana task detail, Linear issue detail, Notion page
 
@@ -41,10 +41,10 @@ Before implementing any major screen, find the matching pattern below. If no pat
 - Filters above or beside the table, not buried
 
 **Rules:**
-- Row height consistent — no variable-height rows in scan mode
+- Row height consistent - no variable-height rows in scan mode
 - Clickable rows have hover state
 - Header and body use identical grid/flex strategy (no alignment drift)
-- Pagination or infinite scroll — never unbounded lists
+- Pagination or infinite scroll - never unbounded lists
 
 **Reference:** GitHub issues list, Linear board, Airtable grid
 
@@ -55,7 +55,7 @@ Before implementing any major screen, find the matching pattern below. If no pat
 **Use when:** User fills in or modifies structured data.
 
 **Layout:**
-- Spacious — generous vertical gaps between field groups
+- Spacious - generous vertical gaps between field groups
 - Labels above inputs (not beside, unless very short forms)
 - Primary action (Save/Submit) at bottom, visually prominent
 - Destructive actions (Delete) separated and de-emphasized
@@ -63,7 +63,7 @@ Before implementing any major screen, find the matching pattern below. If no pat
 **Rules:**
 - Field groups have clear section headers
 - Validation errors inline, adjacent to the field
-- No horizontal scrolling — form fits viewport width
+- No horizontal scrolling - form fits viewport width
 - Tab order follows visual order
 
 **Reference:** GitHub settings, Stripe dashboard settings
@@ -103,7 +103,7 @@ Before implementing any major screen, find the matching pattern below. If no pat
 - Focus trapped inside modal
 - Escape closes (unless destructive action in progress)
 - Backdrop click closes (unless form has unsaved changes)
-- No nested modals — use a drawer or navigate instead
+- No nested modals - use a drawer or navigate instead
 
 **Reference:** GitHub "New issue" dialog, Linear "Create issue"
 

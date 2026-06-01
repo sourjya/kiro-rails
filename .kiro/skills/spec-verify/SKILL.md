@@ -9,7 +9,7 @@ Verify that a completed implementation satisfies its spec.
 
 ## Steps
 
-1. **Read the spec** — load requirements.md and design.md
+1. **Read the spec** - load requirements.md and design.md
 2. **Run verification checks** against each requirement
 3. **Generate a verification report**
 4. **Flag any gaps** for remediation
@@ -68,7 +68,7 @@ Ready for archive / Needs remediation on: ...
 
 ## Rules
 
-1. **Be strict** — a requirement is only "met" if ALL its acceptance criteria pass
-2. **Check tests exist** — don't just trust that code works; verify tests cover it
-3. **Flag scope creep** — if implementation added things not in the spec, note it
-4. **Recommend next step** — either `spec-archive` (if passed) or remediation tasks
+1. **Be strict** - a requirement is only "met" if ALL its acceptance criteria pass
+2. **Check tests exist** - don't just trust that code works; verify tests cover it
+3. **Flag scope creep** - if implementation added things not in the spec, note it
+4. **Recommend next step** - either `spec-archive` (if passed) or remediation tasks

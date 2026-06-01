@@ -9,7 +9,7 @@ The security review system follows a three-tier model - one prompt, three hooks,
 
 ---
 
-## Threat Modeling — Recommended Before First Review
+## Threat Modeling - Recommended Before First Review
 
 Before running your first Tier 2 or Tier 3 security review, build a threat model for the project using the [AWS Labs Threat Modeling MCP Server](https://github.com/awslabs/threat-modeling-mcp-server). This produces a structured threat model (assets, trust boundaries, threat actors, data flows) that the security review prompts can reference to reduce false positives.
 
@@ -121,7 +121,7 @@ Security findings may surface structural issues that the maintainability review 
 
 ---
 
-## Adversarial Verification — Reducing False Positives
+## Adversarial Verification - Reducing False Positives
 
 Security reviews use a two-pass approach to reduce false positives:
 
@@ -147,10 +147,10 @@ Update the SRR with the verification results before finalizing.
 
 | Context | Verification approach |
 |---------|----------------------|
-| Tier 1 (pre-commit) | None — speed matters, findings are high-confidence patterns |
+| Tier 1 (pre-commit) | None - speed matters, findings are high-confidence patterns |
 | Tier 2 (feature complete) | Self-verification pass (built into prompt) |
 | Tier 3 (sprint end) | Self-verification + spawn `security-verifier` agent for HIGH+ findings |
-| Pre-release or post-incident | Full independent verification — spawn verifier for ALL findings |
+| Pre-release or post-incident | Full independent verification - spawn verifier for ALL findings |
 
 ### Why two agents matter
 

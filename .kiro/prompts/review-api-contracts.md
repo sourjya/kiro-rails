@@ -53,9 +53,9 @@ Treat the API surface as a contract landscape. Group related findings into theme
 
 After producing findings, re-examine each HIGH-priority finding adversarially:
 
-1. Check `docs/decisions/` ADRs — is this "inconsistency" actually a documented intentional exception?
-2. Check if the endpoint is internal-only (single consumer, deployed atomically) — lower severity
-3. Check if a middleware or shared handler already enforces the concern globally — finding may be invalid
+1. Check `docs/decisions/` ADRs - is this "inconsistency" actually a documented intentional exception?
+2. Check if the endpoint is internal-only (single consumer, deployed atomically) - lower severity
+3. Check if a middleware or shared handler already enforces the concern globally - finding may be invalid
 4. Downgrade findings where the inconsistency is documented or where the fix would break existing consumers
 
 ## Operating Constraints

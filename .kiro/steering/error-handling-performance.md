@@ -6,16 +6,16 @@ inclusion: always
 
 Standards for error handling, performance optimization, and themed UI dialogs.
 
-## Async Discipline — MANDATORY
+## Async Discipline - MANDATORY
 
 **Operations that depend on each other must be sequenced. Never fire-and-forget before a dependent operation.**
 
 ### Rules
 
-1. **Use `mutateAsync` + `await` for dependent operations** — if operation B depends on operation A completing, use `await mutateAsync()` for A, not `mutate()`. `mutate` is fire-and-forget; it does NOT wait for completion.
-2. **Never block async event loops with sync I/O** — in Python asyncio, never call sync functions that take >100ms (HTTP requests, LLM calls, file I/O on large files) without `await asyncio.to_thread()` or `loop.run_in_executor()`.
-3. **Auth token timing** — never fire API requests that require auth before confirming the token is available. Check auth state before making dependent requests, not after a 401.
-4. **Sequence mutations that share state** — if two mutations modify the same resource, await the first before firing the second. Parallel mutations on shared state cause race conditions.
+1. **Use `mutateAsync` + `await` for dependent operations** - if operation B depends on operation A completing, use `await mutateAsync()` for A, not `mutate()`. `mutate` is fire-and-forget; it does NOT wait for completion.
+2. **Never block async event loops with sync I/O** - in Python asyncio, never call sync functions that take >100ms (HTTP requests, LLM calls, file I/O on large files) without `await asyncio.to_thread()` or `loop.run_in_executor()`.
+3. **Auth token timing** - never fire API requests that require auth before confirming the token is available. Check auth state before making dependent requests, not after a 401.
+4. **Sequence mutations that share state** - if two mutations modify the same resource, await the first before firing the second. Parallel mutations on shared state cause race conditions.
 
 ## Error Handling Standards - MANDATORY
 

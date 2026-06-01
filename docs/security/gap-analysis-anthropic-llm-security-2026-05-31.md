@@ -21,11 +21,11 @@ Anthropic describes a single scan loop. Kiro-rails has **three tiers** calibrate
 - **T2 (feature-complete):** Changed files + new integrations, full OWASP
 - **T3 (sprint-end):** Full codebase + supply chain + headers
 
-This is more practical — you catch issues at the cheapest point to fix them. Anthropic's "scan periodically" advice doesn't address this granularity.
+This is more practical - you catch issues at the cheapest point to fix them. Anthropic's "scan periodically" advice doesn't address this granularity.
 
 ### 2. Pre-Commit Gating (BETTER)
 
-Kiro-rails blocks commits with CRITICAL findings (secrets, eval, raw SQL, auth bypass). Anthropic's loop is entirely **post-hoc** — they find, verify, triage, then patch. We prevent the worst issues from ever entering the repo.
+Kiro-rails blocks commits with CRITICAL findings (secrets, eval, raw SQL, auth bypass). Anthropic's loop is entirely **post-hoc** - they find, verify, triage, then patch. We prevent the worst issues from ever entering the repo.
 
 ### 3. Prescriptive Category Taxonomy (BETTER for recurring reviews)
 
@@ -44,7 +44,7 @@ Our system produces SRR reports → updates SECURITY_LOG.md → creates fix task
 
 ### 6. AI-Generation Artifact Detection (UNIQUE)
 
-T3 includes explicit checks for AI-generated code drift (naming inconsistencies, over-verbose boilerplate, structural incoherence across sessions). Anthropic doesn't address this — they assume human-written code.
+T3 includes explicit checks for AI-generated code drift (naming inconsistencies, over-verbose boilerplate, structural incoherence across sessions). Anthropic doesn't address this - they assume human-written code.
 
 ### 7. Regression Test Mandate (BETTER)
 
@@ -52,7 +52,7 @@ T2+ rules require noting "whether a regression test exists" for each HIGH+ findi
 
 ### 8. Restricted-Tool Agent (GOOD)
 
-The `code-security-reviewer` agent has `allowedTools` limited to read/grep/glob/knowledge — no write access. This prevents the reviewer from accidentally modifying code during analysis. Anthropic doesn't address tool restriction for the discovery agent.
+The `code-security-reviewer` agent has `allowedTools` limited to read/grep/glob/knowledge - no write access. This prevents the reviewer from accidentally modifying code during analysis. Anthropic doesn't address tool restriction for the discovery agent.
 
 ---
 
@@ -64,7 +64,7 @@ The `code-security-reviewer` agent has `allowedTools` limited to read/grep/glob/
 
 > "Adding an adversarial verifier roughly halved the rate of non-exploitable findings."
 
-**Our gap:** We use a single agent for both discovery and assessment. The same agent that finds the issue also assigns confidence. This creates confirmation bias — the agent is unlikely to disprove its own finding.
+**Our gap:** We use a single agent for both discovery and assessment. The same agent that finds the issue also assigns confidence. This creates confirmation bias - the agent is unlikely to disprove its own finding.
 
 **Impact:** Higher false positive rate, especially for MEDIUM/LOW findings where exploitability is ambiguous.
 
@@ -152,13 +152,13 @@ The `code-security-reviewer` agent has `allowedTools` limited to read/grep/glob/
 
 ## What They Recommend Against That We Do (Correctly)
 
-### 1. "Don't use long checklists — they reduce creativity"
+### 1. "Don't use long checklists - they reduce creativity"
 
 We use detailed checklists (S1-S17). This is **correct for our use case**. Anthropic's advice applies to one-off pentesting. For recurring automated reviews, consistency > creativity.
 
 ### 2. "Discovery should optimize for recall, not precision"
 
-Our T1 correctly optimizes for **precision** — we can't block commits on false positives. Our T3 could benefit from higher recall. This is already well-calibrated in our tiered approach.
+Our T1 correctly optimizes for **precision** - we can't block commits on false positives. Our T3 could benefit from higher recall. This is already well-calibrated in our tiered approach.
 
 ---
 
@@ -302,7 +302,7 @@ Add to T2/T3 rules in `review-code-security.md`:
 
 > "Discovery is now straightforward to parallelize, and the bottleneck has shifted to verification, triage, and patching."
 
-Our tiered system addresses this — T1 catches easy stuff automatically, T2/T3 focus on harder verification and triage.
+Our tiered system addresses this - T1 catches easy stuff automatically, T2/T3 focus on harder verification and triage.
 
 > "If we send product engineers a pile of findings where a majority are non-exploitable, they will lose trust in the reports."
 
@@ -310,7 +310,7 @@ Our confidence levels (CONFIRMED/LIKELY/NEEDS VALIDATION) and "do NOT report fal
 
 > "The model performed best on systems with well-documented threat models, system design docs, requirements, and constraints."
 
-We have extensive steering files, specs, and ADRs. This is a strength — but we need to formalize it into a THREAT_MODEL.md.
+We have extensive steering files, specs, and ADRs. This is a strength - but we need to formalize it into a THREAT_MODEL.md.
 
 ---
 
@@ -348,19 +348,19 @@ Every prompt would benefit from reading a project-level context document before 
 
 | Prompt | What context document it needs |
 |--------|-------------------------------|
-| `review-code-security.md` | `THREAT_MODEL.md` — trust boundaries, what's out of scope |
-| `review-code-maintainability.md` | `docs/decisions/` ADRs — intentional duplication, chosen patterns |
-| `review-api-contracts.md` | API design decisions doc — intentional exceptions to envelope |
-| `review-dependency-risk.md` | Dependency policy doc — accepted risks, vendor lock-in decisions |
-| `review-iac-consistency.md` | Infrastructure decisions — intentional per-env differences |
-| `review-observability.md` | SLO definitions — what level of observability is "enough" |
-| `review-test-quality.md` | Test strategy doc — intentional coverage gaps, risk-based testing |
-| `review-cicd-pipeline.md` | Deployment policy — intentional gating decisions |
-| `review-frontend-performance.md` | Performance budget doc — acceptable thresholds |
-| `review-css-architecture.md` | Design system decisions — intentional overrides |
-| `review-spec-readiness.md` | Already reads specs — no gap |
-| `review-ux-audit.md` | UX principles doc — intentional pattern choices |
-| `review-ux-preflight.md` | Already takes input context — no gap |
+| `review-code-security.md` | `THREAT_MODEL.md` - trust boundaries, what's out of scope |
+| `review-code-maintainability.md` | `docs/decisions/` ADRs - intentional duplication, chosen patterns |
+| `review-api-contracts.md` | API design decisions doc - intentional exceptions to envelope |
+| `review-dependency-risk.md` | Dependency policy doc - accepted risks, vendor lock-in decisions |
+| `review-iac-consistency.md` | Infrastructure decisions - intentional per-env differences |
+| `review-observability.md` | SLO definitions - what level of observability is "enough" |
+| `review-test-quality.md` | Test strategy doc - intentional coverage gaps, risk-based testing |
+| `review-cicd-pipeline.md` | Deployment policy - intentional gating decisions |
+| `review-frontend-performance.md` | Performance budget doc - acceptable thresholds |
+| `review-css-architecture.md` | Design system decisions - intentional overrides |
+| `review-spec-readiness.md` | Already reads specs - no gap |
+| `review-ux-audit.md` | UX principles doc - intentional pattern choices |
+| `review-ux-preflight.md` | Already takes input context - no gap |
 
 **Upgrade:** Add to each prompt's preamble:
 ```markdown
@@ -412,8 +412,8 @@ Several prompts assign severity without structured criteria, leading to inconsis
 | `review-spec-readiness.md` | Already operates pre-implementation; verification isn't applicable |
 | `review-ux-preflight.md` | Already takes explicit input context; produces PROCEED/REVISE/BLOCK |
 | `review-ux-audit.md` | Already persona-driven with explicit scope input |
-| `review-css-architecture.md` | Findings are objective (hardcoded values, dead CSS) — low false-positive risk |
-| `review-frontend-performance.md` | Findings are measurable (bundle size, render count) — low ambiguity |
+| `review-css-architecture.md` | Findings are objective (hardcoded values, dead CSS) - low false-positive risk |
+| `review-frontend-performance.md` | Findings are measurable (bundle size, render count) - low ambiguity |
 
 ---
 
@@ -421,24 +421,24 @@ Several prompts assign severity without structured criteria, leading to inconsis
 
 ### Immediate (do now, ~2h total)
 
-1. **Create `docs/security/THREAT_MODEL.md` template** — add to kiro-rails as a managed file
-2. **Add verification pass to `review-code-security.md`** — adversarial disproof step for T2/T3
-3. **Add severity calibration rubric to `review-code-security.md`** — structured questions before severity assignment
-4. **Add dedup rules to `review-code-security.md`** — group by root cause
+1. **Create `docs/security/THREAT_MODEL.md` template** - add to kiro-rails as a managed file
+2. **Add verification pass to `review-code-security.md`** - adversarial disproof step for T2/T3
+3. **Add severity calibration rubric to `review-code-security.md`** - structured questions before severity assignment
+4. **Add dedup rules to `review-code-security.md`** - group by root cause
 
 ### Short-term (next session, ~2h total)
 
-5. **Add "read context docs" preamble to all 13 prompts** — 1-2 lines each telling the agent to check ADRs/THREAT_MODEL before flagging
-6. **Add verification pass to `review-code-maintainability.md`** — check if "duplication" is intentional
-7. **Add verification pass to `review-api-contracts.md`** — check if inconsistency is documented
+5. **Add "read context docs" preamble to all 13 prompts** - 1-2 lines each telling the agent to check ADRs/THREAT_MODEL before flagging
+6. **Add verification pass to `review-code-maintainability.md`** - check if "duplication" is intentional
+7. **Add verification pass to `review-api-contracts.md`** - check if inconsistency is documented
 8. **Add dedup rules to `review-observability.md` and `review-api-contracts.md`**
 
 ### Medium-term (next sprint)
 
-9. **Create `security-verifier` agent** — separate agent that adversarially disproves findings
-10. **Add variant analysis to `git-workflow.md` bug fix template** — search for same pattern elsewhere
-11. **Add adversarial re-scan hook** — after security patches, re-scan patched files
-12. **Add `threat-model` skill** — bootstraps THREAT_MODEL.md from code + docs + git history
+9. **Create `security-verifier` agent** - separate agent that adversarially disproves findings
+10. **Add variant analysis to `git-workflow.md` bug fix template** - search for same pattern elsewhere
+11. **Add adversarial re-scan hook** - after security patches, re-scan patched files
+12. **Add `threat-model` skill** - bootstraps THREAT_MODEL.md from code + docs + git history
 
 ---
 
@@ -446,9 +446,9 @@ Several prompts assign severity without structured criteria, leading to inconsis
 
 Kiro-rails' security review system is structurally sound and in some ways more practical than Anthropic's reference architecture (tiered depth, pre-commit gating, workflow integration). The **two highest-value upgrades** are:
 
-1. **THREAT_MODEL.md template** — reduces false positives by giving the reviewer explicit trust boundaries
-2. **Independent verification step** — halves false positives per Anthropic's data by adding adversarial disproof
+1. **THREAT_MODEL.md template** - reduces false positives by giving the reviewer explicit trust boundaries
+2. **Independent verification step** - halves false positives per Anthropic's data by adding adversarial disproof
 
-These principles extend beyond security to **all review prompts** — the same "read context before flagging" and "verify before reporting" patterns would improve every prompt in the system.
+These principles extend beyond security to **all review prompts** - the same "read context before flagging" and "verify before reporting" patterns would improve every prompt in the system.
 
-Total effort for all upgrades: ~6h across two sessions. The cross-prompt "read context docs" change is the highest-leverage single edit — one line added to each prompt's preamble that reduces false positives across the board.
+Total effort for all upgrades: ~6h across two sessions. The cross-prompt "read context docs" change is the highest-leverage single edit - one line added to each prompt's preamble that reduces false positives across the board.

@@ -28,7 +28,7 @@
 
 ---
 
-## Items Found in Other Repos — NOT Adopted (with Justification)
+## Items Found in Other Repos - NOT Adopted (with Justification)
 
 ### Project A (task management SaaS)
 
@@ -56,7 +56,7 @@
 
 | Item | Type | Why NOT adopted |
 |------|------|-----------------|
-| `ux-design-sprint.md` | Prompt | UX design sprint workflow prompt. Interesting but too opinionated for a generic template — assumes a specific design sprint methodology. Projects can add to overrides. |
+| `ux-design-sprint.md` | Prompt | UX design sprint workflow prompt. Interesting but too opinionated for a generic template - assumes a specific design sprint methodology. Projects can add to overrides. |
 | `tp-*.md` prompts (5 files) | Prompts | TracePulse shortcut prompts (tp-start, tp-test, tp-debug, tp-health, tp-diagnose). Product-specific to TracePulse users. |
 | `tp-shell-intercept.kiro.hook` | Hook | Intercepts shell commands to route through TracePulse. Product-specific. |
 | `ui-component-standards.md` | Steering | Project-specific component library conventions. Generic component rules are in `frontend-patterns.md` and `reusable-architecture.md`. |
@@ -76,7 +76,7 @@ This audit documents how kiro-rails' agent/prompt library evolved:
 | v0.7.0 | `ux-preflight-gate.kiro.hook` | Original (internal workflow) | Pre-task UX intent check prevents coding before layout decisions are made |
 | v0.7.0 | `review-ux-preflight.md` | Original | Structured pre-implementation UX gate with 10-point checklist |
 | v0.7.0 | `ux-pattern-registry.md` | Original (extracted from a 41KB project-specific version) | Generic screen-type patterns (task detail, data table, form, dashboard, modal, empty state) |
-| v0.9.0 | `review-ai-agent-surface.md` | Claude-BugHunter `hunt-llm-ai` skill (adapted) | Defensive counterpart to offensive AI hunting — OWASP ASI01-10, MCP Top 10, confidence gates |
+| v0.9.0 | `review-ai-agent-surface.md` | Claude-BugHunter `hunt-llm-ai` skill (adapted) | Defensive counterpart to offensive AI hunting - OWASP ASI01-10, MCP Top 10, confidence gates |
 | v0.9.0 | Spec workflow skills (4) | OpenSpec by Fission AI (adapted) | Structured spec lifecycle (propose → implement → verify → archive) |
 | v0.9.0 | `auth-implementation` skill | Original | Comprehensive SSO/OAuth checklist covering all edge cases |
 
@@ -98,4 +98,4 @@ Items that are project-specific (TracePulse rules, product-specific prompts, que
 
 None at this time. The three repos are well-synchronized with kiro-rails. The installer's upgrade mechanism (`kiro-rails-version` marker + managed file overwrite) keeps them in sync.
 
-If a pattern emerges across 3+ projects (e.g., TracePulse usage rules appearing in all repos), that's a signal to consider promoting it to kiro-rails core. Currently `tracepulse-subagent-rules.md` exists in 2/3 repos — one more adoption would trigger promotion consideration.
+If a pattern emerges across 3+ projects (e.g., TracePulse usage rules appearing in all repos), that's a signal to consider promoting it to kiro-rails core. Currently `tracepulse-subagent-rules.md` exists in 2/3 repos - one more adoption would trigger promotion consideration.
