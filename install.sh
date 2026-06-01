@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.9.0"
+CURRENT_VERSION="0.9.1"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -73,6 +73,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-ux-audit.md
   .kiro/prompts/review-ux-preflight.md
   .kiro/prompts/review-spec-readiness.md
+  .kiro/prompts/review-ai-agent-surface.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
   scripts/export-to-tools.sh

@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.9.0"
+$CurrentVersion = "0.9.1"
 $VersionFile = ".kiro\.kiro-rails-version"
 $OverridesFile = ".kiro\steering\user-project-overrides.md"
 
@@ -60,6 +60,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-ux-audit.md"
     ".kiro/prompts/review-ux-preflight.md"
     ".kiro/prompts/review-spec-readiness.md"
+    ".kiro/prompts/review-ai-agent-surface.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
 )
