@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Session Guard Check",
+  "description": "On prompt submit, refreshes the session lock and surfaces a warning if another live session holds this working tree or if HEAD drifted unexpectedly (sign of cross-session interference).",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'if [ -f scripts/session-guard.sh ]; then OUT=$(bash scripts/session-guard.sh 2>/dev/null | grep \"⚠️\"); if [ -n \"$OUT\" ]; then echo \"$OUT\"; echo \"See session-isolation.md - do not run destructive or cross-repo git.\"; else echo OK; fi; else echo OK; fi'"
+  }
+}

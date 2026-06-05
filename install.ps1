@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.10.0"
+$CurrentVersion = "0.11.0"
 $VersionFile = ".kiro\.kiro-rails-version"
 $OverridesFile = ".kiro\steering\user-project-overrides.md"
 
@@ -28,6 +28,7 @@ $ManagedFiles = @(
     ".kiro/steering/review-policy.md"
     ".kiro/steering/chokepoint-logging.md"
     ".kiro/steering/focus-and-branch-discipline.md"
+    ".kiro/steering/session-isolation.md"
     ".kiro/steering/frontend-patterns.md"
     ".kiro/steering/api-contract-discipline.md"
     ".kiro/steering/ux-pattern-registry.md"
@@ -46,6 +47,7 @@ $ManagedFiles = @(
     ".kiro/hooks/ux-preflight-gate.kiro.hook"
     ".kiro/hooks/focus-guard.kiro.hook"
     ".kiro/hooks/branch-hygiene-check.kiro.hook"
+    ".kiro/hooks/session-guard-check.kiro.hook"
     ".kiro/skills/auth-implementation/SKILL.md"
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/agents/ux-red-team.json"
@@ -67,6 +69,7 @@ $ManagedFiles = @(
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
     "scripts/branch-check.sh"
+    "scripts/session-guard.sh"
 )
 
 $StaleFiles = @(

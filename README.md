@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [19 steering files](.kiro/steering/) · [15 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh)
+**What's included:** [20 steering files](.kiro/steering/) · [16 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
 ## Why Use This Template
 
@@ -35,6 +35,7 @@ This template solves that by encoding your engineering standards as **[steering 
 | 🔄 Discipline | Fix-on-fix spirals (7+ commits) | Fix depth rule - stop after 2 failed fixes, map all paths |
 | 🎯 Discipline | Stacked requests derail the current task | Request queue protocol - file it, finish current job, then drain the backlog |
 | 🌿 Discipline | Branches pile up and silently diverge | Branch hygiene - merge-and-delete, collision detector before forking a branch |
+| 🚧 Isolation | A parallel agent session corrupts another repo's git | Session isolation - stay in your project root, never `git -C` a sibling repo, working-tree lock detects foreign actors |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
 
@@ -70,7 +71,7 @@ What you get:
 - **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
 - **Architecture** - reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
 - **Observability** - error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
-- **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), consistency rules, dependency minimalism, code commenting standards
+- **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), session isolation (no cross-repo git, working-tree lock), consistency rules, dependency minimalism, code commenting standards
 - **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
 ## Documentation That Writes Itself
@@ -111,6 +112,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
 │   ├── focus-and-branch-discipline.md # Queue mid-task requests, Definition of Done, branch hygiene
+│   ├── session-isolation.md          # Stay in your repo, no cross-repo git, no killing foreign processes
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
@@ -126,7 +128,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── bug-doc-completion-check      # File edit: verifies bug doc fields are complete
 │   ├── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
 │   ├── focus-guard                   # Prompt submit: queue unrelated mid-task requests, don't thrash
-│   └── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
+│   ├── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
+│   └── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   └── security-verifier.json        # Adversarial agent that disproves false positives
@@ -169,7 +172,8 @@ docs/
 
 scripts/
 ├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
-└── branch-check.sh     # Detect branch collisions before they become duplicate-divergent files
+├── branch-check.sh     # Detect branch collisions before they become duplicate-divergent files
+└── session-guard.sh    # Detect concurrent-session interference on a shared working tree
 
 logs/                   # Command output logs (gitignored)
 ```
@@ -201,6 +205,7 @@ They are included based on their `inclusion` setting:
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
 | [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
 | [focus-and-branch-discipline.md](.kiro/steering/focus-and-branch-discipline.md) | always | Request queue protocol (file mid-task requests, finish before switching), Definition of Done, branch hygiene (merge-and-delete, check before branching, prune merged) |
+| [session-isolation.md](.kiro/steering/session-isolation.md) | always | Stay inside your project root, never operate on sibling repos (`git -C`/cross-repo PRs), verify before destructive git, never kill processes you didn't spawn |
 
 ### Customization Points
 
@@ -229,6 +234,7 @@ Hooks fire automatically on file edits or before tool use:
 | ADR Trigger | Infrastructure files edited | Asks if the change warrants an Architecture Decision Record |
 | Focus Guard | Prompt submit | If there's uncommitted work on a non-main branch, reminds the agent to queue unrelated requests instead of thrashing |
 | Branch Hygiene Check | Prompt submit | Flags branches merged into main but not deleted, and warns when local branch count grows large |
+| Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 
 ## Development Workflow
 

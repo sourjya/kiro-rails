@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.11.0
+
+### Added - Session Isolation
+
+Guardrails against concurrent agent sessions interfering with each other across sibling repositories (root cause: a session launched for one repo reached into a sibling repo and corrupted a different session's git state).
+
+- **`session-isolation.md` steering** (`inclusion: always`) - operate only inside your project root; never `cd` into or `git -C` a sibling repo; never open cross-repo PRs/cherry-picks; verify branch/HEAD before destructive git; never kill processes you didn't spawn.
+- **`scripts/session-guard.sh`** - records a per-session working-tree lock under `logs/` (gitignored) and warns when another live session holds the tree or when HEAD drifted unexpectedly (a foreign actor touched the tree).
+- **`session-guard-check` hook** (prompt submit) - surfaces the guard's warnings each turn.
+- Installers, README, and counts updated (steering 19 -> 20, hooks 15 -> 16); version 0.11.0.
+
 ## 2026-06-05 - v0.10.0
 
 ### Added - Focus & Branch Discipline
