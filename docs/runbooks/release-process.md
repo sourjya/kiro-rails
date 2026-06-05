@@ -9,11 +9,21 @@ the repo-specific publish + verification steps.
 2. **Bump the version** in both installers - `install.sh` (`CURRENT_VERSION`) and `install.ps1` (`$CurrentVersion`). They must match. (The bump is what makes existing installs pick up changes on re-run.)
 3. **Update the changelog** - add a dated `vX.Y.Z` section to `docs/changelogs/CHANGELOG.md`.
 4. **Regenerate the Claude layer** - `bash scripts/export-to-claude.sh && git add .claude .mcp.json`, then confirm `bash scripts/check-claude-fresh.sh` prints `OK`.
-5. **Merge** the branch to `main` with `--no-ff`, then delete the branch.
-6. **Push** `main` to both remotes: `git push origin main && git push codecommit main`.
-7. **Tag** (annotated) and push: `git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z && git push codecommit vX.Y.Z`. The repo tags every minor and patch.
-8. **GitHub release**: `gh release create vX.Y.Z --title "..." --notes-file <notes> --latest`.
-9. **Smoke-test the published release** - confirm it actually installs:
+5. **Pre-push smoke test** - validate the *un-pushed* working tree before it goes out:
+
+   ```bash
+   bash scripts/smoke-test-install.sh --local
+   ```
+
+   This serves the working tree over a local http server and installs from it, running
+   both `install.sh` and `install.ps1` natively (the latter when `pwsh` is present).
+   Catches path/version/missing-file regressions before they reach `main`. Must print
+   `SMOKE TEST PASSED`.
+6. **Merge** the branch to `main` with `--no-ff`, then delete the branch.
+7. **Push** `main` to both remotes: `git push origin main && git push codecommit main`.
+8. **Tag** (annotated) and push: `git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z && git push codecommit vX.Y.Z`. The repo tags every minor and patch.
+9. **GitHub release**: `gh release create vX.Y.Z --title "..." --notes-file <notes> --latest`.
+10. **Post-push smoke test** - confirm the published release actually installs:
 
    ```bash
    bash scripts/smoke-test-install.sh           # tests ref 'main'
