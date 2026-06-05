@@ -20,6 +20,7 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 
 ## Queue
 
+- [ ] 2026-06-05 | Guard rule 2 (destructive-git path scan) matches ANY `/segment` token, including slash-containing branch names (`git reset --hard ... fix/x` -> matches `/x`), relative paths, and URLs - a false positive that blocks legitimate destructive git. Restrict the scan to real filesystem path arguments. Distinct from the quote/heredoc fix | context: hit live while restructuring a commit through a branch named fix/mcp-translation
 
 ## Done
 
