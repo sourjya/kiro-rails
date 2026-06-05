@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.12.2
+
+### Fixed / Changed - Hook reliability, guard precision, MCP translation
+
+- **All 18 hook files are now valid strict JSON.** `security-tier1/2/3` had unescaped newlines inside string values (re-serialized losslessly); `spec-validation-gate` was YAML and is now JSON on the `when`/`fileEdited` schema. All parse with `jq` and `python json`. (These four use `then.askAgent` - a Kiro action with no Claude command equivalent - so they remain Kiro-only, now cleanly; documented in the compatibility doc.)
+- **Claude `PreToolUse` guard no longer false-positives on quoted text.** It strips heredoc bodies and quoted spans before matching, so commit messages or `echo`/docs that merely mention `git -C` aren't blocked - it had been blocking its own commit messages. Bare cross-repo invocations are still blocked (verified across 5 cases).
+- **MCP config translation in `export-to-claude.sh`.** Generates a project-root `.mcp.json` from `.kiro/settings/mcp.json` (enabled servers only, `disabled` omitted) and maps each server's `autoApprove` tools to `settings.json` `permissions.allow` (`mcp__<server>__<tool>`). `check-claude-fresh.sh` now verifies `.mcp.json` too. (The shipped template's only server is disabled, so no `.mcp.json` is produced by default.)
+- Version 0.12.2.
+
 ## 2026-06-05 - v0.12.1
 
 ### Fixed - Installer reliability
