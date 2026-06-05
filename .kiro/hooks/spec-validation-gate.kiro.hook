@@ -1,65 +1,16 @@
----
-name: spec-validation-gate
-description: Validates spec structure when spec files are edited. Ensures proposal, requirements, design, and tasks follow the required format before implementation begins.
-trigger:
-  - type: file_change
-    path: ".kiro/specs/**/*.md"
----
-
-# Spec Validation Gate
-
-When any file in `.kiro/specs/` is created or modified, validate the spec folder structure and content quality.
-
-## Validation Rules
-
-### 1. Folder Completeness
-Check that the spec folder contains all required files:
-- `proposal.md` — REQUIRED
-- `requirements.md` — REQUIRED
-- `design.md` — REQUIRED (can be minimal for small changes)
-- `tasks.md` — REQUIRED
-
-If any are missing, warn the user: "Spec `<name>` is incomplete. Missing: <files>. Use `spec-propose` to generate the full structure."
-
-### 2. Proposal Validation
-`proposal.md` must contain:
-- [ ] A `## Problem Statement` section (not empty)
-- [ ] A `## Proposed Solution` section (not empty)
-- [ ] A `## Scope` section with at least one in-scope item
-
-If missing, warn: "proposal.md is missing required sections. A proposal needs at minimum: Problem Statement, Proposed Solution, and Scope."
-
-### 3. Requirements Validation
-`requirements.md` must contain:
-- [ ] At least one `### REQ-` heading
-- [ ] Each requirement has `**Acceptance Criteria:**` with at least one checkbox item `- [ ]`
-
-If requirements lack acceptance criteria, warn: "REQ-<N> has no acceptance criteria. Requirements must be testable — add `- [ ] criterion` items."
-
-### 4. Tasks Validation
-`tasks.md` must contain:
-- [ ] At least one checkbox item (`- [ ]` or `- [x]`)
-- [ ] Tasks should be atomic (warn if any task description exceeds 200 characters)
-
-### 5. Cross-Reference Check
-- If `design.md` exists and references requirement IDs (REQ-1, REQ-2), verify those IDs exist in `requirements.md`
-- If `tasks.md` references requirement IDs, verify they exist
-
-## Severity
-
-- Missing files: **ERROR** — block implementation
-- Missing sections in proposal: **WARNING** — allow but flag
-- Requirements without acceptance criteria: **ERROR** — block implementation
-- Empty tasks: **WARNING** — allow but flag
-- Broken cross-references: **WARNING** — flag for correction
-
-## Output
-
-Summarize validation results:
-```
-Spec Validation: <spec-name>
-✅ proposal.md — valid (3 sections)
-✅ requirements.md — valid (4 requirements, all with criteria)
-⚠️  design.md — missing (acceptable for small changes)
-✅ tasks.md — valid (7 tasks)
-```
+{
+  "enabled": true,
+  "name": "Spec Validation Gate",
+  "description": "Validates spec structure when spec files are edited. Ensures proposal, requirements, design, and tasks follow the required format before implementation begins.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      ".kiro/specs/**/*.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "# Spec Validation Gate\n\nWhen any file in `.kiro/specs/` is created or modified, validate the spec folder structure and content quality.\n\n## Validation Rules\n\n### 1. Folder Completeness\nCheck that the spec folder contains all required files:\n- `proposal.md` — REQUIRED\n- `requirements.md` — REQUIRED\n- `design.md` — REQUIRED (can be minimal for small changes)\n- `tasks.md` — REQUIRED\n\nIf any are missing, warn the user: \"Spec `<name>` is incomplete. Missing: <files>. Use `spec-propose` to generate the full structure.\"\n\n### 2. Proposal Validation\n`proposal.md` must contain:\n- [ ] A `## Problem Statement` section (not empty)\n- [ ] A `## Proposed Solution` section (not empty)\n- [ ] A `## Scope` section with at least one in-scope item\n\nIf missing, warn: \"proposal.md is missing required sections. A proposal needs at minimum: Problem Statement, Proposed Solution, and Scope.\"\n\n### 3. Requirements Validation\n`requirements.md` must contain:\n- [ ] At least one `### REQ-` heading\n- [ ] Each requirement has `**Acceptance Criteria:**` with at least one checkbox item `- [ ]`\n\nIf requirements lack acceptance criteria, warn: \"REQ-<N> has no acceptance criteria. Requirements must be testable — add `- [ ] criterion` items.\"\n\n### 4. Tasks Validation\n`tasks.md` must contain:\n- [ ] At least one checkbox item (`- [ ]` or `- [x]`)\n- [ ] Tasks should be atomic (warn if any task description exceeds 200 characters)\n\n### 5. Cross-Reference Check\n- If `design.md` exists and references requirement IDs (REQ-1, REQ-2), verify those IDs exist in `requirements.md`\n- If `tasks.md` references requirement IDs, verify they exist\n\n## Severity\n\n- Missing files: **ERROR** — block implementation\n- Missing sections in proposal: **WARNING** — allow but flag\n- Requirements without acceptance criteria: **ERROR** — block implementation\n- Empty tasks: **WARNING** — allow but flag\n- Broken cross-references: **WARNING** — flag for correction\n\n## Output\n\nSummarize validation results:\n```\nSpec Validation: <spec-name>\n✅ proposal.md — valid (3 sections)\n✅ requirements.md — valid (4 requirements, all with criteria)\n⚠️  design.md — missing (acceptable for small changes)\n✅ tasks.md — valid (7 tasks)\n```"
+  }
+}

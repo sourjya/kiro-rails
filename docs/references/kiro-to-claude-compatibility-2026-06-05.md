@@ -45,6 +45,6 @@ Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2
 
 - `fileMatch` steering becomes always-on in CLAUDE.md (no native conditional include).
 - Kiro pre-commit hooks are not auto-translated (no Claude commit event).
-- **Four shipped hook files are not strict-JSON parseable** and are therefore skipped by the generator (and would fail any JSON tooling): `security-tier1-precommit`, `security-tier2-feature`, `security-tier3-sprint` (raw newlines inside JSON string values) and `spec-validation-gate` (YAML frontmatter, not JSON). The generator prints a clear "skipped" note rather than failing. Fixing these source files is tracked in the backlog; once valid, they translate automatically.
+- **`askAgent` hooks don't translate to Claude command-hooks.** The security tiers (`security-tier1/2/3`) and `spec-validation-gate` use `then.type: askAgent` (a Kiro action that hands the agent a prompt). Claude's hook system runs *commands*, not agent prompts, so the generator skips these (they have no `then.command`). They are now all valid JSON (fixed 2026-06-05 - the security hooks had unescaped newlines in string values; `spec-validation-gate` was YAML and is now JSON on the `when`/`fileEdited` schema), so JSON tooling parses them cleanly; they're simply not command-translatable.
 - MCP config is not auto-translated yet.
 - The `PreToolUse` guard requires `jq` at runtime; if absent it fails open (no block).
