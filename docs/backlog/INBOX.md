@@ -20,9 +20,11 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 
 ## Queue
 
-- [ ] 2026-06-05 | Guard rule 2 (destructive-git path scan) matches ANY `/segment` token, including slash-containing branch names (`git reset --hard ... fix/x` -> matches `/x`), relative paths, and URLs - a false positive that blocks legitimate destructive git. Restrict the scan to real filesystem path arguments. Distinct from the quote/heredoc fix | context: hit live while restructuring a commit through a branch named fix/mcp-translation
+_(empty)_
 
 ## Done
+
+- [x] 2026-06-05 | Guard rule 2 path-scan precision - DONE in v0.12.3: only inspects absolute-path arguments at a word boundary, so branch names (fix/x), refs (origin/main), and URLs are no longer misread as cross-repo paths. Tested: branch+reset, reset origin/main, in-repo reset ALLOW; cd /abs && reset, clean -fd /abs, git -C /abs BLOCK; Task 2 quote/heredoc cases still ALLOW.
 
 - [x] 2026-06-05 | Concurrent-session / cross-repo isolation - DONE in v0.11.0 (session-isolation.md steering + scripts/session-guard.sh + session-guard-check hook; Claude PreToolUse guard added in v0.12.0 actually blocks cross-repo git).
 - [x] 2026-06-05 | Claude-specific tooling parity - DONE in v0.12.0 (export-to-claude.sh generates .claude/ with settings.json hooks, subagents, slash commands, skills, CLAUDE.md + PreToolUse guard). Remaining gap split out as the MCP-translation item above.
