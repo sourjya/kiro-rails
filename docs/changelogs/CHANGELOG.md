@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.10.0
+
+### Added - Focus & Branch Discipline
+
+Two recurring process failures - mid-task request thrashing and branch sprawl - are now encoded as first-class kiro-rails guardrails (steering + hooks + a tool), ported from patterns proven downstream in planiq.
+
+- **`focus-and-branch-discipline.md` steering** (`inclusion: always`) - the Request Queue Protocol (file unrelated mid-task requests to the backlog, acknowledge, finish the current task; divert only on explicit user order), a strict Definition of Done (code -> tests -> commit -> merge -> delete branch -> drain backlog), and Branch Hygiene rules (one task per branch, merge-and-delete as one motion, check before branching, prune merged, reconcile divergence by committing immediately).
+- **`docs/backlog/INBOX.md`** - the on-disk request queue the protocol writes to, plus a new `docs/backlog/` directory in the taxonomy. Shipped as a download-if-missing template so a user's queue is never overwritten on upgrade.
+- **`scripts/branch-check.sh`** - branch collision detector. `branch-check.sh <area>` shows whether any unmerged branch already touches an area before you fork a parallel one; with no args it lists other unmerged branches editing the same files as the current branch, with commit dates - the early-warning signal for silent divergence.
+- **`focus-guard` hook** (prompt submit) - when there's uncommitted work on a non-main branch, reminds the agent to queue unrelated requests instead of thrashing.
+- **`branch-hygiene-check` hook** (prompt submit) - flags branches merged into main but not deleted, and warns when the local branch count grows large.
+
+### Changed
+
+- Steering file count: 18 -> 19; hook count: 13 -> 15; docs directories: 13 -> 14.
+- Both installers (`install.sh`, `install.ps1`) updated to manage the new steering file, hooks, script, `docs/backlog/` directory, and INBOX template. Version bumped to 0.10.0.
+- README: new discipline rows in the "with steering" table, steering and hooks table entries, project-structure tree entries.
+
 ## 2026-06-01 - v0.9.1
 
 ### Added (from Claude-BugHunter adaptation + cross-repo audit)

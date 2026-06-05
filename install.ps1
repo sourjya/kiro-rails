@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.9.1"
+$CurrentVersion = "0.10.0"
 $VersionFile = ".kiro\.kiro-rails-version"
 $OverridesFile = ".kiro\steering\user-project-overrides.md"
 
@@ -27,6 +27,7 @@ $ManagedFiles = @(
     ".kiro/steering/ux-expert-persona.md"
     ".kiro/steering/review-policy.md"
     ".kiro/steering/chokepoint-logging.md"
+    ".kiro/steering/focus-and-branch-discipline.md"
     ".kiro/steering/frontend-patterns.md"
     ".kiro/steering/api-contract-discipline.md"
     ".kiro/steering/ux-pattern-registry.md"
@@ -43,6 +44,8 @@ $ManagedFiles = @(
     ".kiro/hooks/bug-doc-completion-check.kiro.hook"
     ".kiro/hooks/adr-trigger-infra-changes.kiro.hook"
     ".kiro/hooks/ux-preflight-gate.kiro.hook"
+    ".kiro/hooks/focus-guard.kiro.hook"
+    ".kiro/hooks/branch-hygiene-check.kiro.hook"
     ".kiro/skills/auth-implementation/SKILL.md"
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/agents/ux-red-team.json"
@@ -63,6 +66,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-ai-agent-surface.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
+    "scripts/branch-check.sh"
 )
 
 $StaleFiles = @(
@@ -83,6 +87,7 @@ $Dirs = @(
     "docs/decisions"; "docs/architecture"; "docs/roadmap"; "docs/changelogs"
     "docs/bugs"; "docs/ideas"; "docs/technical-debt"; "docs/testing"
     "docs/runbooks"; "docs/references"; "docs/engineering"; "docs/security"
+    "docs/backlog"
     "scripts"; "logs"
 )
 
@@ -163,6 +168,7 @@ $DocTemplates = @(
     "docs/decisions/ADR-000-template.md"
     "docs/bugs/BUG-000-template.md"
     "docs/roadmap/roadmap.md"
+    "docs/backlog/INBOX.md"
     ".kiro/settings/mcp.json"
 )
 foreach ($file in $DocTemplates) {

@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.9.1"
+CURRENT_VERSION="0.10.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -35,6 +35,7 @@ MANAGED_FILES=(
   .kiro/steering/versioning.md
   .kiro/steering/review-policy.md
   .kiro/steering/chokepoint-logging.md
+  .kiro/steering/focus-and-branch-discipline.md
   .kiro/steering/frontend-patterns.md
   .kiro/steering/api-contract-discipline.md
   .kiro/steering/ux-pattern-registry.md
@@ -52,6 +53,8 @@ MANAGED_FILES=(
   .kiro/hooks/adr-trigger-infra-changes.kiro.hook
   .kiro/hooks/ux-preflight-gate.kiro.hook
   .kiro/hooks/spec-validation-gate.kiro.hook
+  .kiro/hooks/focus-guard.kiro.hook
+  .kiro/hooks/branch-hygiene-check.kiro.hook
   .kiro/skills/auth-implementation/SKILL.md
   .kiro/skills/spec-propose/SKILL.md
   .kiro/skills/spec-implement/SKILL.md
@@ -77,6 +80,7 @@ MANAGED_FILES=(
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
   scripts/export-to-tools.sh
+  scripts/branch-check.sh
 )
 
 # ──────────────────────────────────────────────
@@ -110,6 +114,7 @@ DIRS=(
   docs/decisions docs/architecture docs/roadmap docs/changelogs
   docs/bugs docs/ideas docs/technical-debt docs/testing
   docs/runbooks docs/references docs/engineering docs/security
+  docs/backlog
   scripts logs
 )
 
@@ -190,6 +195,7 @@ DOC_TEMPLATES=(
   docs/decisions/ADR-000-template.md
   docs/bugs/BUG-000-template.md
   docs/roadmap/roadmap.md
+  docs/backlog/INBOX.md
   .kiro/settings/mcp.json
 )
 

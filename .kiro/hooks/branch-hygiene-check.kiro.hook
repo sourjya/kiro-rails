@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Branch Hygiene Check",
+  "description": "On prompt submit, flags local branches already merged into main but not deleted, and warns when the local branch count grows large. Prevents branch sprawl and silent divergence.",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'M=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | xargs); T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\"); if [ -n \"$M\" ]; then echo \"🌿 BRANCH HYGIENE: merged into main but not deleted: $M -- run: git branch -d $M (see focus-and-branch-discipline.md).\"; elif [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Prune merged ones (git branch --merged main) and finish or close stale ones before starting new work. Use bash scripts/branch-check.sh to spot collisions.\"; else echo OK; fi'"
+  }
+}

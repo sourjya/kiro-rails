@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [18 steering files](.kiro/steering/) · [13 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh)
+**What's included:** [19 steering files](.kiro/steering/) · [15 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh)
 
 ## Why Use This Template
 
@@ -33,6 +33,8 @@ This template solves that by encoding your engineering standards as **[steering 
 | 📝 Docs | No changelogs | Agent updates changelog on every meaningful change |
 | 🔧 Discipline | Agent refactors unrelated code | Change scope discipline - only touch what was asked |
 | 🔄 Discipline | Fix-on-fix spirals (7+ commits) | Fix depth rule - stop after 2 failed fixes, map all paths |
+| 🎯 Discipline | Stacked requests derail the current task | Request queue protocol - file it, finish current job, then drain the backlog |
+| 🌿 Discipline | Branches pile up and silently diverge | Branch hygiene - merge-and-delete, collision detector before forking a branch |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
 
@@ -68,7 +70,7 @@ What you get:
 - **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
 - **Architecture** - reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
 - **Observability** - error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
-- **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, consistency rules, dependency minimalism, code commenting standards
+- **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), consistency rules, dependency minimalism, code commenting standards
 - **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
 ## Documentation That Writes Itself
@@ -108,6 +110,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── ux-expert-persona.md          # On-demand UX expert persona (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
+│   ├── focus-and-branch-discipline.md # Queue mid-task requests, Definition of Done, branch hygiene
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
 │   ├── comment-standards-check       # Verifies docstrings on staged files before commit
@@ -121,7 +124,9 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── package-manifest-verify       # File edit: verifies package.json/pyproject.toml includes
 │   ├── changelog-consolidation-reminder # Prompt submit: warns if 10+ commits since last changelog
 │   ├── bug-doc-completion-check      # File edit: verifies bug doc fields are complete
-│   └── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
+│   ├── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
+│   ├── focus-guard                   # Prompt submit: queue unrelated mid-task requests, don't thrash
+│   └── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   └── security-verifier.json        # Adversarial agent that disproves false positives
@@ -148,6 +153,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 └── settings/           # LSP and MCP configuration
 
 docs/
+├── backlog/            # INBOX.md - request queue for the focus/branch discipline protocol
 ├── decisions/          # ADR-###-name.md - Architecture Decision Records
 ├── architecture/       # Living technical documentation
 ├── roadmap/            # Planning, milestones, and sprint tracking
@@ -162,7 +168,8 @@ docs/
 └── security/           # Security review reports and findings log
 
 scripts/
-└── git-commit-push.sh  # Commit → merge to main → push (with log capture)
+├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
+└── branch-check.sh     # Detect branch collisions before they become duplicate-divergent files
 
 logs/                   # Command output logs (gitignored)
 ```
@@ -193,6 +200,7 @@ They are included based on their `inclusion` setting:
 | [ux-expert-persona.md](.kiro/steering/ux-expert-persona.md) | manual | On-demand senior UX expert persona for accessibility (WCAG 2.2 AA), usability (Nielsen heuristics), content design, and state/flow coverage |
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
 | [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
+| [focus-and-branch-discipline.md](.kiro/steering/focus-and-branch-discipline.md) | always | Request queue protocol (file mid-task requests, finish before switching), Definition of Done, branch hygiene (merge-and-delete, check before branching, prune merged) |
 
 ### Customization Points
 
@@ -219,6 +227,8 @@ Hooks fire automatically on file edits or before tool use:
 | Changelog Consolidation | Prompt submit | Warns if 10+ commits since last changelog update - triggers consolidation |
 | Bug Doc Completion | `docs/bugs/BUG-*.md` edited | Verifies root cause, fix, regression tests, and status are filled |
 | ADR Trigger | Infrastructure files edited | Asks if the change warrants an Architecture Decision Record |
+| Focus Guard | Prompt submit | If there's uncommitted work on a non-main branch, reminds the agent to queue unrelated requests instead of thrashing |
+| Branch Hygiene Check | Prompt submit | Flags branches merged into main but not deleted, and warns when local branch count grows large |
 
 ## Development Workflow
 
