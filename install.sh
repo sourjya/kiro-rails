@@ -11,8 +11,10 @@ set -euo pipefail
 
 REPO="sourjya/kiro-rails"
 BRANCH="main"
-BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.12.3"
+# Base URL for fetching files. Overridable via KIRO_RAILS_BASE_URL (e.g. file:///path
+# for pre-push/local testing); defaults to this repo's raw GitHub content.
+BASE_URL="${KIRO_RAILS_BASE_URL:-https://raw.githubusercontent.com/$REPO/$BRANCH}"
+CURRENT_VERSION="0.12.4"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 

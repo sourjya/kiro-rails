@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.12.4
+
+### Changed - Cross-platform install.ps1 + release smoke testing
+
+- **`install.ps1` now works on cross-platform PowerShell 7 (macOS/Linux), not just Windows.** It used Windows-only backslash path joins (`.Replace("/", "\")`, `"$cwd\..."`) that produced wrong paths on non-Windows `pwsh` - e.g. the version file silently wasn't written. Switched to forward-slash / `Join-Path` paths, which are correct on every platform including Windows. (Surfaced by running the installer under PowerShell 7 on Linux via the new smoke test.)
+- **`install.ps1` retries transient download failures** (3 attempts) - more robust on flaky networks, and fixes intermittent drops in the `Invoke-WebRequest` fallback path used when `curl.exe` is absent.
+- **`KIRO_RAILS_BASE_URL` override** in both installers - lets them fetch from an arbitrary base (e.g. a local server) for testing; defaults to this repo's raw GitHub content, inert for normal installs.
+- **`scripts/smoke-test-install.sh` gained a `--local` (pre-push) mode** - serves the working tree over a local http server and installs from it, running both installers natively, so un-pushed changes are validated before pushing. The default mode remains post-push (install from a published ref). See `docs/runbooks/release-process.md`.
+- Version 0.12.4.
+
 ## 2026-06-05 - v0.12.3
 
 ### Fixed - Guard path-scan precision

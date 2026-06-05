@@ -5,10 +5,12 @@ $ErrorActionPreference = "Stop"
 
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
-$BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.12.3"
-$VersionFile = ".kiro\.kiro-rails-version"
-$OverridesFile = ".kiro\steering\user-project-overrides.md"
+# Overridable via $env:KIRO_RAILS_BASE_URL (e.g. a file:/// or local URL for pre-push
+# testing); defaults to this repo's raw GitHub content.
+$BaseUrl = if ($env:KIRO_RAILS_BASE_URL) { $env:KIRO_RAILS_BASE_URL } else { "https://raw.githubusercontent.com/$Repo/$Branch" }
+$CurrentVersion = "0.12.4"
+$VersionFile = ".kiro/.kiro-rails-version"
+$OverridesFile = ".kiro/steering/user-project-overrides.md"
 
 $ManagedFiles = @(
     ".kiro/steering/code-organization.md"
@@ -124,7 +126,7 @@ if (Test-Path $VersionFile) {
     }
     $installType = "upgrade"
     Write-Host "Upgrading Kiro Rails: v$installedVersion -> v$CurrentVersion"
-} elseif (Test-Path ".kiro\steering\*.md") {
+} elseif (Test-Path ".kiro/steering/*.md") {
     $installType = "upgrade"
     Write-Host "Detected existing Kiro Rails files (no version file). Upgrading to v$CurrentVersion"
 } else {
@@ -133,8 +135,7 @@ if (Test-Path $VersionFile) {
 
 # Create directories
 foreach ($dir in $Dirs) {
-    $localDir = $dir.Replace("/", "\")
-    if (-not (Test-Path $localDir)) { [void](New-Item -ItemType Directory -Path $localDir -Force) }
+    if (-not (Test-Path $dir)) { [void](New-Item -ItemType Directory -Path $dir -Force) }
 }
 
 # Download helper - tries curl.exe first, falls back to Invoke-WebRequest
@@ -144,20 +145,23 @@ if ($LASTEXITCODE -ne 0) { $useCurl = $false }
 
 function Get-RemoteFile($relativePath) {
     $url = "$BaseUrl/$relativePath"
-    $localPath = $relativePath.Replace("/", "\")
+    $localPath = $relativePath
     $parentDir = Split-Path $localPath -Parent
     if ($parentDir -and -not (Test-Path $parentDir)) { [void](New-Item -ItemType Directory -Path $parentDir -Force) }
-    try {
-        if ($script:useCurl) {
-            $null = & curl.exe -fsSL $url -o $localPath 2>&1
-            return $LASTEXITCODE -eq 0
-        } else {
-            Invoke-WebRequest -Uri $url -OutFile $localPath -UseBasicParsing -ErrorAction Stop
-            return $true
-        }
-    } catch {
-        return $false
+    # Retry transient download failures (flaky networks; IWR keep-alive resets, etc.).
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        try {
+            if ($script:useCurl) {
+                $null = & curl.exe -fsSL $url -o $localPath 2>&1
+                if ($LASTEXITCODE -eq 0) { return $true }
+            } else {
+                Invoke-WebRequest -Uri $url -OutFile $localPath -UseBasicParsing -ErrorAction Stop
+                return $true
+            }
+        } catch { }
+        Start-Sleep -Milliseconds 200
     }
+    return $false
 }
 
 # Download managed files
@@ -168,7 +172,7 @@ foreach ($file in $ManagedFiles) {
     $current++
     $name = Split-Path $file -Leaf
     Write-Host "`r  Downloading [$current/$total] $name                    " -NoNewline
-    $localPath = $file.Replace("/", "\")
+    $localPath = $file
     if ((Test-Path $localPath) -and $installType -eq "upgrade") {
         if (Get-RemoteFile $file) { $updated++ } else { $failed++; Write-Host ""; Write-Host "  Warning: could not download $file" -ForegroundColor Yellow }
     } else {
@@ -186,7 +190,7 @@ $DocTemplates = @(
     ".kiro/settings/mcp.json"
 )
 foreach ($file in $DocTemplates) {
-    $localPath = $file.Replace("/", "\")
+    $localPath = $file
     if (-not (Test-Path $localPath)) {
         if (Get-RemoteFile $file) { $downloaded++ }
     }
@@ -196,7 +200,7 @@ foreach ($file in $DocTemplates) {
 $removed = 0
 if ($installType -eq "upgrade") {
     foreach ($file in $StaleFiles) {
-        $localPath = $file.Replace("/", "\")
+        $localPath = $file
         if (Test-Path $localPath) {
             Remove-Item $localPath -Force
             $removed++
@@ -206,7 +210,7 @@ if ($installType -eq "upgrade") {
 }
 
 # User project overrides
-$overridesLocal = $OverridesFile.Replace("/", "\")
+$overridesLocal = $OverridesFile
 if (Test-Path $overridesLocal) {
     Write-Host ""
     Write-Host "  user-project-overrides.md exists - not modified."
@@ -216,7 +220,7 @@ if (Test-Path $overridesLocal) {
 
     # Interactive prompts
     Write-Host ""
-    $configure = Read-Host "Configure project settings now? You can skip and edit .kiro\steering\user-project-overrides.md later. [Y/n]"
+    $configure = Read-Host "Configure project settings now? You can skip and edit .kiro/steering/user-project-overrides.md later. [Y/n]"
     if ($configure -eq "" -or $configure -match "^[Yy]") {
         Write-Host ""
         Write-Host "Press Enter to skip any section."
@@ -283,32 +287,31 @@ if (Test-Path $overridesLocal) {
 
         [System.IO.File]::WriteAllText((Resolve-Path $overridesLocal).Path, $content)
         Write-Host ""
-        Write-Host "Remaining sections can be edited in: .kiro\steering\user-project-overrides.md"
+        Write-Host "Remaining sections can be edited in: .kiro/steering/user-project-overrides.md"
     }
     Write-Host ""
 }
 
 # Write version file
-$versionLocal = $VersionFile.Replace("/", "\")
-[System.IO.File]::WriteAllText("$cwd\$versionLocal", $CurrentVersion)
+[System.IO.File]::WriteAllText((Join-Path $cwd $VersionFile), $CurrentVersion)
 
 # Summary
 Write-Host ""
 if ($installType -eq "fresh") {
     Write-Host "Done! $downloaded files installed." -ForegroundColor Green
     Write-Host ""
-    Write-Host "Your customization file: .kiro\steering\user-project-overrides.md"
+    Write-Host "Your customization file: .kiro/steering/user-project-overrides.md"
     Write-Host "  This is the only file you need to edit. All other steering files are"
     Write-Host "  managed by kiro-rails and will be updated automatically on upgrade."
     Write-Host ""
     Write-Host "Next steps:"
-    Write-Host "  1. Review .kiro\steering\user-project-overrides.md"
+    Write-Host "  1. Review .kiro/steering/user-project-overrides.md"
     Write-Host "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
 } else {
     Write-Host "Done! $downloaded new, $updated updated, $removed removed." -ForegroundColor Green
     if ($removed -gt 0) { Write-Host "  Stale files from previous versions were cleaned up." }
     Write-Host ""
-    Write-Host "Your customization file was not modified: .kiro\steering\user-project-overrides.md"
+    Write-Host "Your customization file was not modified: .kiro/steering/user-project-overrides.md"
     Write-Host ""
     Write-Host "Review changes with: git diff"
 }
