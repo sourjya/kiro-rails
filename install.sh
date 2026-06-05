@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.11.0"
+CURRENT_VERSION="0.12.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -57,6 +57,7 @@ MANAGED_FILES=(
   .kiro/hooks/focus-guard.kiro.hook
   .kiro/hooks/branch-hygiene-check.kiro.hook
   .kiro/hooks/session-guard-check.kiro.hook
+  .kiro/hooks/claude-export-freshness.kiro.hook
   .kiro/skills/auth-implementation/SKILL.md
   .kiro/skills/spec-propose/SKILL.md
   .kiro/skills/spec-implement/SKILL.md
@@ -84,6 +85,9 @@ MANAGED_FILES=(
   scripts/export-to-tools.sh
   scripts/branch-check.sh
   scripts/session-guard.sh
+  scripts/export-to-claude.sh
+  scripts/claude-guard-bash.sh
+  scripts/check-claude-fresh.sh
 )
 
 # ──────────────────────────────────────────────

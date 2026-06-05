@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [20 steering files](.kiro/steering/) · [16 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh)
+**What's included:** [20 steering files](.kiro/steering/) · [17 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -129,7 +129,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── adr-trigger-infra-changes     # File edit: suggests ADR when infrastructure changes
 │   ├── focus-guard                   # Prompt submit: queue unrelated mid-task requests, don't thrash
 │   ├── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
-│   └── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
+│   ├── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
+│   └── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   └── security-verifier.json        # Adversarial agent that disproves false positives
@@ -173,7 +174,11 @@ docs/
 scripts/
 ├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
 ├── branch-check.sh     # Detect branch collisions before they become duplicate-divergent files
-└── session-guard.sh    # Detect concurrent-session interference on a shared working tree
+├── session-guard.sh    # Detect concurrent-session interference on a shared working tree
+├── export-to-tools.sh  # Generate flat config for Cursor / Copilot / Codex / Claude CLAUDE.md
+├── export-to-claude.sh # Generate the full native .claude/ layer (BONUS for Claude Code)
+├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
+└── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
 
 logs/                   # Command output logs (gitignored)
 ```
@@ -235,6 +240,7 @@ Hooks fire automatically on file edits or before tool use:
 | Focus Guard | Prompt submit | If there's uncommitted work on a non-main branch, reminds the agent to queue unrelated requests instead of thrashing |
 | Branch Hygiene Check | Prompt submit | Flags branches merged into main but not deleted, and warns when local branch count grows large |
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
+| Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
 
 ## Development Workflow
 
@@ -327,6 +333,29 @@ This generates:
 You can also export to a single tool: `--cursor`, `--claude`, `--copilot`, or `--codex`.
 
 The generated files concatenate all steering files (with `user-project-overrides.md` first) into the target tool's expected format. Regenerate after any steering file change.
+
+## BONUS: Native Claude Code Support
+
+kiro-rails is built for [Kiro](https://kiro.dev), but it ships a **native [Claude Code](https://claude.com/claude-code) layer** so the same discipline works there too - not just a flat `CLAUDE.md`, but real Claude-native hooks, subagents, slash commands, and skills.
+
+```bash
+./scripts/export-to-claude.sh
+```
+
+generates a complete `.claude/` tree from your Kiro files (the single source of truth):
+
+| Generated | From | Notes |
+|---|---|---|
+| `.claude/CLAUDE.md` | `.kiro/steering/*.md` | always-on rules |
+| `.claude/settings.json` | `.kiro/hooks/*.kiro.hook` | hooks remapped to Claude events (`UserPromptSubmit`, `PostToolUse`, `Stop`) **plus a Claude-only `PreToolUse` guard** |
+| `.claude/hooks/guard-bash.sh` | `scripts/claude-guard-bash.sh` | **blocks cross-repo git** (`git -C` / destructive git outside the project root) - enforcement Kiro's hook model can't express |
+| `.claude/agents/*.md` | `.kiro/agents/*.json` | subagents (tools + prompt body) |
+| `.claude/commands/*.md` | `.kiro/prompts/*.md` | review prompts as slash commands |
+| `.claude/skills/` | `.kiro/skills/` | copied as-is (format compatible) |
+
+The generated `.claude/` tree is **committed** so Claude Code works the moment you clone - no extra step. Because it is generated, Kiro stays the single source of truth; `scripts/check-claude-fresh.sh` verifies the committed copy is in sync (run before any release - see the `versioning.md` checklist), and the `claude-export-freshness` hook reminds you to regenerate after editing `.kiro/`.
+
+See [docs/references/kiro-to-claude-compatibility-2026-06-05.md](docs/references/kiro-to-claude-compatibility-2026-06-05.md) for the full Kiro→Claude mapping, what translates cleanly, and known limitations. Requires `jq`.
 
 ## Customizing for Your Project
 

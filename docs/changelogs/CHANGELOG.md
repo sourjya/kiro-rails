@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.12.0
+
+### Added - BONUS: Native Claude Code layer
+
+kiro-rails now ships a native Claude Code setup generated from the Kiro files (single source of truth), so the discipline works in Claude Code, not just Kiro. Answers the recurring "kiro-rails isn't compatible with Claude" report - the fix is a generator, not a rewrite.
+
+- **`scripts/export-to-claude.sh`** - generates a complete `.claude/` tree: `CLAUDE.md` (steering), `settings.json` (hooks remapped to Claude events `UserPromptSubmit`/`PostToolUse`/`Stop`), `agents/*.md` (subagents from `.kiro/agents/*.json`), `commands/*.md` (slash commands from `.kiro/prompts/*.md`), and `skills/` (copied). Skips non-JSON hook files with a clear note rather than failing.
+- **`scripts/claude-guard-bash.sh`** - Claude `PreToolUse` hook that **blocks** `git -C` / destructive git targeting paths outside the project root. This turns `session-isolation.md` from advice into enforcement (Kiro has no pre-Bash gate) - it blocks the exact planiq cross-repo incident.
+- **Committed `.claude/` tree** - generated and committed so Claude Code works on clone with zero steps.
+- **`scripts/check-claude-fresh.sh`** + **`claude-export-freshness` hook** - keep the committed `.claude/` from drifting: the check (used in the release checklist) regenerates to a temp dir and diffs; the hook reminds when `.kiro/` source changes.
+- **`versioning.md` release checklist** - new mandatory step to regenerate and verify `.claude/` before tagging.
+- **Compatibility analysis** - `docs/references/kiro-to-claude-compatibility-2026-06-05.md` documents the full Kiro->Claude mapping and known limitations (e.g. `fileMatch` steering degrades to always-on; 4 shipped hook files are currently not valid JSON and are skipped).
+- Installers, README BONUS section, and counts updated (hooks 16 -> 17); version 0.12.0.
+
 ## 2026-06-05 - v0.11.0
 
 ### Added - Session Isolation

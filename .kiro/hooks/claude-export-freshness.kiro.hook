@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Claude Export Freshness",
+  "description": "After editing Kiro source (steering/hooks/agents/prompts/skills), reminds to regenerate the committed .claude/ tree so the Claude bonus layer does not drift from its source of truth.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      ".kiro/steering/**",
+      ".kiro/hooks/**",
+      ".kiro/agents/**",
+      ".kiro/prompts/**",
+      ".kiro/skills/**"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'if [ -d .claude ]; then NEW=$(find .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts .kiro/skills -type f -newer .claude/CLAUDE.md 2>/dev/null | head -1); if [ -n \"$NEW\" ]; then echo \"🔁 CLAUDE EXPORT STALE: .kiro/ changed after .claude/ was generated. Run: bash scripts/export-to-claude.sh && git add .claude (see versioning.md release checklist).\"; else echo OK; fi; else echo OK; fi'"
+  }
+}
