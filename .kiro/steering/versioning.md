@@ -54,9 +54,10 @@ package.json                -> "version": "0.2.0"
 2. Lint clean
 3. Update version in all version files
 4. Update `docs/changelogs/CHANGELOG.md` - move Unreleased items under the new version header with date
-5. Commit: `chore: release vX.X.X`
-6. Tag: `git tag -a vX.X.X -m "vX.X.X - brief description"`
-7. Push: `git push origin main --tags`
+5. **Regenerate the Claude bonus layer** - the committed `.claude/` tree is a generated artifact and MUST be refreshed before tagging: `bash scripts/export-to-claude.sh && git add .claude`. Verify it is in sync with `bash scripts/check-claude-fresh.sh` (must print `OK`).
+6. Commit: `chore: release vX.X.X`
+7. Tag: `git tag -a vX.X.X -m "vX.X.X - brief description"`
+8. Push: `git push origin main --tags`
 
 ## Tag Format
 

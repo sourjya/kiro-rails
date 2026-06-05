@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.11.0"
+$CurrentVersion = "0.12.0"
 $VersionFile = ".kiro\.kiro-rails-version"
 $OverridesFile = ".kiro\steering\user-project-overrides.md"
 
@@ -48,6 +48,7 @@ $ManagedFiles = @(
     ".kiro/hooks/focus-guard.kiro.hook"
     ".kiro/hooks/branch-hygiene-check.kiro.hook"
     ".kiro/hooks/session-guard-check.kiro.hook"
+    ".kiro/hooks/claude-export-freshness.kiro.hook"
     ".kiro/skills/auth-implementation/SKILL.md"
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/agents/ux-red-team.json"
@@ -70,6 +71,9 @@ $ManagedFiles = @(
     "scripts/git-commit-push.sh"
     "scripts/branch-check.sh"
     "scripts/session-guard.sh"
+    "scripts/export-to-claude.sh"
+    "scripts/claude-guard-bash.sh"
+    "scripts/check-claude-fresh.sh"
 )
 
 $StaleFiles = @(

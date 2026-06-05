@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'M=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | xargs); T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\"); if [ -n \"$M\" ]; then echo \"🌿 BRANCH HYGIENE: merged into main but not deleted: $M -- run: git branch -d $M (see focus-and-branch-discipline.md).\"; elif [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Prune merged ones (git branch --merged main) and finish or close stale ones before starting new work. Use bash scripts/branch-check.sh to spot collisions.\"; else echo OK; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'CHANGELOG=\"docs/changelogs/CHANGELOG.md\"; if [ ! -f \"$CHANGELOG\" ]; then echo \"OK\"; exit 0; fi; LAST_MOD=$(git log -1 --format=%H -- \"$CHANGELOG\" 2>/dev/null); if [ -z \"$LAST_MOD\" ]; then echo \"OK\"; exit 0; fi; COMMITS_SINCE=$(git rev-list --count \"$LAST_MOD\"..HEAD 2>/dev/null); if [ \"$COMMITS_SINCE\" -ge 10 ]; then echo \"📝 CHANGELOG BEHIND: $COMMITS_SINCE commits since last changelog update. Consolidate recent changes into docs/changelogs/CHANGELOG.md grouped by feature (not per-commit). Run: git log --oneline $LAST_MOD..HEAD\"; else echo \"OK\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'FIXES=$(git log --oneline -5 2>/dev/null | grep -c \"^[a-f0-9]\\+ fix\"); if [ \"$FIXES\" -ge 3 ]; then echo \"⚠️ FIX SPIRAL DETECTED: $FIXES consecutive fix commits found in last 5 commits. BEFORE attempting another fix: 1) Map ALL code paths through the affected system. 2) Document what fix #1 and #2 did and why they failed. 3) Identify the ROOT CAUSE, not another symptom. See change-discipline.md Fix Depth Rule.\"; else echo \"OK\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"🎯 FOCUS GUARD: uncommitted work in progress on branch $B. If this new request is UNRELATED to that work, do NOT start it - append it to docs/backlog/INBOX.md, tell the user it is noted, and finish the current task first (code + tests + commit + merge + delete). Divert only if the user explicitly says so. See focus-and-branch-discipline.md.\"; else echo OK; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -f scripts/session-guard.sh ]; then OUT=$(bash scripts/session-guard.sh 2>/dev/null | grep \"⚠️\"); if [ -n \"$OUT\" ]; then echo \"$OUT\"; echo \"See session-isolation.md - do not run destructive or cross-repo git.\"; else echo OK; fi; else echo OK; fi'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/guard-bash.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -d .claude ]; then NEW=$(find .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts .kiro/skills -type f -newer .claude/CLAUDE.md 2>/dev/null | head -1); if [ -n \"$NEW\" ]; then echo \"🔁 CLAUDE EXPORT STALE: .kiro/ changed after .claude/ was generated. Run: bash scripts/export-to-claude.sh && git add .claude (see versioning.md release checklist).\"; else echo OK; fi; else echo OK; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'mkdir -p logs && uvx ruff check --fix . 2>&1 | tee logs/ruff_check.log; exit ${PIPESTATUS[0]}'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -f package.json ] && grep -q '\"files\"' package.json 2>/dev/null; then echo \"=== npm pack dry-run ===\"; npm pack --dry-run 2>&1 | tail -20; elif [ -f pyproject.toml ]; then echo \"OK - verify pyproject.toml includes are correct\"; else echo \"OK\"; fi'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -f tsconfig.json ]; then npx tsc --noEmit 2>&1 | head -20; elif [ -f pyproject.toml ] && command -v ruff &>/dev/null; then ruff check . --select E,F --no-fix 2>&1 | head -20; else echo \"OK\"; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}
