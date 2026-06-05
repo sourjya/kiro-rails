@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.12.1
+
+### Fixed - Installer reliability
+
+- **install.ps1 parity with install.sh** - Windows installs were missing files the Linux installer ships. Added the `spec-validation-gate` hook, the four `spec-*` skills, `export-to-tools.sh`, and the `.kiro/skills/spec-*` directories; removed a bogus `.kiro/steering/ux-expert-persona.md` entry (no such file - `ux-pattern-registry.md` was already listed - so it 404'd on every install). Verified the two installers now manage identical file (68) and directory (27) sets.
+- **Installer self-cleanup** - both installers now remove their own bootstrap file when run as a downloaded script (`curl -O ... && bash install.sh`, or `-File install.ps1`), so it isn't left behind. No-op when piped (`curl ... | bash` leaves no file), and never removes a git-tracked `install.sh`/`install.ps1` (so running inside the kiro-rails repo won't delete its own copy). README Windows commands simplified - the trailing `Remove-Item install.ps1` is no longer needed.
+
 ## 2026-06-05 - v0.12.0
 
 ### Added - BONUS: Native Claude Code layer
