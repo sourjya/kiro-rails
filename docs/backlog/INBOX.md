@@ -26,6 +26,8 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 
 - [ ] 2026-06-05 | Fix 4 hook files that are not strict-JSON parseable (fail jq + python json): security-tier1-precommit, security-tier2-feature, security-tier3-sprint have raw newlines inside JSON strings; spec-validation-gate uses YAML frontmatter instead of JSON. They're skipped by export-to-claude.sh so the Claude layer loses them | context: discovered while building the Claude bonus layer generator
 
+- [ ] 2026-06-05 | Refine the Claude PreToolUse guard (claude-guard-bash.sh) to reduce false positives - it currently pattern-matches the whole command string, so the trigger text appearing inside a quoted string / heredoc (e.g. a commit message that mentions the `-C` flag) is wrongly blocked. Consider matching only command-leading positions or parsing the command | context: hit this live while committing the Claude bonus layer - the guard blocked its own commit message
+
 ## Done
 
 <!-- move completed items here with [x] and the date completed -->
