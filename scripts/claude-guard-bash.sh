@@ -69,14 +69,20 @@ if printf '%s' "$CLEAN" | grep -qE '\bgit[[:space:]]+-C[[:space:]]'; then
   fi
 fi
 
-# 2) destructive git that references an absolute path outside the project root
+# 2) destructive git that references an absolute path outside the project root.
+#    Only inspect tokens that are genuine absolute-path ARGUMENTS - a "/" at a word
+#    boundary (preceded by start or whitespace). This deliberately ignores mid-token
+#    slashes from branch names (fix/x), refs (origin/main, HEAD~1..a/b), and URLs
+#    (https://...), which otherwise produce false positives.
 if printf '%s' "$CLEAN" | grep -qE '\bgit\b.*(reset[[:space:]]+--hard|checkout[[:space:]]+-f|clean[[:space:]]+-[a-z]*f|cherry-pick|push[[:space:]]+(--force|-f))'; then
-  for p in $(printf '%s' "$CLEAN" | grep -oE '/[A-Za-z0-9._/-]+'); do
+  while IFS= read -r p; do
+    p="${p#"${p%%[![:space:]]*}"}"   # strip the leading whitespace captured by the word boundary
+    [ -z "$p" ] && continue
     case "$p" in
-      "$ROOT"|"$ROOT"/*|/usr/*|/bin/*|/etc/*|/tmp/*|/opt/*) : ;;
+      "$ROOT"|"$ROOT"/*|/usr/*|/bin/*|/etc/*|/tmp/*|/opt/*|/var/*|/dev/*) : ;;
       *) inside_root "$p" || deny "destructive git references '$p' outside the project root ($ROOT)." ;;
     esac
-  done
+  done < <(printf '%s' "$CLEAN" | grep -oE '(^|[[:space:]])/[A-Za-z0-9._/-]+')
 fi
 
 exit 0

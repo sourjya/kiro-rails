@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-05 - v0.12.3
+
+### Fixed - Guard path-scan precision
+
+- **The Claude `PreToolUse` guard's destructive-git path check no longer false-positives on non-path slashes.** It previously matched any `/segment` token, so a slash-containing branch name (`git reset --hard ...` alongside `fix/x`), a ref like `origin/main`, or a URL was misread as a cross-repo path and blocked. It now only inspects genuine absolute-path arguments at a word boundary. Verified: `branch + reset --hard`, `reset --hard origin/main`, and in-repo resets ALLOW; `cd /abs/other && reset`, `clean -fd /abs/other`, and `git -C /abs/other` BLOCK; the v0.12.2 quote/heredoc cases still ALLOW. (Complements the v0.12.2 quote/heredoc fix; closes the guard's precision gap.)
+- Version 0.12.3.
+
 ## 2026-06-05 - v0.12.2
 
 ### Fixed / Changed - Hook reliability, guard precision, MCP translation
