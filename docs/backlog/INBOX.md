@@ -20,7 +20,6 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 
 ## Queue
 
-- [ ] 2026-06-05 | Translate MCP config (.kiro/settings/mcp.json -> .mcp.json) in export-to-claude.sh - the only Claude-parity surface not yet generated | context: deferred during the Claude bonus layer build (noted in the compatibility doc)
 
 ## Done
 
@@ -28,6 +27,7 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 - [x] 2026-06-05 | Claude-specific tooling parity - DONE in v0.12.0 (export-to-claude.sh generates .claude/ with settings.json hooks, subagents, slash commands, skills, CLAUDE.md + PreToolUse guard). Remaining gap split out as the MCP-translation item above.
 - [x] 2026-06-05 | README hook/steering tables + headline counts - DONE in v0.12.0 (fixed hooks 17->18 and docs dirs 14->13, added the ux-preflight-gate/spec-validation-gate rows, corrected stale ux-expert-persona -> ux-pattern-registry). install.ps1 parity split out as its own item above.
 - [x] 2026-06-05 | Reconcile install.ps1 drift vs install.sh - DONE: ps1 now identical to sh (added spec-validation-gate hook, 4 spec skills, export-to-tools.sh, 4 spec-skill dirs; removed bogus ux-expert-persona.md entry). Verified MANAGED 68=68, DIRS 27=27, all paths exist.
+- [x] 2026-06-05 | Translate MCP config in export-to-claude.sh - DONE: enabled servers -> project-root .mcp.json (command/args/env; disabled omitted), autoApprove -> settings.json permissions.allow (mcp__server__tool). check-claude-fresh now verifies .mcp.json too. Logic tested against a sample enabled config; template's disabled server correctly yields no .mcp.json.
 - [x] 2026-06-05 | Refine Claude PreToolUse guard false positives - DONE: now strips heredoc bodies + quoted spans before matching, so commit messages/echo that mention `git -C` aren't blocked. Tested 5 cases (bare cross-repo + cd-other still BLOCK; message/heredoc/in-repo ALLOW). Trade-off documented.
 - [x] 2026-06-05 | Fix 4 non-JSON hook files - DONE: security-tier1/2/3 re-serialized (escaped newlines in string values), spec-validation-gate converted from YAML to JSON on the when/fileEdited schema. All 18 hooks now parse as strict JSON (jq + python). They use askAgent so remain Claude-untranslatable, but cleanly (documented in the compatibility doc).
 - [x] 2026-06-05 | Installer self-cleanup - DONE in v0.12.1: both installers remove their own bootstrap file when run as a downloaded script, no-op when piped, never delete a git-tracked install.sh/ps1 (tested all 3 cases). README Windows commands simplified (dropped redundant Remove-Item).
