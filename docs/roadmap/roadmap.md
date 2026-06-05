@@ -2,7 +2,7 @@
 
 ## Current Version
 
-v0.1.0 (pre-release)
+v0.12.0 ([release](https://github.com/sourjya/kiro-rails/releases/tag/v0.12.0))
 
 ## Milestones
 
@@ -19,4 +19,8 @@ v0.1.0 (pre-release)
 
 ## Completed
 
-_None yet._
+| Version | Date | Shipped |
+|---------|------|---------|
+| v0.12.0 | 2026-06-05 | BONUS native Claude Code layer - `export-to-claude.sh` generator, `PreToolUse` cross-repo git guard, `.claude/` freshness enforcement |
+| v0.11.0 | 2026-06-05 | Session isolation - `session-isolation.md`, `session-guard.sh`, `session-guard-check` hook |
+| v0.10.0 | 2026-06-05 | Focus & branch discipline - `focus-and-branch-discipline.md`, `branch-check.sh`, `focus-guard` + `branch-hygiene-check` hooks, `docs/backlog/` queue |
