@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Repo = "sourjya/kiro-rails"
 $Branch = "main"
 $BaseUrl = "https://raw.githubusercontent.com/$Repo/$Branch"
-$CurrentVersion = "0.12.0"
+$CurrentVersion = "0.12.1"
 $VersionFile = ".kiro\.kiro-rails-version"
 $OverridesFile = ".kiro\steering\user-project-overrides.md"
 
@@ -311,4 +311,19 @@ if ($installType -eq "fresh") {
     Write-Host "Your customization file was not modified: .kiro\steering\user-project-overrides.md"
     Write-Host ""
     Write-Host "Review changes with: git diff"
+}
+
+# ----------------------------------------------
+# Self-cleanup
+# Remove the bootstrap installer if it was run as a downloaded file (-File install.ps1),
+# so it isn't left behind. Never removes a git-tracked install.ps1 (e.g. the repo's own).
+# ----------------------------------------------
+if ($PSCommandPath -and (Test-Path $PSCommandPath) -and ((Split-Path $PSCommandPath -Leaf) -eq "install.ps1")) {
+    $tracked = $false
+    try { & git ls-files --error-unmatch $PSCommandPath *> $null 2>&1; if ($LASTEXITCODE -eq 0) { $tracked = $true } } catch { $tracked = $false }
+    if (-not $tracked) {
+        Remove-Item -Force -ErrorAction SilentlyContinue $PSCommandPath
+        Write-Host ""
+        Write-Host "Cleaned up the downloaded installer ($PSCommandPath)."
+    }
 }

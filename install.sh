@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="sourjya/kiro-rails"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/$REPO/$BRANCH"
-CURRENT_VERSION="0.12.0"
+CURRENT_VERSION="0.12.1"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -431,4 +431,18 @@ else
   echo "Your customization file was not modified: .kiro/steering/user-project-overrides.md"
   echo ""
   echo "Review changes with: git diff"
+fi
+
+# ──────────────────────────────────────────────
+# Self-cleanup
+# If this installer was run as a downloaded file (e.g. `curl -O ... && bash install.sh`),
+# remove it so it isn't left behind in the project. This is a no-op when piped
+# (`curl ... | bash` leaves no file), and it never removes a git-tracked install.sh
+# (so running it inside the kiro-rails repo itself won't delete the repo's copy).
+# ──────────────────────────────────────────────
+self_src="${BASH_SOURCE[0]:-}"
+if [ -n "$self_src" ] && [ -f "$self_src" ] && [ "$(basename "$self_src")" = "install.sh" ]; then
+  if ! git ls-files --error-unmatch "$self_src" >/dev/null 2>&1; then
+    rm -f "$self_src" && echo "" && echo "Cleaned up the downloaded installer ($self_src)."
+  fi
 fi
