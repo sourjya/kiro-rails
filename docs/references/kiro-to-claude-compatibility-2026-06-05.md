@@ -27,7 +27,7 @@ So Claude users were right that hooks/agents don't "just work" - but the fix is 
 | `.kiro/agents/*.json` | `.claude/agents/*.md` (subagents) | JSON -> markdown frontmatter (`name`, `description`, `tools`) + body from the referenced `prompt` file. Tool names remap: `read`->`Read`, `grep`->`Grep`, `glob`->`Glob`, `shell`->`Bash`; `knowledge` has no Claude tool (dropped). |
 | `.kiro/prompts/*.md` (manual review prompts) | `.claude/commands/*.md` (slash commands) | Add `description` frontmatter; body is portable. |
 | `.kiro/skills/*/SKILL.md` | `.claude/skills/*/SKILL.md` | **Format is compatible** - copy as-is. |
-| `.kiro/settings/mcp.json` | `.mcp.json` (project scope) | Field/location differ; not auto-translated yet (future). |
+| `.kiro/settings/mcp.json` | `.mcp.json` (project root) | Translated: enabled servers pass through (`command`/`args`/`env`); `disabled` servers are omitted; `autoApprove` tools become `settings.json` `permissions.allow` (`mcp__<server>__<tool>`). |
 
 ## Claude-only capability we exploit
 
@@ -35,7 +35,7 @@ Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2
 
 ## What we ship (the "BONUS for Claude")
 
-1. `scripts/export-to-claude.sh` - generator (single source of truth = `.kiro/*`). Emits `.claude/{CLAUDE.md, settings.json, hooks/guard-bash.sh, agents/, commands/, skills/}`.
+1. `scripts/export-to-claude.sh` - generator (single source of truth = `.kiro/*`). Emits `.claude/{CLAUDE.md, settings.json, hooks/guard-bash.sh, agents/, commands/, skills/}` plus a project-root `.mcp.json` when MCP servers are enabled.
 2. `scripts/claude-guard-bash.sh` - the `PreToolUse` cross-repo git guard (copied into `.claude/hooks/` by the generator).
 3. A **committed** generated `.claude/` tree (zero-step for cloners), kept fresh by:
 4. `scripts/check-claude-fresh.sh` - regenerates to a temp dir and diffs against the committed `.claude/`; non-zero exit on drift. Run before tagging a release (see `versioning.md` checklist).
@@ -46,6 +46,6 @@ Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2
 - `fileMatch` steering becomes always-on in CLAUDE.md (no native conditional include).
 - Kiro pre-commit hooks are not auto-translated (no Claude commit event).
 - **`askAgent` hooks don't translate to Claude command-hooks.** The security tiers (`security-tier1/2/3`) and `spec-validation-gate` use `then.type: askAgent` (a Kiro action that hands the agent a prompt). Claude's hook system runs *commands*, not agent prompts, so the generator skips these (they have no `then.command`). They are now all valid JSON (fixed 2026-06-05 - the security hooks had unescaped newlines in string values; `spec-validation-gate` was YAML and is now JSON on the `when`/`fileEdited` schema), so JSON tooling parses them cleanly; they're simply not command-translatable.
-- MCP config is not auto-translated yet.
+- A `.mcp.json` is only generated when at least one MCP server is enabled in `.kiro/settings/mcp.json` (the shipped template's lone server is `disabled`, so no `.mcp.json` is produced by default).
 - The `PreToolUse` guard requires `jq` at runtime; if absent it fails open (no block).
 - The guard strips quoted spans and heredoc bodies before matching (so commit messages or `echo`/docs that merely mention `git -C` aren't blocked). Trade-off: a cross-repo git hidden inside a quoted command substitution (e.g. `"$(git -C /other ...)"`) would also be stripped and not blocked. Bare cross-repo invocations - the realistic accident - are still caught.

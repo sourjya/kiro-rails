@@ -364,6 +364,7 @@ generates a complete `.claude/` tree from your Kiro files (the single source of 
 | `.claude/agents/*.md` | `.kiro/agents/*.json` | subagents (tools + prompt body) |
 | `.claude/commands/*.md` | `.kiro/prompts/*.md` | review prompts as slash commands |
 | `.claude/skills/` | `.kiro/skills/` | copied as-is (format compatible) |
+| `.mcp.json` (project root) | `.kiro/settings/mcp.json` | enabled servers only (disabled omitted); `autoApprove` tools become `settings.json` `permissions.allow` entries (`mcp__server__tool`) |
 
 The generated `.claude/` tree is **committed** so Claude Code works the moment you clone - no extra step. Because it is generated, Kiro stays the single source of truth; `scripts/check-claude-fresh.sh` verifies the committed copy is in sync (run before any release - see the `versioning.md` checklist), and the `claude-export-freshness` hook reminds you to regenerate after editing `.kiro/`.
 

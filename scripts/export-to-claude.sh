@@ -11,7 +11,9 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
 STEER=".kiro/steering"; HOOKS=".kiro/hooks"; AGENTS=".kiro/agents"; PROMPTS=".kiro/prompts"; SKILLS=".kiro/skills"
+MCP_SRC=".kiro/settings/mcp.json"
 OUT="${1:-.claude}"
+OUT_BASE="$(dirname "$OUT")"   # .mcp.json lives at the project root, beside .claude/
 
 command -v jq >/dev/null 2>&1 || { echo "Error: jq is required for export-to-claude.sh"; exit 1; }
 [ -d "$STEER" ] || { echo "Error: $STEER not found. Run from a kiro-rails project root."; exit 1; }
@@ -95,7 +97,28 @@ ups_json=$(to_entries "${ups[@]:-}")
 post_json=$(to_entries "${post[@]:-}")
 stop_json=$(to_entries "${stop[@]:-}")
 
-jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson stop "$stop_json" '
+# ── 6b) MCP: enabled servers -> project-root .mcp.json; autoApprove -> permissions ─
+# Claude reads .mcp.json from the project root (not .claude/). Kiro-specific fields
+# (disabled, autoApprove) have no place in .mcp.json: disabled servers are omitted,
+# and autoApprove tools become settings.json permissions (mcp__<server>__<tool>).
+mcp_perms='[]'
+if [ -f "$MCP_SRC" ] && jq empty "$MCP_SRC" 2>/dev/null; then
+  enabled=$(jq '[ (.mcpServers // {}) | to_entries[] | select(.value.disabled != true) ] | length' "$MCP_SRC")
+  if [ "$enabled" -gt 0 ]; then
+    jq '{ mcpServers: ( (.mcpServers // {}) | to_entries
+          | map(select(.value.disabled != true))
+          | map({ key: .key,
+                  value: (.value | {command, args, env, type, url, headers}
+                          | with_entries(select(.value != null))) })
+          | from_entries ) }' "$MCP_SRC" > "$OUT_BASE/.mcp.json"
+    echo "  + $OUT_BASE/.mcp.json ($enabled enabled MCP server(s))"
+  fi
+  mcp_perms=$(jq -c '[ (.mcpServers // {}) | to_entries[]
+                       | select(.value.disabled != true) | .key as $n
+                       | (.value.autoApprove // [])[] | "mcp__\($n)__\(.)" ]' "$MCP_SRC")
+fi
+
+jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson stop "$stop_json" --argjson mcpperms "$mcp_perms" '
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   hooks: (
@@ -105,7 +128,9 @@ jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson stop "$sto
     + (if ($post|length) > 0 then {PostToolUse: [ {matcher: "Edit|Write|MultiEdit", hooks: $post} ]} else {} end)
     + (if ($stop|length) > 0 then {Stop: [ {hooks: $stop} ]} else {} end)
   )
-}' > "$OUT/settings.json"
+}
++ (if ($mcpperms|length) > 0 then {permissions: {allow: ($mcpperms | unique)}} else {} end)
+' > "$OUT/settings.json"
 
 echo "Generated $OUT/ : CLAUDE.md, settings.json, hooks/guard-bash.sh, $(ls "$OUT/agents" | wc -l | tr -d ' ') agents, $(ls "$OUT/commands" | wc -l | tr -d ' ') commands, $([ -d "$OUT/skills" ] && ls "$OUT/skills" | wc -l | tr -d ' ' || echo 0) skills."
 if [ "${#skipped[@]}" -gt 0 ]; then
