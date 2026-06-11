@@ -5,7 +5,7 @@ the repo-specific publish + verification steps.
 
 ## Steps
 
-1. **Work on a branch**, never on `main` (per `git-workflow.md` / `focus-and-branch-discipline.md`).
+1. **Work on a branch**, never on `main` (per `git-and-focus-discipline.md`).
 2. **Bump the version** in both installers - `install.sh` (`CURRENT_VERSION`) and `install.ps1` (`$CurrentVersion`). They must match. (The bump is what makes existing installs pick up changes on re-run.)
 3. **Update the changelog** - add a dated `vX.Y.Z` section to `docs/changelogs/CHANGELOG.md`.
 4. **Regenerate the Claude layer** - `bash scripts/export-to-claude.sh && git add .claude .mcp.json`, then confirm `bash scripts/check-claude-fresh.sh` prints `OK`.

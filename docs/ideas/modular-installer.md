@@ -25,7 +25,7 @@ curl -fsSL .../install.sh | bash -s -- --interactive
 
 ### Core (always installed)
 - `engineering-standards.md` - folder organization, TDD, task-first, commit rules
-- `git-workflow.md` - branching, commits, merge lifecycle
+- `git-and-focus-discipline.md` - branching, commit cadence, focus, merge lifecycle
 - `code-commenting-standards.md` - docstrings, agent-readability
 - `naming-conventions.md` - test file naming
 - `tasks-template-tdd.md` - TDD task template

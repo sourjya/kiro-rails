@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-11 - v0.13.0
+
+### Added / Changed - Git commit & PR discipline
+
+Implements the recommendations of `docs/references/agentic-coding-tools-git-commit-and-pr-discipline-research.md` ([ADR-001](../decisions/ADR-001-git-commit-pr-discipline.md)).
+
+- **Merged `git-workflow.md` + `focus-and-branch-discipline.md` into one always-on `git-and-focus-discipline.md`**, impact-ordered (branch hygiene → branch types → commit discipline → lifecycle → focus/queue → Definition of Done → bug workflow → conflict resolution). One file per behavioral domain so an agent can't load one and miss rules in the other.
+- **New commit-cadence rules** (the field's most-cited missing discipline): defensive checkpoint commits before any multi-file/multi-session task, an explicit "meaningful checkpoint" definition (compiles + affected tests pass + lint clean → commit), and a never-end-a-session-with-uncommitted-work rule.
+- **New `agent-boundaries.md`** (always-on): the hard "never"/"always" non-negotiables in their shortest form with pointers to the detailed files - the first thing an agent should read. `change-discipline.md` §"Commit Discipline" reduced to a cross-reference to avoid a weaker duplicate.
+- **New hooks:** `commit-checkpoint-on-stop` (agentStop - warns when work is left uncommitted on a branch at the session boundary) and `variant-search-on-fix-branch` (userPromptSubmit - on a fresh `fix/` branch, reminds to search for the same defect class at every call site; commit-count guard prevents prompt fatigue).
+- **New prompt `review-commit-pr-discipline`** (→ `/review-commit-pr-discipline` Claude command) - reviews branch/commit granularity/messages and drafts a What/Why/Trade-offs PR description.
+- **`session-isolation.md`** strengthened with a one-worktree-per-concurrent-session preventive-control note.
+- Installers (`install.sh`/`install.ps1`) updated: new files added to `MANAGED_FILES`, the two merged-away files added to `STALE_FILES` so upgrades clean them up; `.claude/` bonus layer regenerated; README counts and tables refreshed.
+- Drafted changes were independently reviewed by headless `kiro-cli` (read-only) - verdict SHIP-WITH-TWEAKS; tweaks folded in. See `logs/kiro-steering-review.log`.
+- Version 0.13.0.
+
 ## 2026-06-05 - v0.12.4
 
 ### Changed - Cross-platform install.ps1 + release smoke testing

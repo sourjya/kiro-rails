@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [20 steering files](.kiro/steering/) · [18 automated hooks](.kiro/hooks/) · [14 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [15 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -99,7 +99,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── error-handling-performance.md # Error handling, performance, observability, themed dialogs
 │   ├── change-discipline.md          # Permissions, consistency, scope, deps, commits, changelog
 │   ├── documentation-standards.md    # Docs taxonomy, spec quality, API versioning, roadmap
-│   ├── git-workflow.md               # Branch types, forbidden actions, commit format, bug workflow
+│   ├── git-and-focus-discipline.md   # Branch hygiene, commit cadence + checkpoints, request queue, DoD, bug workflow
 │   ├── code-commenting-standards.md  # Docstrings, cross-references, section separators
 │   ├── project-conventions.md        # Project-specific rules, code style, logging
 │   ├── database-conventions.md       # DB architecture, credentials, migrations, ORM
@@ -111,7 +111,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── ux-pattern-registry.md        # Reference patterns for common screen types (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
-│   ├── focus-and-branch-discipline.md # Queue mid-task requests, Definition of Done, branch hygiene
+│   ├── agent-boundaries.md           # The hard "never" rules - shortest always-on file, read first
 │   ├── session-isolation.md          # Stay in your repo, no cross-repo git, no killing foreign processes
 │   └── user-project-overrides.md     # YOUR customizations - never overwritten on upgrade
 ├── hooks/              # Automated quality gates
@@ -123,6 +123,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── security-tier3-sprint         # Sprint end: full codebase + supply chain + headers
 │   ├── fix-spiral-detector           # Prompt submit: warns if 3+ consecutive fix commits detected
 │   ├── type-check-on-stop            # Agent stop: runs tsc/ruff after agent finishes responding
+│   ├── commit-checkpoint-on-stop     # Agent stop: warns if work is left uncommitted on a branch
+│   ├── variant-search-on-fix-branch  # Prompt submit: on a fresh fix/ branch, remind to search for variants
 │   ├── package-manifest-verify       # File edit: verifies package.json/pyproject.toml includes
 │   ├── changelog-consolidation-reminder # Prompt submit: warns if 10+ commits since last changelog
 │   ├── bug-doc-completion-check      # File edit: verifies bug doc fields are complete
@@ -197,7 +199,7 @@ They are included based on their `inclusion` setting:
 | [error-handling-performance.md](.kiro/steering/error-handling-performance.md) | always | Error handling standards, performance guidelines, themed dialogs (no native browser dialogs), observability-first design |
 | [change-discipline.md](.kiro/steering/change-discipline.md) | always | Permission boundaries, consistency rules, change scope discipline, dependency minimalism, design principles, commit discipline, changelog rolling, repo hygiene, credentials |
 | [documentation-standards.md](.kiro/steering/documentation-standards.md) | always | Documentation taxonomy (13 `docs/` subdirectories), spec quality standards, API versioning, roadmap planning, ADR-roadmap linking |
-| [git-workflow.md](.kiro/steering/git-workflow.md) | always | Branch naming, forbidden actions, conventional commit format, merge lifecycle, bug resolution workflow, per-file conflict resolution |
+| [git-and-focus-discipline.md](.kiro/steering/git-and-focus-discipline.md) | always | Branch hygiene & collision detection, branch types/naming, commit discipline (defensive checkpoints, the "meaningful checkpoint" definition, never end a session with uncommitted work, Conventional Commits), standard lifecycle, request-queue protocol, Definition of Done, bug resolution + variant search, per-file conflict resolution |
 | [code-commenting-standards.md](.kiro/steering/code-commenting-standards.md) | always | Module/class/method/property docstrings at all visibility levels, agent-readability requirement, cross-references, section separators |
 | [project-conventions.md](.kiro/steering/project-conventions.md) | always | Project-specific rules, code style, command output logging |
 | [database-conventions.md](.kiro/steering/database-conventions.md) | always | DB architecture, credentials, migrations, ORM conventions, transaction boundaries, connection pooling, engine-specific notes (PostgreSQL, MySQL, SQLite) |
@@ -209,7 +211,7 @@ They are included based on their `inclusion` setting:
 | [ux-pattern-registry.md](.kiro/steering/ux-pattern-registry.md) | manual | Reference layout patterns for common screen types; load with `/ux-pattern-registry` when designing or reviewing UI |
 | [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
 | [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
-| [focus-and-branch-discipline.md](.kiro/steering/focus-and-branch-discipline.md) | always | Request queue protocol (file mid-task requests, finish before switching), Definition of Done, branch hygiene (merge-and-delete, check before branching, prune merged) |
+| [agent-boundaries.md](.kiro/steering/agent-boundaries.md) | always | The hard "never" rules (the non-negotiables) in their shortest form, with `→` pointers to the detailed files - the first thing an agent should read |
 | [session-isolation.md](.kiro/steering/session-isolation.md) | always | Stay inside your project root, never operate on sibling repos (`git -C`/cross-repo PRs), verify before destructive git, never kill processes you didn't spawn |
 
 ### Customization Points
@@ -233,6 +235,7 @@ Hooks fire automatically on file edits or before tool use:
 | Security Tier 3 | Sprint end (manual) | Full codebase + supply chain + headers + logging security |
 | Fix Spiral Detector | Prompt submit | Warns if 3+ consecutive `fix:` commits detected - triggers root cause analysis |
 | Type Check on Stop | Agent stop | Runs `tsc --noEmit` or `ruff check` after agent finishes responding |
+| Commit Checkpoint on Stop | Agent stop | Warns if work is left uncommitted on a non-main branch at the session boundary - commit or stash before context is lost |
 | Package Manifest Verify | `package.json`/`pyproject.toml` edited | Runs `npm pack --dry-run` to verify published artifact includes expected files |
 | Changelog Consolidation | Prompt submit | Warns if 10+ commits since last changelog update - triggers consolidation |
 | Bug Doc Completion | `docs/bugs/BUG-*.md` edited | Verifies root cause, fix, regression tests, and status are filled |
@@ -241,6 +244,7 @@ Hooks fire automatically on file edits or before tool use:
 | Spec Validation Gate | `.kiro/specs/` edited | Validates spec folder completeness and that proposal/requirements/design/tasks follow the required format |
 | Focus Guard | Prompt submit | If there's uncommitted work on a non-main branch, reminds the agent to queue unrelated requests instead of thrashing |
 | Branch Hygiene Check | Prompt submit | Flags branches merged into main but not deleted, and warns when local branch count grows large |
+| Variant Search on Fix Branch | Prompt submit | On a fresh `fix/` branch, reminds the agent to search every call site for the same defect class - the reported instance is rarely the only one |
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 | Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
 
@@ -305,7 +309,7 @@ Reports go in `docs/security/` as `SRR-{###}-{YYYY-MM-DD}-T{tier}.md`. See `revi
 
 Three of the most expensive failures in agentic development are invisible when they happen and only surface much later. kiro-rails encodes a guardrail for each - as always-on steering, backed by a hook and a real tool where the behavior is mechanically checkable.
 
-**Task thrashing.** When you stack new requests mid-task, an agent tends to drop what it's doing and chase the latest one - leaving the original half-finished and bleeding unrelated changes (a CSS fix landing on an `auth` branch) into the wrong place. `focus-and-branch-discipline.md` makes the default *file it, don't do it*: unrelated mid-task requests go to `docs/backlog/INBOX.md`, the agent acknowledges them and finishes the current task to a committed, merged checkpoint, then drains the queue. It diverts only when you explicitly say so. The `focus-guard` hook reminds the agent whenever there's uncommitted work on a branch.
+**Task thrashing.** When you stack new requests mid-task, an agent tends to drop what it's doing and chase the latest one - leaving the original half-finished and bleeding unrelated changes (a CSS fix landing on an `auth` branch) into the wrong place. `git-and-focus-discipline.md` makes the default *file it, don't do it*: unrelated mid-task requests go to `docs/backlog/INBOX.md`, the agent acknowledges them and finishes the current task to a committed, merged checkpoint, then drains the queue. It diverts only when you explicitly say so. The `focus-guard` hook reminds the agent whenever there's uncommitted work on a branch.
 
 **Branch sprawl.** Branches that are never merged-and-deleted pile up and silently diverge - two branches touching the same files on the same day produce duplicate-but-different versions, and "merge then delete" never happens. The discipline is one task per branch, merge-and-delete as a single motion, and a Definition of Done that isn't met until the branch is gone. `scripts/branch-check.sh` detects collisions *before* you fork a parallel branch, and the `branch-hygiene-check` hook flags branches merged but not deleted.
 
