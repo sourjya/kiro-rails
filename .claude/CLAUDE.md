@@ -311,10 +311,11 @@ Rules governing what you can change, how changes must be scoped, dependency mana
 
 ## Commit Discipline
 
-- Commit at meaningful milestones
-- Descriptive commit messages stating what and why
-- Update changelog for behavior/structure changes
-- Verify tests pass before committing
+All commit-cadence, checkpoint, message-format, and branch rules live in one place:
+see **`git-and-focus-discipline.md`** (Part 3 — Commit Discipline). In short: commit
+every meaningful checkpoint (compiles + affected tests pass + lint clean), one logical
+change per commit, Conventional-Commit messages, update the changelog for
+behavior/structure changes, and never end a session with uncommitted work.
 
 ## Changelog Rolling Policy
 
