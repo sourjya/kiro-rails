@@ -8,6 +8,6 @@
   },
   "then": {
     "type": "runCommand",
-    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"🎯 FOCUS GUARD: uncommitted work in progress on branch $B. If this new request is UNRELATED to that work, do NOT start it - append it to docs/backlog/INBOX.md, tell the user it is noted, and finish the current task first (code + tests + commit + merge + delete). Divert only if the user explicitly says so. See focus-and-branch-discipline.md.\"; else echo OK; fi'"
+    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"🎯 FOCUS GUARD: uncommitted work in progress on branch $B. If this new request is UNRELATED to that work, do NOT start it - append it to docs/backlog/INBOX.md, tell the user it is noted, and finish the current task first (code + tests + commit + merge + delete). Divert only if the user explicitly says so. See git-and-focus-discipline.md.\"; else echo OK; fi'"
   }
 }

@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Variant Search on Fix Branch",
+  "description": "On prompt submit while on a fix/ branch, reminds the agent that after finding a bug's root cause it must search for the same pattern at every other call site and the same class of defect elsewhere - the reported instance is rarely the only one. Surfaces the variant-search step from the bug workflow so it is not skipped inside the long checklist.",
+  "version": "1",
+  "when": {
+    "type": "userPromptSubmit"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); case \"$B\" in fix/*) echo \"🔎 VARIANT SEARCH: on $B. After you identify the root cause, search every other call site for the same pattern AND the same defect class elsewhere, fix ALL instances in this branch, and document: \\\"Variant search: checked [locations]. Found [N] additional instances.\\\" The reported instance is rarely the only one. See git-and-focus-discipline.md.\";; *) echo OK;; esac'"
+  }
+}
