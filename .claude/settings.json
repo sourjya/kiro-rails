@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'M=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | xargs); T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\"); if [ -n \"$M\" ]; then echo \"🌿 BRANCH HYGIENE: merged into main but not deleted: $M -- run: git branch -d $M (see focus-and-branch-discipline.md).\"; elif [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Prune merged ones (git branch --merged main) and finish or close stale ones before starting new work. Use bash scripts/branch-check.sh to spot collisions.\"; else echo OK; fi'"
+            "command": "bash -c 'M=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | xargs); T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\"); if [ -n \"$M\" ]; then echo \"🌿 BRANCH HYGIENE: merged into main but not deleted: $M -- run: git branch -d $M (see git-and-focus-discipline.md).\"; elif [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Prune merged ones (git branch --merged main) and finish or close stale ones before starting new work. Use bash scripts/branch-check.sh to spot collisions.\"; else echo OK; fi'"
           },
           {
             "type": "command",
@@ -18,11 +18,15 @@
           },
           {
             "type": "command",
-            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"🎯 FOCUS GUARD: uncommitted work in progress on branch $B. If this new request is UNRELATED to that work, do NOT start it - append it to docs/backlog/INBOX.md, tell the user it is noted, and finish the current task first (code + tests + commit + merge + delete). Divert only if the user explicitly says so. See focus-and-branch-discipline.md.\"; else echo OK; fi'"
+            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"🎯 FOCUS GUARD: uncommitted work in progress on branch $B. If this new request is UNRELATED to that work, do NOT start it - append it to docs/backlog/INBOX.md, tell the user it is noted, and finish the current task first (code + tests + commit + merge + delete). Divert only if the user explicitly says so. See git-and-focus-discipline.md.\"; else echo OK; fi'"
           },
           {
             "type": "command",
             "command": "bash -c 'if [ -f scripts/session-guard.sh ]; then OUT=$(bash scripts/session-guard.sh 2>/dev/null | grep \"⚠️\"); if [ -n \"$OUT\" ]; then echo \"$OUT\"; echo \"See session-isolation.md - do not run destructive or cross-repo git.\"; else echo OK; fi; else echo OK; fi'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); case \"$B\" in fix/*) A=$(git rev-list --count main..HEAD 2>/dev/null || echo 0); if [ \"${A:-0}\" -lt 3 ]; then echo \"🔎 VARIANT SEARCH: on $B. After you identify the root cause, search every other call site for the same pattern AND the same defect class elsewhere, fix ALL instances in this branch, and document: \\\"Variant search: checked [locations]. Found [N] additional instances.\\\" The reported instance is rarely the only one. See git-and-focus-discipline.md.\"; else echo OK; fi;; *) echo OK;; esac'"
           }
         ]
       }
@@ -60,6 +64,10 @@
     "Stop": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then N=$(git status --porcelain 2>/dev/null | wc -l | tr -d \" \"); echo \"💾 CHECKPOINT: $N uncommitted change(s) on branch $B. Do NOT end here - commit a meaningful checkpoint (compiles + affected tests pass + lint clean) or a defensive checkpoint: commit, or stash. Work left in the working tree evaporates at the context boundary. See git-and-focus-discipline.md.\"; else echo OK; fi'"
+          },
           {
             "type": "command",
             "command": "bash -c 'if [ -f tsconfig.json ]; then npx tsc --noEmit 2>&1 | head -20; elif [ -f pyproject.toml ] && command -v ruff &>/dev/null; then ruff check . --select E,F --no-fix 2>&1 | head -20; else echo \"OK\"; fi'"

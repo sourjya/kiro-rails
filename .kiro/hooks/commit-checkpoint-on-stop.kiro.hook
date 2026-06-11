@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Commit Checkpoint on Agent Stop",
+  "description": "When the agent stops with uncommitted changes on a non-main branch, reminds it to commit (feature or checkpoint:) or stash before the context boundary, so work is not lost to compaction, a closed terminal, or a crash. Enforces the never-end-with-uncommitted-work rule in git-and-focus-discipline.md.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -n \"$B\" ] && [ \"$B\" != \"main\" ] && [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then N=$(git status --porcelain 2>/dev/null | wc -l | tr -d \" \"); echo \"💾 CHECKPOINT: $N uncommitted change(s) on branch $B. Do NOT end here - commit a meaningful checkpoint (compiles + affected tests pass + lint clean) or a defensive checkpoint: commit, or stash. Work left in the working tree evaporates at the context boundary. See git-and-focus-discipline.md.\"; else echo OK; fi'",
+    "timeout": 15
+  }
+}

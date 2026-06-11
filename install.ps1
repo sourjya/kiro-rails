@@ -8,7 +8,7 @@ $Branch = "main"
 # Overridable via $env:KIRO_RAILS_BASE_URL (e.g. a file:/// or local URL for pre-push
 # testing); defaults to this repo's raw GitHub content.
 $BaseUrl = if ($env:KIRO_RAILS_BASE_URL) { $env:KIRO_RAILS_BASE_URL } else { "https://raw.githubusercontent.com/$Repo/$Branch" }
-$CurrentVersion = "0.12.4"
+$CurrentVersion = "0.13.0"
 $VersionFile = ".kiro/.kiro-rails-version"
 $OverridesFile = ".kiro/steering/user-project-overrides.md"
 
@@ -19,7 +19,8 @@ $ManagedFiles = @(
     ".kiro/steering/error-handling-performance.md"
     ".kiro/steering/change-discipline.md"
     ".kiro/steering/documentation-standards.md"
-    ".kiro/steering/git-workflow.md"
+    ".kiro/steering/git-and-focus-discipline.md"
+    ".kiro/steering/agent-boundaries.md"
     ".kiro/steering/code-commenting-standards.md"
     ".kiro/steering/project-conventions.md"
     ".kiro/steering/database-conventions.md"
@@ -28,7 +29,6 @@ $ManagedFiles = @(
     ".kiro/steering/versioning.md"
     ".kiro/steering/review-policy.md"
     ".kiro/steering/chokepoint-logging.md"
-    ".kiro/steering/focus-and-branch-discipline.md"
     ".kiro/steering/session-isolation.md"
     ".kiro/steering/frontend-patterns.md"
     ".kiro/steering/api-contract-discipline.md"
@@ -41,6 +41,7 @@ $ManagedFiles = @(
     ".kiro/hooks/security-tier3-sprint.kiro.hook"
     ".kiro/hooks/fix-spiral-detector.kiro.hook"
     ".kiro/hooks/type-check-on-stop.kiro.hook"
+    ".kiro/hooks/commit-checkpoint-on-stop.kiro.hook"
     ".kiro/hooks/package-manifest-verify.kiro.hook"
     ".kiro/hooks/changelog-consolidation-reminder.kiro.hook"
     ".kiro/hooks/bug-doc-completion-check.kiro.hook"
@@ -49,6 +50,7 @@ $ManagedFiles = @(
     ".kiro/hooks/spec-validation-gate.kiro.hook"
     ".kiro/hooks/focus-guard.kiro.hook"
     ".kiro/hooks/branch-hygiene-check.kiro.hook"
+    ".kiro/hooks/variant-search-on-fix-branch.kiro.hook"
     ".kiro/hooks/session-guard-check.kiro.hook"
     ".kiro/hooks/claude-export-freshness.kiro.hook"
     ".kiro/skills/auth-implementation/SKILL.md"
@@ -73,6 +75,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-ux-preflight.md"
     ".kiro/prompts/review-spec-readiness.md"
     ".kiro/prompts/review-ai-agent-surface.md"
+    ".kiro/prompts/review-commit-pr-discipline.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
     "scripts/export-to-tools.sh"
@@ -92,6 +95,8 @@ $StaleFiles = @(
     ".kiro/prompts/review-security.md"
     ".kiro/prompts/review-security-periodic.md"
     ".kiro/hooks/security-checkpoint.kiro.hook"
+    ".kiro/steering/git-workflow.md"
+    ".kiro/steering/focus-and-branch-discipline.md"
 )
 
 $Dirs = @(

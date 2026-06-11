@@ -24,7 +24,7 @@ This is the failure this file prevents:
 **Assume another agent may be working in this tree, or a sibling tree, right now.**
 
 1. **Verify before destructive git.** Before `reset --hard`, `checkout -f`, `clean -fd`, `cherry-pick`, `rebase`, or branch deletion, confirm: (a) you are in your own project root, and (b) the current branch and working-tree state are what you expect. If the branch or `HEAD` moved under you, a foreign actor touched the tree - STOP and report, do not "fix" it blindly.
-2. **Prefer worktrees for parallel work.** Use `git worktree add ../<name> <branch>` instead of switching branches in a shared working tree, so concurrent sessions never collide on `HEAD`.
+2. **One worktree per concurrent session - the preventive control.** When more than one agent session may touch this repo at once, each session gets its **own git worktree on its own branch**: `git worktree add ../<name> <branch>`. Never switch branches in, or share, a single working tree across sessions - that is what collides on `HEAD`. `scripts/branch-check.sh` is the *detective* control (warns after a collision); worktrees *prevent* it.
 3. **Run the guard.** `bash scripts/session-guard.sh` records this session's lock and warns if another live session holds the tree or if `HEAD` drifted unexpectedly.
 
 ## Processes - MANDATORY
@@ -34,5 +34,5 @@ This is the failure this file prevents:
 
 ## Cross-references
 
-- `git-workflow.md`, `focus-and-branch-discipline.md` - in-repo branch discipline (this file is about *cross*-repo and *cross*-session safety).
+- `git-and-focus-discipline.md` - in-repo branch discipline, commit cadence, and focus (this file is about *cross*-repo and *cross*-session safety).
 - `scripts/session-guard.sh` - session lock + working-tree integrity check.
