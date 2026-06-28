@@ -21,6 +21,7 @@ v0.12.0 ([release](https://github.com/sourjya/kiro-rails/releases/tag/v0.12.0))
 
 | Version | Date | Shipped |
 |---------|------|---------|
+| v0.14.0 | 2026-06-28 | Security review enhancements - `incident-response` skill, supply chain integrity (SBOM/SLSA/namespace), cloud security baseline, GraphQL security, NIST CSF/ATT&CK/D3FEND compliance tagging, activation triggers on 5 prompts |
 | v0.13.0 | 2026-06-11 | Git commit & PR discipline - merged `git-and-focus-discipline.md`, new `agent-boundaries.md`, defensive-checkpoint + meaningful-checkpoint + session-end commit rules, `commit-checkpoint-on-stop` + `variant-search-on-fix-branch` hooks, `review-commit-pr-discipline` prompt ([ADR-001](../decisions/ADR-001-git-commit-pr-discipline.md)) |
 | v0.12.0 | 2026-06-05 | BONUS native Claude Code layer - `export-to-claude.sh` generator, `PreToolUse` cross-repo git guard, `.claude/` freshness enforcement |
 | v0.11.0 | 2026-06-05 | Session isolation - `session-isolation.md`, `session-guard.sh`, `session-guard-check` hook |

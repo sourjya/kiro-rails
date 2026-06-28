@@ -6,6 +6,18 @@ Your mission is not to verify that endpoints return data. It is to determine whe
 
 ---
 
+## Activation Triggers
+
+Run this review when:
+- New API endpoints or routes are added
+- API versioning changes or a new API version is introduced
+- A feature adds or modifies request/response schemas
+- GraphQL schema changes (new types, resolvers, or queries)
+- Before publishing an API to external consumers
+- At feature-complete or sprint-end review checkpoints
+
+---
+
 ## Review Objectives
 
 Identify:
@@ -29,6 +41,8 @@ Identify:
 9. **Idempotency and safety semantics.** Verify that HTTP method semantics are respected. Flag `GET` endpoints that mutate state. Flag `PUT` endpoints that are not idempotent. Flag `POST` endpoints for create operations that lack idempotency keys or duplicate detection. Check whether `DELETE` is idempotent (deleting a non-existent resource returns `204` or `404` consistently, not `500`). Flag `PATCH` endpoints that replace entire resources instead of applying partial updates. Verify that retry-safe operations are documented as such.
 
 10. **Cross-cutting contract concerns.** Verify that headers, CORS, caching, and rate limiting are applied uniformly. Flag: missing `Content-Type` headers on responses, inconsistent `Cache-Control` directives across similar endpoints, CORS configuration that varies by endpoint without documented intent, missing rate limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`) on throttled endpoints, missing `X-Request-Id` or correlation ID propagation in responses. Check whether `ETag` or `Last-Modified` headers are used for cacheable resources. Flag where cross-cutting concerns are applied per-endpoint rather than through middleware.
+
+11. **GraphQL-specific security (if applicable).** If the project exposes a GraphQL API, verify: introspection is disabled in production (attackers use it to map the entire schema). Query depth limiting is configured to prevent deeply nested queries that cause exponential resolver execution. Query cost or complexity analysis is enforced, rejecting queries above a threshold before execution. Batching attacks are prevented — rate limits apply per-operation, not per-HTTP-request (a single POST can batch dozens of operations). Field-level authorization is implemented — access control at the resolver level, not just the endpoint level; a user who can query their own `orders` must not reach another user's `orders` through a nested relationship. Persisted/allowlisted queries are preferred over arbitrary queries in production to eliminate injection via query manipulation. Alias-based attacks are prevented — aliases allow the same field to be queried N times in one request, bypassing naive rate limits. Error messages do not leak schema details, resolver internals, or stack traces.
 
 ---
 
@@ -153,3 +167,7 @@ Confirm you explicitly reviewed each of the following, even if no issue was foun
 - [ ] Request ID / correlation ID propagation in responses
 - [ ] Deprecated endpoint signaling (Sunset, Deprecation headers)
 - [ ] Validation error detail structure (per-field errors with path and message)
+- [ ] GraphQL: introspection disabled in production (if GraphQL is used)
+- [ ] GraphQL: query depth and complexity limits configured
+- [ ] GraphQL: field-level authorization at resolver layer (not just endpoint)
+- [ ] GraphQL: batching/alias abuse prevention

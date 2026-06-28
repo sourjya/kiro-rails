@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [15 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [5 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [15 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -68,7 +68,7 @@ This downloads all steering files, hooks, prompts, templates, and creates the `d
 What you get:
 
 - **Code quality** - TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 13-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
-- **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, mandatory regression tests for bugs
+- **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, incident response skill, mandatory regression tests for bugs
 - **Architecture** - reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
 - **Observability** - error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
 - **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), session isolation (no cross-repo git, working-tree lock), consistency rules, dependency minimalism, code commenting standards
@@ -137,7 +137,9 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   └── security-verifier.json        # Adversarial agent that disproves false positives
 ├── skills/
-│   └── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
+│   ├── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
+│   │   └── SKILL.md
+│   └── incident-response/            # Security incident containment, evidence, recovery (auto-activates on breach keywords)
 │       └── SKILL.md
 ├── prompts/
 │   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
@@ -408,6 +410,8 @@ Key sources:
 The spec workflow skills and multi-tool export features were inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) by [Fission AI](https://fission.ai). Their work on schema-driven spec workflows, multi-tool adapter generation, and the propose/apply/archive lifecycle informed our approach to structured planning within kiro-rails. We adapted these ideas to work with Kiro's native skill system and always-on enforcement model rather than opt-in CLI commands.
 
 The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart - a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
+
+The security review prompt enhancements (v0.10.0+) — supply chain integrity checks, cloud hardening baseline, GraphQL security, NIST/ATT&CK compliance tagging, and the incident-response skill — were informed by [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) by [Mahipal Jangra](https://github.com/mukul975). Their 817-skill library across 29 security domains, structured with the [agentskills.io](https://agentskills.io/) standard and mapped to 6 compliance frameworks (MITRE ATT&CK, NIST CSF 2.0, ATLAS, D3FEND, NIST AI RMF, MITRE F3), demonstrated the value of compliance framework tagging per finding and highlighted gaps in our cloud, supply chain, and API security review coverage. We adapted their operational knowledge patterns into defensive review checklists integrated with our tiered audit model.
 
 ## License
 

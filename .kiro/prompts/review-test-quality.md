@@ -6,6 +6,17 @@ Your mission is not to count tests. It is to determine whether the test suite wo
 
 ---
 
+## Activation Triggers
+
+Run this review when:
+- A feature is complete and test coverage is claimed
+- At sprint end to assess overall test health
+- When flaky tests are reported or test suite runtime is growing
+- Before merging a large feature branch
+- After a production incident to verify regression coverage
+
+---
+
 ## Classification Lenses
 
 Apply these four lenses when classifying findings. They are not scoring dimensions - they are frames for understanding *why* a gap matters.

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-06-28 - v0.14.0
+
+### Added - Security review enhancements (informed by Anthropic-Cybersecurity-Skills)
+
+Evaluation of [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) (817 skills, 29 domains, 6 compliance frameworks) identified gaps in our security review coverage. See `docs/references/eval-anthropic-cybersecurity-skills-2026-06-28.md`.
+
+- **New `incident-response` skill** (`.kiro/skills/incident-response/SKILL.md`) — 6-phase structured response: immediate containment, scope assessment, communication (with notification template), remediation, recovery verification, post-incident review. Auto-activates on breach/compromise/incident keywords.
+- **Supply chain integrity checks** added to `review-dependency-risk.md` — namespace squatting prevention (@org/ scoping), SBOM generation readiness, Sigstore/SLSA provenance verification, reproducible build checks. 4 new Do Not Miss checklist items.
+- **NIST CSF + ATT&CK + D3FEND framework tagging** added to `review-code-security.md` — T2 and T3 SRR findings now include compliance framework mappings per finding.
+- **Cloud security baseline** added to `review-iac-consistency.md` — new section 13 covering CloudTrail, GuardDuty, AWS Config, root MFA, SCPs, WAF on public endpoints, TLS 1.2+ enforcement, KMS rotation, public exposure checks. 7 new checklist items.
+- **GraphQL security** added to `review-api-contracts.md` — new section 11 covering introspection disabled in prod, query depth/complexity limits, batching attack prevention, field-level authorization, persisted queries, alias abuse. 4 new checklist items.
+- **Activation Triggers sections** added to 5 review prompts (dependency-risk, iac-consistency, api-contracts, code-maintainability, test-quality) — self-documenting when each review should run.
+
 ## 2026-06-11 - v0.13.0
 
 ### Added / Changed - Git commit & PR discipline
