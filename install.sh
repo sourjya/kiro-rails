@@ -14,7 +14,7 @@ BRANCH="main"
 # Base URL for fetching files. Overridable via KIRO_RAILS_BASE_URL (e.g. file:///path
 # for pre-push/local testing); defaults to this repo's raw GitHub content.
 BASE_URL="${KIRO_RAILS_BASE_URL:-https://raw.githubusercontent.com/$REPO/$BRANCH}"
-CURRENT_VERSION="0.14.0"
+CURRENT_VERSION="0.15.0"
 VERSION_FILE=".kiro/.kiro-rails-version"
 OVERRIDES_FILE=".kiro/steering/user-project-overrides.md"
 
@@ -85,6 +85,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-spec-readiness.md
   .kiro/prompts/review-ai-agent-surface.md
   .kiro/prompts/review-commit-pr-discipline.md
+  .kiro/prompts/review-hardcoded-values.md
   .kiro/templates/tasks-template-tdd.md
   scripts/git-commit-push.sh
   scripts/export-to-tools.sh

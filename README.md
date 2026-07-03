@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [15 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [16 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -154,7 +154,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
 │   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
 │   ├── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
-│   └── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
+│   ├── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
+│   └── review-hardcoded-values.md        # Hardcoded value scan - UUIDs, URLs, magic numbers, secrets, env assumptions
 ├── specs/              # Feature specifications (requirements → design → tasks)
 ├── templates/
 │   └── tasks-template-tdd.md         # TDD task template with RED/GREEN/REFACTOR phases

@@ -8,7 +8,7 @@ $Branch = "main"
 # Overridable via $env:KIRO_RAILS_BASE_URL (e.g. a file:/// or local URL for pre-push
 # testing); defaults to this repo's raw GitHub content.
 $BaseUrl = if ($env:KIRO_RAILS_BASE_URL) { $env:KIRO_RAILS_BASE_URL } else { "https://raw.githubusercontent.com/$Repo/$Branch" }
-$CurrentVersion = "0.14.0"
+$CurrentVersion = "0.15.0"
 $VersionFile = ".kiro/.kiro-rails-version"
 $OverridesFile = ".kiro/steering/user-project-overrides.md"
 
@@ -76,6 +76,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-spec-readiness.md"
     ".kiro/prompts/review-ai-agent-surface.md"
     ".kiro/prompts/review-commit-pr-discipline.md"
+    ".kiro/prompts/review-hardcoded-values.md"
     ".kiro/templates/tasks-template-tdd.md"
     "scripts/git-commit-push.sh"
     "scripts/export-to-tools.sh"

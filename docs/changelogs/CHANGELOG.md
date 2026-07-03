@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-03 - v0.15.0
+
+### Added - Hardcoded value scan prompt
+
+- **New `review-hardcoded-values.md` prompt** — 6-category structured scan for embedded literals: hardcoded identifiers (C1), URLs/domains (C2), magic numbers (C3), string-literal enum values (C4), credentials/secrets (C5), and environment assumptions (C6). Includes suppression convention (`scan:allow`), per-language adaptation appendix (Python, TypeScript, Go), hook pairing guidance for automated pre-commit coverage, and tiered review cadence integration. Produces a findings report with scan manifest proving completeness.
+- Installers (`install.sh`, `install.ps1`) updated to include the new prompt file.
+- README updated: prompt count 15 → 16.
+
 ## 2026-06-28 - v0.14.0
 
 ### Added - Security review enhancements (informed by Anthropic-Cybersecurity-Skills)
