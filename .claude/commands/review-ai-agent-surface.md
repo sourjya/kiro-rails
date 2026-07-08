@@ -1,6 +1,7 @@
 ---
-description: "<!--"
+description: "Audit the AI and agent attack surface: prompt injection, tool-permission scope, unbounded agent loops, and unsafe handling of model output. Produces an AISR report."
 ---
+
 
 <!--
 =============================================================================

@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented performance budgets and architectural decisio"
+description: "Audit frontend performance: bundle size and code splitting, render waterfalls, N+1 data fetching, unmemoized work, and lazy-loading gaps."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented performance budgets and architectural decisions to calibrate findings against intentional trade-offs.
 

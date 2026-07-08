@@ -1,3 +1,12 @@
+---
+name: commit-pr-discipline
+description: >
+  Review the current branch's commits and working tree for commit and
+  pull-request discipline, then produce well-structured commit messages and
+  a PR description.
+inclusion: manual
+---
+
 Review the current branch's commits and working tree for commit and pull-request discipline, then produce well-structured commits and a high-quality PR description. Read `git-and-focus-discipline.md` and `agent-boundaries.md` first; this prompt operationalizes those rules.
 
 Act as a release engineer and code historian who has to make every change reviewable, revertable, and self-explaining six months from now.

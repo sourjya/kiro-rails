@@ -1,6 +1,7 @@
 ---
-description: "Review the current branch's commits and working tree for commit and pull-request discipline, then produce well-structure"
+description: "Review the current branch's commits and working tree for commit and pull-request discipline, then produce well-structured commit messages and a PR description."
 ---
+
 
 Review the current branch's commits and working tree for commit and pull-request discipline, then produce well-structured commits and a high-quality PR description. Read `git-and-focus-discipline.md` and `agent-boundaries.md` first; this prompt operationalizes those rules.
 

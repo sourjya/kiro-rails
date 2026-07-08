@@ -1,12 +1,24 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in"
+description: "Audit dependency manifests for supply-chain risk: unmaintained or typosquatted packages, license conflicts, unpinned versions, and known vulnerabilities."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in, intentional SDK coupling) to distinguish intentional choices from accidental risk.
 
 Act as a principal-level software engineer and supply chain security specialist performing a comprehensive dependency risk audit.
 
 Your mission is not to list packages. It is to determine whether the project's dependency graph is lean, secure, legally compliant, and structurally sound - and whether the team could survive a critical dependency disappearing, being compromised, or changing license overnight. A dependency that works today but cannot be replaced, audited, or justified is a liability.
+
+---
+
+## Activation Triggers
+
+Run this review when:
+- A Tier 3 (sprint-end) security review is scheduled
+- A significant number of dependencies were added or upgraded in the sprint
+- A dependency manifest (`package.json`, `pyproject.toml`) has been substantially modified
+- A supply chain incident is reported in the ecosystem (e.g., compromised npm package)
+- Before any major release or deployment to production
 
 ---
 
@@ -24,7 +36,7 @@ Identify:
 
 5. **Bundle size and frontend performance.** Dependencies that are not tree-shakeable, forcing the entire package into the bundle when only one function is used. Import granularity issues: importing from the package root when subpath imports are available (e.g., `import _ from 'lodash'` vs `import debounce from 'lodash/debounce'`). Duplicate packages in the dependency tree - the same package resolved at multiple versions simultaneously. Dependencies that ship unminified code, source maps, or test files in their published package. Flag where a dependency contributes more than 50KB gzipped to the frontend bundle for a feature that could be implemented in under 100 lines.
 
-6. **Supply chain integrity beyond CVEs.** Typosquatting risk: package names that are one character off from popular libraries, or internal package names that could be claimed on public registries (dependency confusion). Install-time code execution: `preinstall`, `postinstall`, or `prepare` scripts in dependencies that execute arbitrary code during `npm install` or equivalent. Lockfile integrity: verify lockfiles are committed, consistent with manifests, and not manually edited. Integrity hashes present and matching. Packages that have had ownership transfers, unpublish/republish events, or version yanking in their recent history. Flag any dependency that downloads binaries or executes network calls during installation.
+6. **Supply chain integrity beyond CVEs.** Typosquatting risk: package names that are one character off from popular libraries, or internal package names that could be claimed on public registries (dependency confusion). Install-time code execution: `preinstall`, `postinstall`, or `prepare` scripts in dependencies that execute arbitrary code during `npm install` or equivalent. Lockfile integrity: verify lockfiles are committed, consistent with manifests, and not manually edited. Integrity hashes present and matching. Packages that have had ownership transfers, unpublish/republish events, or version yanking in their recent history. Flag any dependency that downloads binaries or executes network calls during installation. Additionally check: **Namespace squatting** - internal packages must use org-scoped names (`@org/pkg`) or private registries; unscoped internal names are claimable on public registries. **SBOM readiness** - verify the project can generate a CycloneDX or SPDX Software Bill of Materials from its manifests and lockfiles; flag if no SBOM tooling is configured for CI. **Provenance and signing** - for published packages: check if artifacts have Sigstore signatures, SLSA provenance attestations, or npm provenance (`--provenance` flag); flag critical-path dependencies that lack any artifact signing. **Reproducible builds** - flag where the build process depends on non-deterministic inputs (floating versions resolved at build time, unpinned base images, network fetches during build) that prevent artifact verification.
 
 7. **Vendor lock-in and abstraction quality.** Direct coupling to vendor SDKs (AWS SDK, Stripe, SendGrid, etc.) without an adapter or interface layer. Dependencies where switching providers would require touching more than 3 files. Infrastructure dependencies imported directly in business logic rather than through a factory or configuration-driven abstraction. Flag where the project's `reusable-architecture.md` mandates adapter patterns but the implementation bypasses them with direct SDK imports.
 
@@ -152,6 +164,10 @@ Confirm you explicitly reviewed each of the following, even if no issue was foun
 - [ ] Tree-shaking effectiveness and import granularity
 - [ ] Duplicate package versions in the resolved dependency tree
 - [ ] Install-time scripts (`preinstall`, `postinstall`) in all dependencies
+- [ ] Namespace protection: internal packages use org-scoped names or private registries
+- [ ] SBOM generation capability configured in CI pipeline
+- [ ] Provenance attestations or Sigstore signatures on published artifacts
+- [ ] No floating versions or network fetches in build steps (reproducible builds)
 - [ ] Lockfile committed, consistent with manifest, and integrity hashes present
 - [ ] Typosquatting and dependency confusion risk for internal package names
 - [ ] Vendor SDK coupling without adapter abstraction

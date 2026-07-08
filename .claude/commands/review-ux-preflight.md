@@ -1,15 +1,7 @@
 ---
-description: "---"
+description: "Pre-implementation UX gate. Run before coding any UI feature to validate layout decisions, interaction placement, and hierarchy. Produces a PROCEED/REVISE/BLOCK decision."
 ---
 
----
-name: ux-preflight
-description: >
-  Pre-implementation UX gate. Run before coding any UI feature to validate
-  layout decisions, interaction placement, and hierarchy. Produces a
-  PROCEED/REVISE/BLOCK decision.
-inclusion: manual
----
 
 # UX Preflight Review
 

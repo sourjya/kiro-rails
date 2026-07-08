@@ -1,12 +1,32 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented design system decisions (intentional override"
+description: "Audit CSS and design-token usage against the console-idiom rubric: ad hoc overrides, magic values, duplicated spacing scales, and design-system drift."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented design system decisions (intentional overrides, chosen methodology) to distinguish intentional patterns from accidental inconsistency.
 
 Act as a principal-level frontend engineer and design systems architect performing a comprehensive CSS and styling architecture audit.
 
 Your mission is not to enforce a preferred methodology. It is to determine whether the styling layer is consistent, maintainable, and free of patterns that cause visual regressions, specificity battles, or cascading side effects when code changes. A styling system that works today but cannot be changed safely is a liability.
+
+---
+
+## House Standard: Console-Idiom Rubric
+
+Before scanning, load `.kiro/steering/ux-console-idiom.md`. The D (Density & Type)
+and K (Consistency & Tokens) families define the quantitative thresholds for this
+review. Specifically:
+
+- **D-1/D-2**: body text size range and font weight count - flag violations with rubric IDs
+- **K-1/K-2/K-3**: border-radius set size, color palette adherence, spacing scale
+- **K-4/K-5**: icon style consistency, active/selected state treatment
+
+Every finding that maps to a rubric check MUST carry the rubric ID and severity.
+The token audit (Section C of output) should validate against the design tokens
+declared in `user-project-overrides.md`.
+
+Evidence from `scripts/style-survey.js` (computed-style census) is preferred over
+manual inspection for D and K family checks.
 
 ---
 

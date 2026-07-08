@@ -1,3 +1,12 @@
+---
+name: dependency-risk
+description: >
+  Audit dependency manifests for supply-chain risk: unmaintained or
+  typosquatted packages, license conflicts, unpinned versions, and known
+  vulnerabilities.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in, intentional SDK coupling) to distinguish intentional choices from accidental risk.
 
 Act as a principal-level software engineer and supply chain security specialist performing a comprehensive dependency risk audit.

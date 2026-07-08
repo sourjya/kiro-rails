@@ -1,3 +1,12 @@
+---
+name: code-maintainability
+description: >
+  Structural maintainability audit: god objects, hidden coupling, dead
+  code, comment-standard compliance, and drift from documented
+  architecture. Produces an MRR report.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented architectural decisions to distinguish intentional patterns from accidental inconsistency. Do not flag documented exceptions as findings.
 
 Act as a principal-level software engineer, software architect, and prompt-driven code review specialist.

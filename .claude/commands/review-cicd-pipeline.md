@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented deployment decisions (intentional gating stra"
+description: "Audit CI/CD pipelines for missing quality gates, unpinned actions, secret exposure in logs, and deploy steps that can run without passing tests."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented deployment decisions (intentional gating strategy, accepted pipeline trade-offs) to distinguish intentional configuration from accidental gaps.
 

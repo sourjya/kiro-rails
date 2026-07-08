@@ -1,6 +1,7 @@
 ---
-description: "Before reviewing, read `docs/decisions/` ADRs and `docs/roadmap/roadmap.md` if they exist. Use documented architectural "
+description: "Grade a Kiro spec (requirements, design, tasks) against the spec quality standards before implementation begins. Flags thin specs that will cause rework."
 ---
+
 
 Before reviewing, read `docs/decisions/` ADRs and `docs/roadmap/roadmap.md` if they exist. Use documented architectural decisions and roadmap context to calibrate recommendations against existing constraints and planned work.
 

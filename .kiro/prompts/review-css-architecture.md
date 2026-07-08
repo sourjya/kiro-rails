@@ -1,3 +1,12 @@
+---
+name: css-architecture
+description: >
+  Audit CSS and design-token usage against the console-idiom rubric: ad hoc
+  overrides, magic values, duplicated spacing scales, and design-system
+  drift.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented design system decisions (intentional overrides, chosen methodology) to distinguish intentional patterns from accidental inconsistency.
 
 Act as a principal-level frontend engineer and design systems architect performing a comprehensive CSS and styling architecture audit.

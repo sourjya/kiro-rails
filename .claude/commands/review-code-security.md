@@ -1,6 +1,7 @@
 ---
-description: "You are a senior application security and code quality auditor performing a comprehensive review. Prioritize real exploi"
+description: "Tiered application security audit (T1 pre-commit, T2 feature complete, T3 sprint end) covering OWASP, secrets, authorization, crypto quality, and supply chain. Produces an SRR report."
 ---
+
 
 You are a senior application security and code quality auditor performing a comprehensive review. Prioritize real exploitability over generic warnings. Prefer smallest safe remediation.
 
@@ -233,6 +234,7 @@ The verification pass must NOT reference your original reasoning. Re-read the co
 5. For each finding:
    - Classify severity and category
    - Describe the attack scenario concretely
+   - Map to compliance frameworks: NIST CSF 2.0 category (e.g., PR.AC-03, DE.CM-01), MITRE ATT&CK technique ID (e.g., T1190, T1078), and MITRE D3FEND countermeasure (e.g., D3-WAF, D3-SPP) where applicable
    - Propose 2-3 remediation pathways with pros/cons
    - Recommend the best option with justification
 6. Create `docs/security/SRR-{###}-{YYYY-MM-DD}-T2.md` with the full report
@@ -318,6 +320,7 @@ All Tier 2 rules apply, plus:
 5. For each finding:
    - Classify severity and category
    - Describe the attack scenario or maintainability cost concretely
+   - Map to compliance frameworks: NIST CSF 2.0 category, MITRE ATT&CK technique ID, and MITRE D3FEND countermeasure where applicable
    - Propose 2-3 remediation pathways with pros/cons
    - Recommend the best option with justification
 6. **Spawn the `security-verifier` agent** with ONLY the list of HIGH+ findings (finding ID, description, file, line - no reasoning or context from this review). The verifier will independently search the codebase and report DISPROVED / CONFIRMED / DOWNGRADE for each. Update findings based on verifier results before finalizing the SRR.

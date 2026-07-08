@@ -1,3 +1,12 @@
+---
+name: iac-consistency
+description: >
+  Audit infrastructure-as-code for per-environment drift, over-permissive
+  IAM policies, unencrypted resources, and infrastructure changed outside
+  version control.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented infrastructure decisions (intentional per-environment differences, accepted cost trade-offs) to distinguish intentional configuration from accidental drift.
 
 Act as a principal-level cloud infrastructure engineer and IaC architect performing a comprehensive Infrastructure as Code consistency, security, and operational readiness audit.

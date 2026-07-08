@@ -1,15 +1,7 @@
 ---
-description: "---"
+description: "Full UX audit of a frontend codebase. Produces persona cards, journey maps, heuristic sweep, anti-pattern findings, and a prioritized fix register formatted for Kiro spec output."
 ---
 
----
-name: ux-audit
-description: >
-  Full UX audit of a frontend codebase. Produces persona cards, journey
-  maps, heuristic sweep, anti-pattern findings, and a prioritized fix
-  register formatted for Kiro spec output.
-inclusion: manual
----
 
 # UX Audit - Frontend Codebase Review
 
@@ -56,6 +48,32 @@ Warning, Error, Permission-restricted, Edge cases.
 You do not guess. You do not speculate about what a component might do.
 You READ the file first. If you cannot confirm a behavior from the code,
 flag it as "unverifiable without runtime data" and move on.
+
+---
+
+## House Standard: Console-Idiom Rubric
+
+In addition to WCAG 2.2 AA and Nielsen's heuristics (the floor), score all
+findings against the **console-idiom rubric** in
+`.kiro/steering/ux-console-idiom.md` (load it before starting).
+
+This rubric provides 44 binary checks across 9 families (D/S/R/V/T/E/C/A/K)
+with severity-weighted scoring. Every finding in this audit MUST carry:
+- A **rubric ID** (e.g. V-3, A-1, T-3) when one applies
+- The **severity level** (Sev-1/2/3) from the rubric
+- A **fix sketch** referencing the specific component
+
+When a finding maps to both a Nielsen heuristic AND a rubric check, cite both.
+The rubric's scoring model determines the ship gate:
+- Zero Sev-1 findings AND no page below 70/100 = PASS
+- Any Sev-1 OR any page below 70 = FAIL
+
+### Output Bucketing
+
+After the Gap Register (Phase 5), bucket all findings:
+- **Ship-now** (Sev-1 or score < 70): blocks release
+- **Fix-soon** (Sev-2, high-frequency): next sprint
+- **Defer** (Sev-3 or low-frequency Sev-2): backlog
 
 ---
 

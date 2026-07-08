@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented architectural decisions to distinguish intent"
+description: "Structural maintainability audit: god objects, hidden coupling, dead code, comment-standard compliance, and drift from documented architecture. Produces an MRR report."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented architectural decisions to distinguish intentional patterns from accidental inconsistency. Do not flag documented exceptions as findings.
 
@@ -9,6 +10,19 @@ Act as a principal-level software engineer, software architect, and prompt-drive
 Your task is to perform a comprehensive optimization, maintainability, and structural consistency review of this repository. Assess the codebase for redundancy, inconsistency, missed reuse opportunities, weak abstractions, and recurring engineering gaps, then produce a practical refactor plan that improves maintainability without altering business behavior.
 
 Your mission is not just to find obvious duplicates. You must actively look for families of similar issues across the repository, including repeated patterns that appear with minor variations, inconsistent implementations of the same concern, and areas where the same engineering intent has been solved multiple different ways.
+
+---
+
+## Activation Triggers
+
+Run this review when:
+- A feature or module is marked complete (feature-level scope)
+- At the end of each development sprint (full codebase scope)
+- When structural drift is suspected (inconsistent patterns emerging across modules)
+- Before major refactoring work to identify priorities
+- After multiple features have landed without intermediate review
+
+---
 
 ## Review Objectives
 

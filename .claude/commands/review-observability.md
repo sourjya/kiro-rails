@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs and any SLO/SLI documentation if they exist. Use documented observability d"
+description: "Audit logging, metrics, tracing, and correlation IDs across pipelines and background jobs. Flags blackbox code paths that emit no telemetry and cannot be debugged in production."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs and any SLO/SLI documentation if they exist. Use documented observability decisions to distinguish intentional gaps (acceptable risk) from accidental omissions.
 

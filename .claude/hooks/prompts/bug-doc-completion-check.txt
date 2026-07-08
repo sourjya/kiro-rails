@@ -1,0 +1,12 @@
+A bug document was just edited. Read the file and verify ALL of these required fields are filled (not empty, not 'TBD', not 'TODO'):
+
+1. **Root Cause** - must explain WHY the bug happened
+2. **Fix Description** - must explain WHAT was changed to fix it
+3. **Regression Tests** - must list specific test names that prevent recurrence
+4. **Status** - must be one of: OPEN, IN_PROGRESS, FIXED, WONT_FIX
+
+If the bug status is FIXED, ALL fields above must be complete. If any are missing or placeholder, list what's incomplete and ask the user to fill them in.
+
+If the bug is still OPEN or IN_PROGRESS, only flag missing Root Cause (which should be filled during investigation).
+
+Respond with 'OK - bug document complete' if everything is filled, or list the gaps.
