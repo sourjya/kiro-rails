@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-08 - v0.17.2 - UX Preflight Gate Reaches Claude
+
+### Fixed
+
+- **`export-to-claude.sh` silently dropped the `ux-preflight-gate` hook.** Kiro's `when.type: preTaskExecution` has no Claude event, so the hook fell through the `case` to the unmapped branch and its `askAgent` prompt was deleted as an orphan. Claude users got no UX Intent Block gate at all - the hook was enabled in `.kiro/` and simply did not exist in `.claude/`. It is now approximated with a `PreToolUse` hook (matcher `Edit|Write|MultiEdit`) that reads the hook payload's `.tool_input.file_path` and fires only on `.tsx`/`.jsx`/`.css`/`.scss` - the same self-gating stdin trick already used to approximate `beforeCommit`. Exported hook count 18 -> 19.
+- **`PreToolUse` could only ever emit one matcher block.** The `jq` assembly hardcoded a single `{matcher: "Bash"}` entry, so any second `PreToolUse` matcher would have overwritten it via object addition. It now builds an array.
+- **The compatibility doc claimed pre-commit hooks were "not auto-translated"**, contradicting its own mapping table, which documents the `beforeCommit` approximation. Corrected.
+
+### Notes
+
+- The Claude gate fires **per UI-file write**, where Kiro fires **per spec task** - strictly noisier, but non-blocking by design (the guard exits 0 on both paths). Documented as an accepted fidelity trade-off alongside `beforeCommit`.
+- The two dropped agent tools reported by the same stderr warning (`code-security-reviewer:knowledge`, `ux-red-team:code`) are **deliberately not mapped**. Claude has no equivalent for either, and `ux-red-team` is declared read-only; inventing a mapping would widen the sandbox of the two agents whose purpose is to be restricted. The exporter's fail-closed behavior (emit `tools: Read` rather than an absent `tools:` line) is correct and stays.
+
+Ticket: KRL-9. Tactiq `Kiro-Rails` folder gained `Bugs`/`Feature Requests` subfolders; all 9 tickets routed, aliases preserved.
+
 ## 2026-07-08 - v0.17.1 - Single Owner for the Claude Layer
 
 ### Fixed
