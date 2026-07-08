@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-08 - UX Review Tooling
+
+### Added - Console-idiom UX rubric and live browser-walk review
+
+- **New `.kiro/steering/ux-console-idiom.md`** — console-idiom UX quality rubric with 9 check families (D/S/R/V/T/E/C/A/K), 44 checks, severity-weighted scoring (Sev-1 −15, Sev-2 −5, Sev-3 −1), and a ship gate (zero Sev-1 + no page below 70). `inclusion: manual` — loaded on-demand for reviews, not always-on (per context-bloat research evidence).
+- **New `.kiro/prompts/review-ux-live.md`** — 9-step per-page live browser-walk protocol with side-effect boundary (observer-only), evidence discipline (5 evidence types with strength ratings), mandatory Corrections/Retractions section, and report structure (6 fixed-order sections). Requires a browser MCP at runtime.
+- **New `.kiro/agents/ux-reviewer.json`** — restricted-tool UX auditor agent (read, grep, glob only; no write/delete/send). Enforces the side-effect boundary at the tool-permission layer.
+- **New `scripts/style-survey.js`** — in-page computed-style census for quantitative rubric evidence. Collects font-size histogram, weight census, border-radius set, button dimensions, heading hierarchy, nav/tab active states, table alignment, unlabelled form controls, color values, and spacing values. Runnable in DevTools or via browser MCP.
+- **New `docs/ux-reviews/` taxonomy directory** — UXR report placement rules, gate definition, and cross-references.
+- **Design tokens section in `user-project-overrides.md`** — placeholder block for team-specific UX rubric thresholds (typography, surfaces, consistency, save model, tables, timing, date format).
+
+### Changed
+
+- **`review-ux-audit.md`** — added House Standard section requiring rubric IDs on findings, ship-now/fix-soon/defer bucketing, and gate pass/fail scoring.
+- **`review-css-architecture.md`** — added rubric reference for D and K families, style-survey.js evidence preference for token audits.
+- **`review-policy.md`** — added UX Review section (trigger conditions, agent/rubric/prompt references, gate behavior, report location `docs/ux-reviews/UXR-{###}`), updated output convention table, report numbering, and folder structure.
+- README updated: prompts 16 → 17, agents 3 → 4, docs dirs 13 → 14, steering table adds `ux-console-idiom.md`, project structure tree updated.
+
 ## 2026-07-03 - v0.15.0
 
 ### Added - Hardcoded value scan prompt

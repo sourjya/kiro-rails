@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [16 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -109,6 +109,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching, component extraction, completion verification (fileMatch: tsx/jsx)
 │   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-pattern-registry.md        # Reference patterns for common screen types (manual)
+│   ├── ux-console-idiom.md           # Console-idiom UX rubric — 9 families, severity scoring, ship gate (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
 │   ├── agent-boundaries.md           # The hard "never" rules - shortest always-on file, read first
@@ -135,7 +136,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   └── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
-│   └── security-verifier.json        # Adversarial agent that disproves false positives
+│   ├── security-verifier.json        # Adversarial agent that disproves false positives
+│   └── ux-reviewer.json              # Restricted-tool UX auditor (browser MCP + read only)
 ├── skills/
 │   ├── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
 │   │   └── SKILL.md
@@ -153,6 +155,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
 │   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
+│   ├── review-ux-live.md                 # Live browser-walk UX review — 9-step protocol, rubric scoring, evidence discipline
 │   ├── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
 │   ├── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
 │   └── review-hardcoded-values.md        # Hardcoded value scan - UUIDs, URLs, magic numbers, secrets, env assumptions
@@ -174,7 +177,8 @@ docs/
 ├── runbooks/           # Operational guides and setup instructions
 ├── references/         # External docs, research materials, API guides
 ├── engineering/        # Engineering process documentation
-└── security/           # Security review reports and findings log
+├── security/           # Security review reports and findings log
+└── ux-reviews/         # UX review reports (UXR-###) with rubric-scored findings
 
 scripts/
 ├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
@@ -183,7 +187,8 @@ scripts/
 ├── export-to-tools.sh  # Generate flat config for Cursor / Copilot / Codex / Claude CLAUDE.md
 ├── export-to-claude.sh # Generate the full native .claude/ layer (BONUS for Claude Code)
 ├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
-└── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
+├── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
+└── style-survey.js     # In-page computed-style census for UX rubric evidence (D/K families)
 
 logs/                   # Command output logs (gitignored)
 ```
@@ -212,7 +217,8 @@ They are included based on their `inclusion` setting:
 | [frontend-patterns.md](.kiro/steering/frontend-patterns.md) | fileMatch | React hooks rules, event propagation, CSS flex/grid layout, cache invalidation, component extraction & reuse (prop parity), completion verification (build ≠ done), component completeness checklist (loaded for `*.tsx`/`*.jsx` files) |
 | [api-contract-discipline.md](.kiro/steering/api-contract-discipline.md) | fileMatch | Contract-first development, response shape verification, error response contracts, rate limiting guidance (loaded for `api/`, `routes/`, `services/` files) |
 | [ux-pattern-registry.md](.kiro/steering/ux-pattern-registry.md) | manual | Reference layout patterns for common screen types; load with `/ux-pattern-registry` when designing or reviewing UI |
-| [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
+| [ux-console-idiom.md](.kiro/steering/ux-console-idiom.md) | manual | Console-idiom UX rubric with 9 check families (44 checks), severity scoring, and ship gate; load with `/ux-console-idiom` when reviewing or generating console/admin UI |
+| [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security, maintainability, and UX reviews, output conventions, sequencing rules, report numbering |
 | [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
 | [agent-boundaries.md](.kiro/steering/agent-boundaries.md) | always | The hard "never" rules (the non-negotiables) in their shortest form, with `→` pointers to the detailed files - the first thing an agent should read |
 | [session-isolation.md](.kiro/steering/session-isolation.md) | always | Stay inside your project root, never operate on sibling repos (`git -C`/cross-repo PRs), verify before destructive git, never kill processes you didn't spawn |
