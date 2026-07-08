@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-08 - v0.17.1 - Single Owner for the Claude Layer
+
+### Fixed
+
+- **`export-to-tools.sh --claude` clobbered the generated Claude layer.** Its `export_claude()` wrote `.claude/CLAUDE.md` itself, producing a degraded, differently-headed copy (2633 vs 2652 lines) and leaving `settings.json`, `agents/`, `commands/` and `skills/` untouched. Whichever exporter ran last won.
+- **It also made the release gate non-deterministic.** `export-to-tools.sh`'s `header()` stamps `# Generated: <ISO timestamp>` into its output. `.claude/` is a committed artifact byte-compared by `check-claude-fresh.sh`, which `versioning.md` makes a release gate, so *any* run flipped the gate to `STALE` on the timestamp alone - even with no change to `.kiro/`.
+- `export_claude()` now delegates to `scripts/export-to-claude.sh`, the single owner of `.claude/`. As a side benefit, `--all` now emits the *full* Claude layer (hooks, agents, commands, skills) rather than a lone degraded `CLAUDE.md`. The three non-gated targets (`.cursorrules`, `.github/copilot-instructions.md`, `AGENTS.md`) keep their timestamped headers.
+
+Verified: `--claude` and `--all` both leave `check-claude-fresh.sh` printing `OK`; two consecutive runs produce byte-identical `.claude/`; no `Generated:` line reaches `CLAUDE.md`. Variant search: no other script under `scripts/` writes to `.claude/`.
+
+Ticket: KRL-8.
+
 ## 2026-07-08 - v0.17.0 - Claude Export Fidelity
 
 ### Fixed - the generated `.claude/` layer was missing 37% of enabled hooks
