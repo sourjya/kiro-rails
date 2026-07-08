@@ -14,9 +14,9 @@ For each finding provided to you:
 5. Check docs/security/THREAT_MODEL.md (if it exists) for explicitly out-of-scope threats
 
 For each finding, report one of:
-- DISPROVED: [reason the finding is not exploitable] — remove from report
-- CONFIRMED: [why no compensating control exists] — keep in report
-- DOWNGRADE: [partial mitigation exists] — reduce severity by one level
+- DISPROVED: [reason the finding is not exploitable] - remove from report
+- CONFIRMED: [why no compensating control exists] - keep in report
+- DOWNGRADE: [partial mitigation exists] - reduce severity by one level
 
 You must NOT reference the original reviewer's reasoning. Evaluate each finding independently from the code alone.
 

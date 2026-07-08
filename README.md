@@ -76,7 +76,7 @@ What you get:
 
 ## Getting Started with Reviews
 
-kiro-rails ships 17 review prompts — but you don't need to memorize them. The system guides you automatically.
+kiro-rails ships 17 review prompts - but you don't need to memorize them. The system guides you automatically.
 
 ### Just ask
 
@@ -88,9 +88,9 @@ Type any of these in chat and the agent will help you pick the right review:
 "How do I audit my UI?"
 ```
 
-The `/review-guide` skill activates automatically on these questions and recommends 1-3 reviews based on what you're actually working on — not a wall of options.
+The `/review-guide` skill activates automatically on these questions and recommends 1-3 reviews based on what you're actually working on - not a wall of options.
 
-### Or just keep working — it suggests for you
+### Or just keep working - it suggests for you
 
 The `review-suggest` hook watches your branch in the background. When you've built up enough work (5+ commits with frontend changes, auth code, or API routes), it nudges you with one line:
 
@@ -115,7 +115,7 @@ If you already know what you need:
 
 | When | What happens | You do |
 |------|-------------|--------|
-| Every commit | Tier 1 fires automatically | Nothing — secrets and unsafe code are caught for you |
+| Every commit | Tier 1 fires automatically | Nothing - secrets and unsafe code are caught for you |
 | Feature complete | Tier 2 is available | Run 2-3 relevant reviews from the cheat sheet |
 | Sprint end | Tier 3 full sweep | Run the full suite once before release |
 
@@ -156,7 +156,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching, component extraction, completion verification (fileMatch: tsx/jsx)
 │   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-pattern-registry.md        # Reference patterns for common screen types (manual)
-│   ├── ux-console-idiom.md           # Console-idiom UX rubric — 9 families, severity scoring, ship gate (manual)
+│   ├── ux-console-idiom.md           # Console-idiom UX rubric - 9 families, severity scoring, ship gate (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
 │   ├── agent-boundaries.md           # The hard "never" rules - shortest always-on file, read first
@@ -205,7 +205,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
 │   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
-│   ├── review-ux-live.md                 # Live browser-walk UX review — 9-step protocol, rubric scoring, evidence discipline
+│   ├── review-ux-live.md                 # Live browser-walk UX review - 9-step protocol, rubric scoring, evidence discipline
 │   ├── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
 │   ├── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
 │   └── review-hardcoded-values.md        # Hardcoded value scan - UUIDs, URLs, magic numbers, secrets, env assumptions
@@ -306,7 +306,7 @@ Hooks fire automatically on file edits or before tool use:
 | Variant Search on Fix Branch | Prompt submit | On a fresh `fix/` branch, reminds the agent to search every call site for the same defect class - the reported instance is rarely the only one |
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 | Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
-| Review Suggest | Prompt submit | Suggests relevant review prompts when your branch has enough work (5+ commits with UI, API, or auth changes) — one-line nudge, never blocking |
+| Review Suggest | Prompt submit | Suggests relevant review prompts when your branch has enough work (5+ commits with UI, API, or auth changes) - one-line nudge, never blocking |
 
 ## Development Workflow
 
@@ -469,7 +469,7 @@ The spec workflow skills and multi-tool export features were inspired by [OpenSp
 
 The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart - a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
 
-The security review prompt enhancements (v0.10.0+) — supply chain integrity checks, cloud hardening baseline, GraphQL security, NIST/ATT&CK compliance tagging, and the incident-response skill — were informed by [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) by [Mahipal Jangra](https://github.com/mukul975). Their 817-skill library across 29 security domains, structured with the [agentskills.io](https://agentskills.io/) standard and mapped to 6 compliance frameworks (MITRE ATT&CK, NIST CSF 2.0, ATLAS, D3FEND, NIST AI RMF, MITRE F3), demonstrated the value of compliance framework tagging per finding and highlighted gaps in our cloud, supply chain, and API security review coverage. We adapted their operational knowledge patterns into defensive review checklists integrated with our tiered audit model.
+The security review prompt enhancements (v0.10.0+) - supply chain integrity checks, cloud hardening baseline, GraphQL security, NIST/ATT&CK compliance tagging, and the incident-response skill - were informed by [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) by [Mahipal Jangra](https://github.com/mukul975). Their 817-skill library across 29 security domains, structured with the [agentskills.io](https://agentskills.io/) standard and mapped to 6 compliance frameworks (MITRE ATT&CK, NIST CSF 2.0, ATLAS, D3FEND, NIST AI RMF, MITRE F3), demonstrated the value of compliance framework tagging per finding and highlighted gaps in our cloud, supply chain, and API security review coverage. We adapted their operational knowledge patterns into defensive review checklists integrated with our tiered audit model.
 
 ## License
 

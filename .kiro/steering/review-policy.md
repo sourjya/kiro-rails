@@ -9,7 +9,7 @@ The security review system follows a three-tier model - one prompt, three hooks,
 
 ---
 
-## Quick Reference — Which Review, When
+## Quick Reference - Which Review, When
 
 Use `/review-guide` for interactive help. The short version:
 
@@ -129,7 +129,7 @@ Without a threat model, the reviewer infers trust boundaries from code alone, wh
 
 ---
 
-## UX Review — Live Browser Walk
+## UX Review - Live Browser Walk
 
 **Prompt:** `.kiro/prompts/review-ux-live.md`
 **Agent:** `.kiro/agents/ux-reviewer.json` (restricted-tool: browser MCP + read + script exec only)
@@ -144,13 +144,13 @@ Without a threat model, the reviewer infers trust boundaries from code alone, wh
 - After a significant design system or layout change
 
 **Does NOT fire:**
-- On every commit (too expensive — browser automation)
+- On every commit (too expensive - browser automation)
 - On backend-only changes with no UI impact
 - As always-on context (per research evidence on context-bloat cost)
 
 **Checks:** Console-idiom rubric (9 families, 44 checks): Density & Type, Surfaces & Layout, Read-First Editing, Save Model, Tables & Lists, Empty States & Feedback, Copy & Correctness, Accessibility & States, Consistency & Tokens
 
-**Output:** Full UXR report — `docs/ux-reviews/UXR-{###}-{YYYY-MM-DD}.md`
+**Output:** Full UXR report - `docs/ux-reviews/UXR-{###}-{YYYY-MM-DD}.md`
 - Systemic findings + per-page findings with rubric IDs
 - Prioritized plan (ship-now / fix-soon / defer)
 - Mandatory Corrections/Retractions section

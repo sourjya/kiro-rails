@@ -24,7 +24,7 @@ A FAIL blocks release (same weight as a Tier 2 security finding).
 
 ## Cross-references
 
-- `.kiro/steering/review-policy.md` — trigger rules
-- `.kiro/steering/ux-console-idiom.md` — the rubric
-- `.kiro/prompts/review-ux-live.md` — the browser-walk protocol
-- `.kiro/agents/ux-reviewer.json` — the restricted-tool agent
+- `.kiro/steering/review-policy.md` - trigger rules
+- `.kiro/steering/ux-console-idiom.md` - the rubric
+- `.kiro/prompts/review-ux-live.md` - the browser-walk protocol
+- `.kiro/agents/ux-reviewer.json` - the restricted-tool agent

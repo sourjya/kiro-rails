@@ -12,7 +12,7 @@ Before scanning, load `.kiro/steering/ux-console-idiom.md`. The D (Density & Typ
 and K (Consistency & Tokens) families define the quantitative thresholds for this
 review. Specifically:
 
-- **D-1/D-2**: body text size range and font weight count — flag violations with rubric IDs
+- **D-1/D-2**: body text size range and font weight count - flag violations with rubric IDs
 - **K-1/K-2/K-3**: border-radius set size, color palette adherence, spacing scale
 - **K-4/K-5**: icon style consistency, active/selected state treatment
 

@@ -8,7 +8,7 @@ description: >
 inclusion: manual
 ---
 
-# Live UX Review — Browser-Walk Protocol
+# Live UX Review - Browser-Walk Protocol
 
 A structured protocol for reviewing a running application's UX via browser
 automation. Each page is walked with 9 steps that produce evidence for
@@ -24,10 +24,10 @@ rubric definitions and scoring model.
 
 ---
 
-## Side-Effect Boundary — NON-NEGOTIABLE
+## Side-Effect Boundary - NON-NEGOTIABLE
 
 During a live review, you are an **observer only**. Do NOT:
-- Submit forms (except safe dirty-state probes — see Step 5)
+- Submit forms (except safe dirty-state probes - see Step 5)
 - Click delete, remove, or destructive action buttons
 - Send messages, emails, or notifications
 - Log out (you may lose session state)
@@ -102,10 +102,10 @@ If the page contains a form or editable content:
 
 If the page has modals, drawers, or overlays:
 1. Open the overlay via its trigger
-2. Press Escape — does it close? (A-4)
-3. If not closed by Escape: click behind/outside — does it close?
+2. Press Escape - does it close? (A-4)
+3. If not closed by Escape: click behind/outside - does it close?
 4. When closed: does focus return to the trigger element? (A-1)
-5. While open: Tab through — is focus trapped inside? (A-1)
+5. While open: Tab through - is focus trapped inside? (A-1)
 
 ### Step 7: Cross-Page Entity Consistency
 
@@ -130,7 +130,7 @@ findings unless they manifest as user-visible issues).
 ### Step 9: Identify the Gold-Standard Page
 
 After reviewing multiple pages, identify which page in the application
-best follows the rubric — the one with fewest findings and highest
+best follows the rubric - the one with fewest findings and highest
 score. Use it as a reference when suggesting fixes:
 
 "Page X does this correctly; page Y should match."
@@ -176,18 +176,18 @@ the naming convention `UXR-{NNN}-{YYYY-MM-DD}.md`.
 
 ### Report Structure (fixed order)
 
-1. **Summary** — Pages reviewed, Sev counts (1/2/3), gate PASS/FAIL,
+1. **Summary** - Pages reviewed, Sev counts (1/2/3), gate PASS/FAIL,
    one-paragraph verdict
-2. **Systemic findings** — Issues that appear on multiple pages (table
+2. **Systemic findings** - Issues that appear on multiple pages (table
    format: rubric ID, severity, evidence, fix)
-3. **Per-page findings** — One table per page, each with rubric ID,
+3. **Per-page findings** - One table per page, each with rubric ID,
    severity, evidence, fix, and page score
-4. **Prioritized plan** — ship-now (Sev-1 or score < 70) / fix-soon
+4. **Prioritized plan** - ship-now (Sev-1 or score < 70) / fix-soon
    (Sev-2 high-freq) / defer (Sev-3 or low-freq Sev-2)
-5. **Corrections/Retractions** — MANDATORY section. List any findings
+5. **Corrections/Retractions** - MANDATORY section. List any findings
    that were initially asserted but later disproved by live interaction,
    and explain why
-6. **Notes** — Checks not verifiable in this mode; candidate design
+6. **Notes** - Checks not verifiable in this mode; candidate design
    tokens discovered; suggestions for the gold-standard page
 
 ### Gate Result
@@ -197,7 +197,7 @@ the naming convention `UXR-{NNN}-{YYYY-MM-DD}.md`.
 
 ---
 
-## Corrections/Retractions — MANDATORY
+## Corrections/Retractions - MANDATORY
 
 This section exists because live review can initially misidentify
 findings that are later disproved. Common causes:
@@ -210,15 +210,15 @@ When a prior finding is disproved:
 2. Add it to the Corrections/Retractions section with the reason
 3. Recalculate the page score
 
-Never delete history — always show what was initially found and why
+Never delete history - always show what was initially found and why
 it was retracted. This builds review credibility over time.
 
 ---
 
 ## Cross-references
 
-- `.kiro/steering/ux-console-idiom.md` — the rubric (load before starting)
-- `scripts/style-survey.js` — quantitative evidence script (Step 3)
-- `.kiro/steering/review-policy.md` — when this review triggers
-- `.kiro/steering/ux-pattern-registry.md` — reference patterns for common screens
-- `docs/ux-reviews/` — report output directory
+- `.kiro/steering/ux-console-idiom.md` - the rubric (load before starting)
+- `scripts/style-survey.js` - quantitative evidence script (Step 3)
+- `.kiro/steering/review-policy.md` - when this review triggers
+- `.kiro/steering/ux-pattern-registry.md` - reference patterns for common screens
+- `docs/ux-reviews/` - report output directory

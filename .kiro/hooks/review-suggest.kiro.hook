@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "name": "Review Suggest",
-  "description": "On prompt submit, detects when the user may be at a review-worthy checkpoint (feature complete, merge ready, UI changes) and suggests the most relevant review prompt. One-line nudge only — never blocking.",
+  "description": "On prompt submit, detects when the user may be at a review-worthy checkpoint (feature complete, merge ready, UI changes) and suggests the most relevant review prompt. One-line nudge only - never blocking.",
   "version": "1",
   "when": {
     "type": "userPromptSubmit"

@@ -1,4 +1,4 @@
-# Agentic Coding Tools — Git Commit & PR Discipline
+# Agentic Coding Tools - Git Commit & PR Discipline
 ## Deep Research Report + Steering Recommendations for ChaosLabz / Kiro
 **Date:** June 2026 | **Scope:** Kiro, Claude Code, Cursor, OpenAI Codex, GitHub Copilot, Devin
 
@@ -6,13 +6,13 @@
 
 ## 1. The Landscape in 2026
 
-The shift from "AI-assisted coding" to full agentic coding happened fast. By mid-2025, tools like Claude Code and Codex could autonomously edit files, run tests, and commit changes. By 2026, the developer's job has moved from context management to outcome specification — and from "write code" to "govern agent behavior."
+The shift from "AI-assisted coding" to full agentic coding happened fast. By mid-2025, tools like Claude Code and Codex could autonomously edit files, run tests, and commit changes. By 2026, the developer's job has moved from context management to outcome specification - and from "write code" to "govern agent behavior."
 
-Git discipline is where the wheels fall off most often. Agents are fluent in git mechanics; they are not inherently disciplined about when to commit, what to branch, or when to stop and ask. That discipline is entirely externally imposed — via configuration files, steering documents, hooks, and human-in-the-loop gates. If you don't configure it, you get chaos.
+Git discipline is where the wheels fall off most often. Agents are fluent in git mechanics; they are not inherently disciplined about when to commit, what to branch, or when to stop and ask. That discipline is entirely externally imposed - via configuration files, steering documents, hooks, and human-in-the-loop gates. If you don't configure it, you get chaos.
 
 ---
 
-## 2. Configuration Formats — The Cross-Agent Landscape
+## 2. Configuration Formats - The Cross-Agent Landscape
 
 Each tool reads a different primary config file. This is the biggest source of duplication pain for multi-agent shops.
 
@@ -24,7 +24,7 @@ Each tool reads a different primary config file. This is the biggest source of d
 | **GitHub Copilot** | `.github/copilot-instructions.md` | `AGENTS.md` (proximity rules apply) |
 | **Cursor** | `.cursor/rules/*.mdc` (modern) or `.cursorrules` (legacy) | `agents.md` fallback |
 | **Gemini CLI** | `GEMINI.md` | Can be configured to read `AGENTS.md` |
-| **Devin** | `AGENTS.md` | — |
+| **Devin** | `AGENTS.md` | - |
 | **Windsurf** | `.windsurfrules` | `AGENTS.md` |
 
 ### The emerging standard: AGENTS.md
@@ -41,21 +41,21 @@ Claude Code reads `CLAUDE.md` natively; the standard workaround for cross-tool t
 
 ---
 
-## 3. Commit Discipline — What Agents Do By Default vs. What You Should Configure
+## 3. Commit Discipline - What Agents Do By Default vs. What You Should Configure
 
 ### 3.1 Default behaviors (without configuration)
 
 **Kiro:** No autonomous commits by default. Commits only happen when triggered via a hook or when the user explicitly asks. The agent hooks system (`fileEdited`, `taskCompleted` etc.) is where you wire up automated commit behavior.
 
-**Claude Code:** Will commit when instructed, but does not commit autonomously during a session. Context loss mid-session is a known failure mode — work can evaporate at compaction if not committed. Official guidance: "Commit frequently, dump progress to files, treat every session as disposable."
+**Claude Code:** Will commit when instructed, but does not commit autonomously during a session. Context loss mid-session is a known failure mode - work can evaporate at compaction if not committed. Official guidance: "Commit frequently, dump progress to files, treat every session as disposable."
 
 **Cursor:** No auto-commit by default. Best practice from the community: defensive checkpoint commits before any multi-file refactor (`git add -A && git commit -m "checkpoint: before <task>"`). Cursor 3.0's `Background Agent` (cloud, sandboxed) does commit automatically as part of the issue-to-PR flow.
 
-**Codex:** Operates in an isolated cloud sandbox per task. Each task ends with a proposed diff for human review — Codex does not push to main autonomously. The commit-to-PR flow is fully managed; humans approve before anything lands.
+**Codex:** Operates in an isolated cloud sandbox per task. Each task ends with a proposed diff for human review - Codex does not push to main autonomously. The commit-to-PR flow is fully managed; humans approve before anything lands.
 
-**GitHub Copilot Coding Agent:** Provisions a `copilot/issue-{number}` branch, does all work there, opens a PR — cannot touch main or any protected branch. PR is gated behind human approval + full CI. This is the most constrained architecture of the major tools.
+**GitHub Copilot Coding Agent:** Provisions a `copilot/issue-{number}` branch, does all work there, opens a PR - cannot touch main or any protected branch. PR is gated behind human approval + full CI. This is the most constrained architecture of the major tools.
 
-**Devin:** Maximum autonomy — plan to pull request, no mandatory human checkpoint mid-task. Best for fully delegatable bounded tasks. Requires strong AGENTS.md constraints to compensate.
+**Devin:** Maximum autonomy - plan to pull request, no mandatory human checkpoint mid-task. Best for fully delegatable bounded tasks. Requires strong AGENTS.md constraints to compensate.
 
 ### 3.2 What high-performing teams configure
 
@@ -63,17 +63,17 @@ The consensus across practitioner write-ups and community research:
 
 1. **Commit at task checkpoints, not at file-save.** A checkpoint is: code written + tests pass + no failing lint. Uncommitted checkpoints are the root cause of the context-loss regression pattern.
 
-2. **One logical change per commit.** One well-cited pattern from Claude Code best practices: separate commits per file when multiple files change for different reasons. Do NOT bundle unrelated changes — makes rollback impossible.
+2. **One logical change per commit.** One well-cited pattern from Claude Code best practices: separate commits per file when multiple files change for different reasons. Do NOT bundle unrelated changes - makes rollback impossible.
 
 3. **Commit message = Conventional Commits format.** Virtually all tools can be steered to produce `feat(scope): description`, `fix(scope): description` etc. Enforce this via a steering rule or pre-commit hook. Agents generally produce better commit messages than developers do when explicitly instructed to follow a format.
 
 4. **Defensive checkpoint before any multi-file refactor.** This is cited independently by Cursor, Claude Code, and Codex communities. Make it a hook: before any session that will touch >3 files, create a labeled checkpoint commit.
 
-5. **After every successful test run, commit immediately.** Do not let a passing state sit uncommitted — context compression, agent session end, or a bad subsequent step will erase it.
+5. **After every successful test run, commit immediately.** Do not let a passing state sit uncommitted - context compression, agent session end, or a bad subsequent step will erase it.
 
 ---
 
-## 4. Branch Strategy — What Agents Do and What Works
+## 4. Branch Strategy - What Agents Do and What Works
 
 ### 4.1 Kiro (GitHub integration)
 
@@ -83,7 +83,7 @@ Kiro's autonomous GitHub agent creates a feature branch per task, commits with c
 
 ### 4.2 Copilot Coding Agent
 
-The cleanest isolation model in the industry. Scoped strictly to `copilot/*` branches. Cannot touch main or develop. GitHub Actions pipelines require human approval to trigger on agent PRs. AGENTS.md is the hard constraint layer — code style, testing thresholds, prohibited patterns, commit conventions.
+The cleanest isolation model in the industry. Scoped strictly to `copilot/*` branches. Cannot touch main or develop. GitHub Actions pipelines require human approval to trigger on agent PRs. AGENTS.md is the hard constraint layer - code style, testing thresholds, prohibited patterns, commit conventions.
 
 ### 4.3 Cursor Background Agent
 
@@ -91,7 +91,7 @@ Sandboxed cloud VM with its own ephemeral checkout. Can read a GitHub issue, bra
 
 ### 4.4 Codex
 
-Each task gets its own isolated sandbox preloaded with the repository. There is no shared branch state between parallel tasks — parallel execution is safe by design. The output is always a proposed diff for review, not an automatic push.
+Each task gets its own isolated sandbox preloaded with the repository. There is no shared branch state between parallel tasks - parallel execution is safe by design. The output is always a proposed diff for review, not an automatic push.
 
 ### 4.5 Common anti-patterns (across all tools)
 
@@ -110,22 +110,22 @@ These failure modes are well-documented and appear repeatedly across practitione
 
 ---
 
-## 5. PR Discipline — How Each Tool Handles It
+## 5. PR Discipline - How Each Tool Handles It
 
 | Tool | PR creation | PR description quality | Human gate |
 |---|---|---|---|
-| **Kiro** | Automatic after task completion | Detailed: changes, approach, trade-offs | Optional — configurable |
+| **Kiro** | Automatic after task completion | Detailed: changes, approach, trade-offs | Optional - configurable |
 | **Copilot Coding Agent** | Automatic after task completion | Structured, includes security scan findings | Mandatory human approval before CI triggers |
 | **Cursor Background Agent** | Automatic after task completion | Issue-sourced context, diff summary | Human review before merge |
 | **Codex** | Proposes diff; PR opened with human opt-in | Mirrors PR preferences trained via RL | Human approval always required |
-| **Devin** | Fully autonomous by default | Variable quality | Optional — configurable per team |
+| **Devin** | Fully autonomous by default | Variable quality | Optional - configurable per team |
 | **Claude Code** | Manual (developer-initiated) or via hooks | As good as the commit message discipline | Always manual |
 
-**Key finding:** At OpenAI, Codex reviews 100% of pull requests. The teams extracting the most value from this do so because their tests are good enough to make the review meaningful. Test quality is the multiplier — automated review on a poorly-tested codebase produces noise, not signal.
+**Key finding:** At OpenAI, Codex reviews 100% of pull requests. The teams extracting the most value from this do so because their tests are good enough to make the review meaningful. Test quality is the multiplier - automated review on a poorly-tested codebase produces noise, not signal.
 
 ### PR description best practice (universal)
 
-The most impactful single steering rule for PR quality: require the agent to document **what changed, why, and what trade-offs were considered** — not just what files were modified. Kiro does this by default; others need it explicitly in their config.
+The most impactful single steering rule for PR quality: require the agent to document **what changed, why, and what trade-offs were considered** - not just what files were modified. Kiro does this by default; others need it explicitly in their config.
 
 ---
 
@@ -133,7 +133,7 @@ The most impactful single steering rule for PR quality: require the agent to doc
 
 ### Kiro hooks
 
-Kiro's hook system is the most flexible of any tool reviewed. Hooks fire on IDE events (`fileEdited`, `taskCompleted`, `onSave`, git events) and trigger predefined agent actions. Hooks run inside the IDE during development — before code reaches a CI/CD pipeline. Teams commit hooks to version control for shared enforcement. Practical uses documented in production:
+Kiro's hook system is the most flexible of any tool reviewed. Hooks fire on IDE events (`fileEdited`, `taskCompleted`, `onSave`, git events) and trigger predefined agent actions. Hooks run inside the IDE during development - before code reaches a CI/CD pipeline. Teams commit hooks to version control for shared enforcement. Practical uses documented in production:
 
 - Auto-generate changelog from git diff
 - Commit message helper (format enforcement)
@@ -200,14 +200,14 @@ Missing across all your steering files: the explicit "create a checkpoint commit
 Recommended addition to `git-workflow.md`:
 
 ```markdown
-## Defensive Checkpoints — MANDATORY
+## Defensive Checkpoints - MANDATORY
 
 Before starting any task that will touch more than 3 files or take more than one
 session to complete, create a labeled checkpoint commit:
 
 git add -A && git commit -m "checkpoint: before <task-description>"
 
-This creates a safe rollback point. A checkpoint is NOT a feature commit — it does
+This creates a safe rollback point. A checkpoint is NOT a feature commit - it does
 not need to pass tests or meet commit message standards. Its only job is to make
 work recoverable.
 ```
@@ -268,7 +268,7 @@ Your steering files have some overlap. Suggested reorganization:
   - Command output logging and reusable scripts → merge into `wsl-shell-commands.md`
 
 **Add (new file recommended):**
-- `agent-boundaries.md` — A short file that explicitly tells the agent what it MUST NOT do autonomously, mirroring the pattern used in Cursor's `cursorrules-2026-best-practices.md`:
+- `agent-boundaries.md` - A short file that explicitly tells the agent what it MUST NOT do autonomously, mirroring the pattern used in Cursor's `cursorrules-2026-best-practices.md`:
   - Never commit without a passing test run (unless checkpoint-flagged)
   - Never delete config files without explicit confirmation
   - Never use `--ours` or `--theirs`
@@ -276,7 +276,7 @@ Your steering files have some overlap. Suggested reorganization:
   - Never modify tests to make them pass
   - Always stop and ask on genuine conflicts (with the 2-minute / 20-hour framing)
 
-This belongs as its own file because it needs `inclusion: always` and should be the shortest, sharpest document in your steering set — the first thing an agent reads, and the hardest constraints stated plainly.
+This belongs as its own file because it needs `inclusion: always` and should be the shortest, sharpest document in your steering set - the first thing an agent reads, and the hardest constraints stated plainly.
 
 ---
 
@@ -286,7 +286,7 @@ This belongs as its own file because it needs `inclusion: always` and should be 
 
 2. **Git worktrees as first-class workflow.** Cursor 3.0's Agents Window (April 2026) treats worktrees as primitives. The pattern of one worktree per agent task will become standard. Your `scripts/branch-check.sh` is the right detective control today; plan for a worktree-based preventive control when Kiro adds native multi-agent support.
 
-3. **Automated PR review by agents.** Codex reviews 100% of PRs at OpenAI. This pattern is coming to all tools. Your Tier 1/2/3 security review framework maps directly onto this — it just needs to be triggered pre-PR-open rather than post-commit in those cases.
+3. **Automated PR review by agents.** Codex reviews 100% of PRs at OpenAI. This pattern is coming to all tools. Your Tier 1/2/3 security review framework maps directly onto this - it just needs to be triggered pre-PR-open rather than post-commit in those cases.
 
 4. **SKILL.md as the cross-agent skill standard.** Skills (reusable procedural instructions with YAML frontmatter) are converging on a cross-tool format. Your Kiro hooks are the equivalent. Consider migrating the most reusable ones to SKILL.md format for portability.
 

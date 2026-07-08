@@ -1,6 +1,6 @@
 {
   "name": "ux-reviewer",
-  "description": "Performs live browser-walk UX audits using the console-idiom rubric. Restricted to read-only browser interaction — no writes, deletes, or submissions. Requires a browser MCP.",
+  "description": "Performs live browser-walk UX audits using the console-idiom rubric. Restricted to read-only browser interaction - no writes, deletes, or submissions. Requires a browser MCP.",
   "prompt": "file://../prompts/review-ux-live.md",
   "tools": [
     "read",
@@ -20,5 +20,5 @@
     "file://scripts/style-survey.js",
     "file://docs/ux-reviews/**/*.md"
   ],
-  "welcomeMessage": "UX reviewer ready. I will walk the application in-browser using the 9-step protocol, score each page against the console-idiom rubric, and produce a UXR report. I operate read-only — no form submissions, saves, or destructive actions."
+  "welcomeMessage": "UX reviewer ready. I will walk the application in-browser using the 9-step protocol, score each page against the console-idiom rubric, and produce a UXR report. I operate read-only - no form submissions, saves, or destructive actions."
 }

@@ -66,24 +66,24 @@ Keyword-rich descriptions enable agents to find the right skill from natural lan
 
 | Domain | Skills | Relevance to kiro-rails |
 |--------|--------|------------------------|
-| Cloud Security | 66 | **High** — hardening, CSPM, cloud forensics |
-| Web Application Security | 42 | **High** — OWASP Top 10, SQLi, XSS, SSRF |
-| DevSecOps | 18 | **High** — CI/CD security, Trivy, code signing |
-| API Security | 28 | **High** — GraphQL, REST, OWASP API Top 10 |
-| Supply Chain Security | 8 | **High** — SBOMs, dependency confusion, SLSA |
-| AI Security | 14 | **High** — LLM red-teaming, prompt injection, MCP security |
-| Container Security | 33 | **Medium** — K8s RBAC, image scanning, Falco |
-| Cryptography | 16 | **Medium** — TLS, post-quantum, key management |
-| Identity & Access Management | 37 | **Medium** — Entra ID, PAM, zero trust |
-| Compliance & Governance | 9 | **Medium** — NIST 800-30, CMMC, HIPAA |
-| Threat Hunting | 58 | Low — operational SOC work |
-| Threat Intelligence | 52 | Low — STIX/TAXII, MISP, feed integration |
-| Digital Forensics | 41 | Low — disk imaging, memory forensics |
-| Malware Analysis | 39 | Low — reverse engineering, sandboxing |
-| Red Teaming | 33 | Low — ADCS, BloodHound, C2 frameworks |
-| Incident Response | 26 | Low-Medium — breach containment patterns |
-| Penetration Testing | 21 | Low — operational pentesting |
-| Others (12 domains) | ~150 | Low — OT/ICS, mobile, hardware, deception |
+| Cloud Security | 66 | **High** - hardening, CSPM, cloud forensics |
+| Web Application Security | 42 | **High** - OWASP Top 10, SQLi, XSS, SSRF |
+| DevSecOps | 18 | **High** - CI/CD security, Trivy, code signing |
+| API Security | 28 | **High** - GraphQL, REST, OWASP API Top 10 |
+| Supply Chain Security | 8 | **High** - SBOMs, dependency confusion, SLSA |
+| AI Security | 14 | **High** - LLM red-teaming, prompt injection, MCP security |
+| Container Security | 33 | **Medium** - K8s RBAC, image scanning, Falco |
+| Cryptography | 16 | **Medium** - TLS, post-quantum, key management |
+| Identity & Access Management | 37 | **Medium** - Entra ID, PAM, zero trust |
+| Compliance & Governance | 9 | **Medium** - NIST 800-30, CMMC, HIPAA |
+| Threat Hunting | 58 | Low - operational SOC work |
+| Threat Intelligence | 52 | Low - STIX/TAXII, MISP, feed integration |
+| Digital Forensics | 41 | Low - disk imaging, memory forensics |
+| Malware Analysis | 39 | Low - reverse engineering, sandboxing |
+| Red Teaming | 33 | Low - ADCS, BloodHound, C2 frameworks |
+| Incident Response | 26 | Low-Medium - breach containment patterns |
+| Penetration Testing | 21 | Low - operational pentesting |
+| Others (12 domains) | ~150 | Low - OT/ICS, mobile, hardware, deception |
 
 ---
 
@@ -157,10 +157,10 @@ These improvements enhance our existing `review-code-security.md` and `review-ai
 
 ## What We Should NOT Adopt
 
-1. **Offensive/red-team skills** — Wrong audience (we serve developers, not pentesters)
-2. **Tool-specific operational runbooks** — Volatility3, BloodHound, Sliver C2 are analyst tools
-3. **Their skill format verbatim** — Their format optimizes for operational execution; ours optimizes for development decisions
-4. **Quantity over depth** — 817 skills is a knowledge base. We're a process template. 5-10 well-integrated skills > 100 reference skills
+1. **Offensive/red-team skills** - Wrong audience (we serve developers, not pentesters)
+2. **Tool-specific operational runbooks** - Volatility3, BloodHound, Sliver C2 are analyst tools
+3. **Their skill format verbatim** - Their format optimizes for operational execution; ours optimizes for development decisions
+4. **Quantity over depth** - 817 skills is a knowledge base. We're a process template. 5-10 well-integrated skills > 100 reference skills
 
 ---
 

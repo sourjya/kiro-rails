@@ -1,5 +1,5 @@
 /**
- * style-survey.js — Computed-style census for UX rubric evidence.
+ * style-survey.js - Computed-style census for UX rubric evidence.
  *
  * Run this script in a browser context (DevTools console, Playwright MCP
  * `javascript` tool, or any browser automation) to produce quantitative
@@ -120,7 +120,7 @@
       });
     }
 
-    // ── Tabs and nav items — active state (K-5) ───────────────────────
+    // ── Tabs and nav items - active state (K-5) ───────────────────────
     const navSelectors = [
       '[role="tab"]',
       '[aria-selected]',

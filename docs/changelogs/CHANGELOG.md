@@ -4,36 +4,36 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
-## 2026-07-08 - UX Review Tooling
+## 2026-07-08 - v0.16.0 - UX Review Tooling + Interactive Review Guide
 
 ### Added - Interactive Review Guide (3-layer onboarding)
 
-- **New `.kiro/skills/review-guide/SKILL.md`** — interactive skill that guides novice users to the right review prompt. Auto-matches on "what reviews should I run?", "which prompt?", "how do I audit?". 3-step protocol: understand context → recommend 1-3 reviews → offer to run. Includes full catalog knowledge (17 prompts), tiered model explanation, and common Q&A.
-- **New `.kiro/hooks/review-suggest.kiro.hook`** — prompt-submit hook that detects review-worthy checkpoints (5+ commits with frontend/API/auth changes) and suggests the right review with a one-line nudge. Never blocking, never verbose. Points to `/review-guide` for deeper help.
-- **Quick Reference table in `review-policy.md`** — 8-row "you just... → run this" lookup table (~150 tokens) giving the agent ambient awareness to suggest reviews organically in any conversation.
-- **"Getting Started with Reviews" section in README** — user-friendly onboarding right below Quick Start. Shows the system is self-guiding: just ask, or keep working and it suggests for you. Includes cheat sheet and tier explanation.
+- **New `.kiro/skills/review-guide/SKILL.md`** - interactive skill that guides novice users to the right review prompt. Auto-matches on "what reviews should I run?", "which prompt?", "how do I audit?". 3-step protocol: understand context → recommend 1-3 reviews → offer to run. Includes full catalog knowledge (17 prompts), tiered model explanation, and common Q&A.
+- **New `.kiro/hooks/review-suggest.kiro.hook`** - prompt-submit hook that detects review-worthy checkpoints (5+ commits with frontend/API/auth changes) and suggests the right review with a one-line nudge. Never blocking, never verbose. Points to `/review-guide` for deeper help.
+- **Quick Reference table in `review-policy.md`** - 8-row "you just... → run this" lookup table (~150 tokens) giving the agent ambient awareness to suggest reviews organically in any conversation.
+- **"Getting Started with Reviews" section in README** - user-friendly onboarding right below Quick Start. Shows the system is self-guiding: just ask, or keep working and it suggests for you. Includes cheat sheet and tier explanation.
 
 ### Added - Console-idiom UX rubric and live browser-walk review
 
-- **New `.kiro/steering/ux-console-idiom.md`** — console-idiom UX quality rubric with 9 check families (D/S/R/V/T/E/C/A/K), 44 checks, severity-weighted scoring (Sev-1 −15, Sev-2 −5, Sev-3 −1), and a ship gate (zero Sev-1 + no page below 70). `inclusion: manual` — loaded on-demand for reviews, not always-on (per context-bloat research evidence).
-- **New `.kiro/prompts/review-ux-live.md`** — 9-step per-page live browser-walk protocol with side-effect boundary (observer-only), evidence discipline (5 evidence types with strength ratings), mandatory Corrections/Retractions section, and report structure (6 fixed-order sections). Requires a browser MCP at runtime.
-- **New `.kiro/agents/ux-reviewer.json`** — restricted-tool UX auditor agent (read, grep, glob only; no write/delete/send). Enforces the side-effect boundary at the tool-permission layer.
-- **New `scripts/style-survey.js`** — in-page computed-style census for quantitative rubric evidence. Collects font-size histogram, weight census, border-radius set, button dimensions, heading hierarchy, nav/tab active states, table alignment, unlabelled form controls, color values, and spacing values. Runnable in DevTools or via browser MCP.
-- **New `docs/ux-reviews/` taxonomy directory** — UXR report placement rules, gate definition, and cross-references.
-- **Design tokens section in `user-project-overrides.md`** — placeholder block for team-specific UX rubric thresholds (typography, surfaces, consistency, save model, tables, timing, date format).
+- **New `.kiro/steering/ux-console-idiom.md`** - console-idiom UX quality rubric with 9 check families (D/S/R/V/T/E/C/A/K), 44 checks, severity-weighted scoring (Sev-1 −15, Sev-2 −5, Sev-3 −1), and a ship gate (zero Sev-1 + no page below 70). `inclusion: manual` - loaded on-demand for reviews, not always-on (per context-bloat research evidence).
+- **New `.kiro/prompts/review-ux-live.md`** - 9-step per-page live browser-walk protocol with side-effect boundary (observer-only), evidence discipline (5 evidence types with strength ratings), mandatory Corrections/Retractions section, and report structure (6 fixed-order sections). Requires a browser MCP at runtime.
+- **New `.kiro/agents/ux-reviewer.json`** - restricted-tool UX auditor agent (read, grep, glob only; no write/delete/send). Enforces the side-effect boundary at the tool-permission layer.
+- **New `scripts/style-survey.js`** - in-page computed-style census for quantitative rubric evidence. Collects font-size histogram, weight census, border-radius set, button dimensions, heading hierarchy, nav/tab active states, table alignment, unlabelled form controls, color values, and spacing values. Runnable in DevTools or via browser MCP.
+- **New `docs/ux-reviews/` taxonomy directory** - UXR report placement rules, gate definition, and cross-references.
+- **Design tokens section in `user-project-overrides.md`** - placeholder block for team-specific UX rubric thresholds (typography, surfaces, consistency, save model, tables, timing, date format).
 
 ### Changed
 
-- **`review-ux-audit.md`** — added House Standard section requiring rubric IDs on findings, ship-now/fix-soon/defer bucketing, and gate pass/fail scoring.
-- **`review-css-architecture.md`** — added rubric reference for D and K families, style-survey.js evidence preference for token audits.
-- **`review-policy.md`** — added UX Review section (trigger conditions, agent/rubric/prompt references, gate behavior, report location `docs/ux-reviews/UXR-{###}`), updated output convention table, report numbering, and folder structure.
+- **`review-ux-audit.md`** - added House Standard section requiring rubric IDs on findings, ship-now/fix-soon/defer bucketing, and gate pass/fail scoring.
+- **`review-css-architecture.md`** - added rubric reference for D and K families, style-survey.js evidence preference for token audits.
+- **`review-policy.md`** - added UX Review section (trigger conditions, agent/rubric/prompt references, gate behavior, report location `docs/ux-reviews/UXR-{###}`), updated output convention table, report numbering, and folder structure.
 - README updated: prompts 16 → 17, agents 3 → 4, docs dirs 13 → 14, steering table adds `ux-console-idiom.md`, project structure tree updated.
 
 ## 2026-07-03 - v0.15.0
 
 ### Added - Hardcoded value scan prompt
 
-- **New `review-hardcoded-values.md` prompt** — 6-category structured scan for embedded literals: hardcoded identifiers (C1), URLs/domains (C2), magic numbers (C3), string-literal enum values (C4), credentials/secrets (C5), and environment assumptions (C6). Includes suppression convention (`scan:allow`), per-language adaptation appendix (Python, TypeScript, Go), hook pairing guidance for automated pre-commit coverage, and tiered review cadence integration. Produces a findings report with scan manifest proving completeness.
+- **New `review-hardcoded-values.md` prompt** - 6-category structured scan for embedded literals: hardcoded identifiers (C1), URLs/domains (C2), magic numbers (C3), string-literal enum values (C4), credentials/secrets (C5), and environment assumptions (C6). Includes suppression convention (`scan:allow`), per-language adaptation appendix (Python, TypeScript, Go), hook pairing guidance for automated pre-commit coverage, and tiered review cadence integration. Produces a findings report with scan manifest proving completeness.
 - Installers (`install.sh`, `install.ps1`) updated to include the new prompt file.
 - README updated: prompt count 15 → 16.
 
@@ -43,12 +43,12 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
 Evaluation of [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) (817 skills, 29 domains, 6 compliance frameworks) identified gaps in our security review coverage. See `docs/references/eval-anthropic-cybersecurity-skills-2026-06-28.md`.
 
-- **New `incident-response` skill** (`.kiro/skills/incident-response/SKILL.md`) — 6-phase structured response: immediate containment, scope assessment, communication (with notification template), remediation, recovery verification, post-incident review. Auto-activates on breach/compromise/incident keywords.
-- **Supply chain integrity checks** added to `review-dependency-risk.md` — namespace squatting prevention (@org/ scoping), SBOM generation readiness, Sigstore/SLSA provenance verification, reproducible build checks. 4 new Do Not Miss checklist items.
-- **NIST CSF + ATT&CK + D3FEND framework tagging** added to `review-code-security.md` — T2 and T3 SRR findings now include compliance framework mappings per finding.
-- **Cloud security baseline** added to `review-iac-consistency.md` — new section 13 covering CloudTrail, GuardDuty, AWS Config, root MFA, SCPs, WAF on public endpoints, TLS 1.2+ enforcement, KMS rotation, public exposure checks. 7 new checklist items.
-- **GraphQL security** added to `review-api-contracts.md` — new section 11 covering introspection disabled in prod, query depth/complexity limits, batching attack prevention, field-level authorization, persisted queries, alias abuse. 4 new checklist items.
-- **Activation Triggers sections** added to 5 review prompts (dependency-risk, iac-consistency, api-contracts, code-maintainability, test-quality) — self-documenting when each review should run.
+- **New `incident-response` skill** (`.kiro/skills/incident-response/SKILL.md`) - 6-phase structured response: immediate containment, scope assessment, communication (with notification template), remediation, recovery verification, post-incident review. Auto-activates on breach/compromise/incident keywords.
+- **Supply chain integrity checks** added to `review-dependency-risk.md` - namespace squatting prevention (@org/ scoping), SBOM generation readiness, Sigstore/SLSA provenance verification, reproducible build checks. 4 new Do Not Miss checklist items.
+- **NIST CSF + ATT&CK + D3FEND framework tagging** added to `review-code-security.md` - T2 and T3 SRR findings now include compliance framework mappings per finding.
+- **Cloud security baseline** added to `review-iac-consistency.md` - new section 13 covering CloudTrail, GuardDuty, AWS Config, root MFA, SCPs, WAF on public endpoints, TLS 1.2+ enforcement, KMS rotation, public exposure checks. 7 new checklist items.
+- **GraphQL security** added to `review-api-contracts.md` - new section 11 covering introspection disabled in prod, query depth/complexity limits, batching attack prevention, field-level authorization, persisted queries, alias abuse. 4 new checklist items.
+- **Activation Triggers sections** added to 5 review prompts (dependency-risk, iac-consistency, api-contracts, code-maintainability, test-quality) - self-documenting when each review should run.
 
 ## 2026-06-11 - v0.13.0
 

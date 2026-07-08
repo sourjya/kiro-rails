@@ -37,7 +37,7 @@ main ──→ feat/A ──→ merge+delete ──→ fix/B ──→ merge+del
 
 ---
 
-# Part 1 — Branch Hygiene
+# Part 1 - Branch Hygiene
 
 **A branch exists to isolate one task and then disappear. A branch that outlives its
 task is a liability.** These rules come first because branch divergence is the
@@ -92,7 +92,7 @@ full cross-session safety rules.
 
 ---
 
-# Part 2 — Branch Types & Naming
+# Part 2 - Branch Types & Naming
 
 | Situation | Branch type | Example |
 |---|---|---|
@@ -112,7 +112,7 @@ full cross-session safety rules.
 
 ---
 
-# Part 3 — Commit Discipline
+# Part 3 - Commit Discipline
 
 **A branch is not a place to hoard uncommitted work. Commit at every meaningful
 checkpoint so that no context boundary, crash, or bad next step can erase a good
@@ -189,7 +189,7 @@ rollback commits described above.)
 
 ---
 
-# Part 4 — The Standard Lifecycle
+# Part 4 - The Standard Lifecycle
 
 ## Standard Git Scripts
 
@@ -222,7 +222,7 @@ git checkout -b feat/next-thing
 
 ---
 
-# Part 5 — Focus & The Request Queue Protocol
+# Part 5 - Focus & The Request Queue Protocol
 
 **When a new request arrives while you are mid-task, the default is to FILE it, not
 DO it.**
@@ -261,7 +261,7 @@ authorize a divert** - you do not divert on your own judgment that the new thing
 
 ---
 
-# Part 6 — Definition of Done
+# Part 6 - Definition of Done
 
 A task is **not** done when the code works. It is done when ALL of the following are
 true, **in order**:
@@ -280,7 +280,7 @@ branches pile up and diverge.
 
 ---
 
-# Part 7 — Handling Bugs During Feature Work
+# Part 7 - Handling Bugs During Feature Work
 
 **Do NOT fix bugs on the current feature branch.**
 
@@ -325,7 +325,7 @@ When a bug is identified, follow this workflow in full:
 
 ---
 
-# Part 8 — Spec-Driven Work
+# Part 8 - Spec-Driven Work
 
 1. Create `feat/<spec-name>` branch from main
 2. Complete ALL tasks in the spec on that branch
@@ -336,7 +336,7 @@ When a bug is identified, follow this workflow in full:
 
 ---
 
-# Part 9 — Forbidden Actions & Per-File Conflict Resolution
+# Part 9 - Forbidden Actions & Per-File Conflict Resolution
 
 | Action | Why it's banned |
 |---|---|

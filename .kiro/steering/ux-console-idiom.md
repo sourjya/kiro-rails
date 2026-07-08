@@ -1,13 +1,13 @@
 ---
 inclusion: manual
-description: Console-idiom UX rubric — 9 check families with severity scoring for data-dense admin/SaaS interfaces. Load with /ux-console-idiom when reviewing or generating UI.
+description: Console-idiom UX rubric - 9 check families with severity scoring for data-dense admin/SaaS interfaces. Load with /ux-console-idiom when reviewing or generating UI.
 ---
 
 # UX Console-Idiom Rubric
 
-A checkable UX quality rubric for **console-style applications** — admin panels, dashboards, SaaS control planes, and data-dense internal tools. Each check has a unique ID, severity, and a binary pass/fail criterion.
+A checkable UX quality rubric for **console-style applications** - admin panels, dashboards, SaaS control planes, and data-dense internal tools. Each check has a unique ID, severity, and a binary pass/fail criterion.
 
-**Load this file** when reviewing, auditing, or generating UI for console-type applications. It layers on top of WCAG 2.2 AA and Nielsen's 10 heuristics as the **house standard** — specific where they are general.
+**Load this file** when reviewing, auditing, or generating UI for console-type applications. It layers on top of WCAG 2.2 AA and Nielsen's 10 heuristics as the **house standard** - specific where they are general.
 
 **Customize:** Override threshold values in `user-project-overrides.md` under the Design Tokens section. The IDs and severity model are fixed; the numeric thresholds are team-configurable.
 
@@ -31,7 +31,7 @@ A checkable UX quality rubric for **console-style applications** — admin panel
 
 ---
 
-## D — Density & Type
+## D - Density & Type
 
 Controls typographic consistency and information density.
 
@@ -45,7 +45,7 @@ Controls typographic consistency and information density.
 
 ---
 
-## S — Surfaces & Layout
+## S - Surfaces & Layout
 
 Controls spatial organization and container usage.
 
@@ -59,7 +59,7 @@ Controls spatial organization and container usage.
 
 ---
 
-## R — Read-First Editing
+## R - Read-First Editing
 
 Controls the inline-edit and detail-view patterns.
 
@@ -72,7 +72,7 @@ Controls the inline-edit and detail-view patterns.
 
 ---
 
-## V — Save Model
+## V - Save Model
 
 Controls how mutations are committed and confirmed.
 
@@ -85,7 +85,7 @@ Controls how mutations are committed and confirmed.
 
 ---
 
-## T — Tables & Lists
+## T - Tables & Lists
 
 Controls data-grid and list-view patterns.
 
@@ -99,7 +99,7 @@ Controls data-grid and list-view patterns.
 
 ---
 
-## E — Empty States & Feedback
+## E - Empty States & Feedback
 
 Controls system status communication.
 
@@ -113,7 +113,7 @@ Controls system status communication.
 
 ---
 
-## C — Copy & Correctness
+## C - Copy & Correctness
 
 Controls text quality and data display.
 
@@ -127,7 +127,7 @@ Controls text quality and data display.
 
 ---
 
-## A — Accessibility & States
+## A - Accessibility & States
 
 Controls WCAG compliance and interactive state coverage.
 
@@ -142,7 +142,7 @@ Controls WCAG compliance and interactive state coverage.
 
 ---
 
-## K — Consistency & Tokens
+## K - Consistency & Tokens
 
 Controls design-system adherence and visual consistency.
 
@@ -163,7 +163,7 @@ Controls design-system adherence and visual consistency.
 Reference this file and require findings to carry a rubric ID + severity:
 
 ```
-Finding: D-2 (Sev-2) — 4 font weights in use (400, 500, 600, 700). Expected max 2.
+Finding: D-2 (Sev-2) - 4 font weights in use (400, 500, 600, 700). Expected max 2.
 Fix: Remove 500 and 700; consolidate to 400/600.
 ```
 
@@ -183,8 +183,8 @@ Findings SHOULD include quantitative evidence from `scripts/style-survey.js` (co
 
 ## Cross-references
 
-- `user-project-overrides.md` — team-specific threshold overrides (font size, weight count, radii count, spacing scale)
-- `ux-pattern-registry.md` — reference layout patterns for common screen types
-- `review-ux-audit.md` — review prompt that scores against this rubric
-- `review-ux-live.md` — live browser-walk protocol using this rubric
-- `scripts/style-survey.js` — quantitative evidence collection script
+- `user-project-overrides.md` - team-specific threshold overrides (font size, weight count, radii count, spacing scale)
+- `ux-pattern-registry.md` - reference layout patterns for common screen types
+- `review-ux-audit.md` - review prompt that scores against this rubric
+- `review-ux-live.md` - live browser-walk protocol using this rubric
+- `scripts/style-survey.js` - quantitative evidence collection script
