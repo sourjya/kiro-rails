@@ -110,6 +110,40 @@ Without a threat model, the reviewer infers trust boundaries from code alone, wh
 
 ---
 
+## UX Review — Live Browser Walk
+
+**Prompt:** `.kiro/prompts/review-ux-live.md`
+**Agent:** `.kiro/agents/ux-reviewer.json` (restricted-tool: browser MCP + read + script exec only)
+**Rubric:** `.kiro/steering/ux-console-idiom.md` (loaded on-demand, NOT always-on)
+**Trigger:** Manual invocation at UI feature completion or pre-release
+**Scope:** All user-facing routes (or subset specified by the invoker)
+
+**Fires when:**
+- A `ui/` or `feat/` branch with frontend changes is marked feature-complete
+- Before any release (per the release checklist in `versioning.md`)
+- Manually triggered when UX regression is suspected
+- After a significant design system or layout change
+
+**Does NOT fire:**
+- On every commit (too expensive — browser automation)
+- On backend-only changes with no UI impact
+- As always-on context (per research evidence on context-bloat cost)
+
+**Checks:** Console-idiom rubric (9 families, 44 checks): Density & Type, Surfaces & Layout, Read-First Editing, Save Model, Tables & Lists, Empty States & Feedback, Copy & Correctness, Accessibility & States, Consistency & Tokens
+
+**Output:** Full UXR report — `docs/ux-reviews/UXR-{###}-{YYYY-MM-DD}.md`
+- Systemic findings + per-page findings with rubric IDs
+- Prioritized plan (ship-now / fix-soon / defer)
+- Mandatory Corrections/Retractions section
+- Gate: PASS (zero Sev-1, no page below 70) or FAIL
+
+**Gate behavior:**
+- FAIL blocks release (same weight as a Tier 2 security finding)
+- Sev-1 findings create immediate fix tasks
+- Sev-2 findings added to next sprint backlog
+
+---
+
 ## Sequencing Rule
 
 When both a security review and a maintainability review are due at the same checkpoint (e.g., end of sprint or feature complete), run in this order:
@@ -167,6 +201,7 @@ The same agent that finds an issue is biased toward confirming it (confirmation 
 | Security Tier 3 | `docs/security/` | `SRR-{###}-{YYYY-MM-DD}-T3.md` |
 | AI Surface Review | `docs/security/` | `AISR-{###}-{YYYY-MM-DD}.md` |
 | Maintainability | `docs/reviews/` | `MRR-{###}-{YYYY-MM-DD}.md` |
+| UX Review | `docs/ux-reviews/` | `UXR-{###}-{YYYY-MM-DD}.md` |
 | Dep snapshot | `docs/security/` | `dep-snapshot-{YYYY-MM-DD}.md` |
 
 ---
@@ -175,7 +210,8 @@ The same agent that finds an issue is biased toward confirming it (confirmation 
 
 - SRR numbers are sequential across all tiers: SRR-001, SRR-002, SRR-003, ...
 - MRR numbers are sequential: MRR-001, MRR-002, MRR-003, ...
-- Always check existing files in `docs/security/` and `docs/reviews/` to determine the next number before creating a new report
+- UXR numbers are sequential: UXR-001, UXR-002, UXR-003, ...
+- Always check existing files in `docs/security/`, `docs/reviews/`, and `docs/ux-reviews/` to determine the next number before creating a new report
 - The tier suffix (T2 or T3) is appended after the date, not the number
 
 ---
@@ -203,4 +239,6 @@ docs/
 - reviews/
   - REVIEW_LOG.md
   - MRR-{###}-{YYYY-MM-DD}.md
+- ux-reviews/
+  - UXR-{###}-{YYYY-MM-DD}.md
 ```
