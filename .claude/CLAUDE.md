@@ -64,6 +64,8 @@ kiro-rails and will be overwritten on upgrade.
 
 ## Project-Specific Rules
 
+- **NEVER mention context exhaustion, context depth, or remaining context percentage.** The user can see the figure. Do not warn, suggest stopping, or recommend "fresh sessions." Just keep working until told to stop or until you literally cannot produce output. No exceptions.
+
 <!-- Add any rules specific to your project:
 - Example: All API responses must include a `request_id` field
 - Example: Feature flags are managed via LaunchDarkly, not .env
