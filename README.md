@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [21 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -74,6 +74,53 @@ What you get:
 - **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), session isolation (no cross-repo git, working-tree lock), consistency rules, dependency minimalism, code commenting standards
 - **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
+## Getting Started with Reviews
+
+kiro-rails ships 17 review prompts — but you don't need to memorize them. The system guides you automatically.
+
+### Just ask
+
+Type any of these in chat and the agent will help you pick the right review:
+
+```
+"What reviews should I run?"
+"Which prompt do I use for security?"
+"How do I audit my UI?"
+```
+
+The `/review-guide` skill activates automatically on these questions and recommends 1-3 reviews based on what you're actually working on — not a wall of options.
+
+### Or just keep working — it suggests for you
+
+The `review-suggest` hook watches your branch in the background. When you've built up enough work (5+ commits with frontend changes, auth code, or API routes), it nudges you with one line:
+
+> 💡 Your branch has 8 commits. Consider running: `/review-ux-live` (UI changes detected). Type `/review-guide` for help choosing.
+
+It never blocks you. It never repeats. It just suggests at the right moment.
+
+### The cheat sheet
+
+If you already know what you need:
+
+| You just... | Run this |
+|---|---|
+| Finished UI work | `/review-ux-live` |
+| Completed a feature | `/review-code-security` + `/review-code-maintainability` |
+| Changed auth/API code | `/review-code-security` + `/review-api-contracts` |
+| Added dependencies | `/review-dependency-risk` |
+| End of sprint | `/review-code-security` (Tier 3) + `/review-test-quality` |
+| Shipping AI features | `/review-ai-agent-surface` |
+
+### The three tiers (how depth scales)
+
+| When | What happens | You do |
+|------|-------------|--------|
+| Every commit | Tier 1 fires automatically | Nothing — secrets and unsafe code are caught for you |
+| Feature complete | Tier 2 is available | Run 2-3 relevant reviews from the cheat sheet |
+| Sprint end | Tier 3 full sweep | Run the full suite once before release |
+
+That's it. Start with `/review-guide` and let the system teach you the rest as you work.
+
 ## Documentation That Writes Itself
 
 Most teams say "we should document things" but have no enforcement. Kiro-rails makes documentation a side effect of the normal workflow - the agent does it automatically because the steering files and hooks require it.
@@ -133,7 +180,8 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── focus-guard                   # Prompt submit: queue unrelated mid-task requests, don't thrash
 │   ├── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
 │   ├── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
-│   └── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
+│   ├── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
+│   └── review-suggest                # Prompt submit: suggest relevant review prompts based on branch changes
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   ├── security-verifier.json        # Adversarial agent that disproves false positives
@@ -141,7 +189,9 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 ├── skills/
 │   ├── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
 │   │   └── SKILL.md
-│   └── incident-response/            # Security incident containment, evidence, recovery (auto-activates on breach keywords)
+│   ├── incident-response/            # Security incident containment, evidence, recovery (auto-activates on breach keywords)
+│   │   └── SKILL.md
+│   └── review-guide/                 # Interactive review prompt guide (auto-matches "what reviews?", "which prompt?")
 │       └── SKILL.md
 ├── prompts/
 │   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
@@ -256,6 +306,7 @@ Hooks fire automatically on file edits or before tool use:
 | Variant Search on Fix Branch | Prompt submit | On a fresh `fix/` branch, reminds the agent to search every call site for the same defect class - the reported instance is rarely the only one |
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 | Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
+| Review Suggest | Prompt submit | Suggests relevant review prompts when your branch has enough work (5+ commits with UI, API, or auth changes) — one-line nudge, never blocking |
 
 ## Development Workflow
 

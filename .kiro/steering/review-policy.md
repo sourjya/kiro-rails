@@ -9,6 +9,25 @@ The security review system follows a three-tier model - one prompt, three hooks,
 
 ---
 
+## Quick Reference — Which Review, When
+
+Use `/review-guide` for interactive help. The short version:
+
+| You just... | Run this |
+|---|---|
+| Finished UI work | `/review-ux-live` (browser walk) or `/review-ux-audit` (from code) |
+| Completed a feature | `/review-code-security` (Tier 2) + `/review-code-maintainability` |
+| Changed auth/API code | `/review-code-security` + `/review-api-contracts` |
+| Added dependencies | `/review-dependency-risk` |
+| Wrote a spec | `/review-spec-readiness` |
+| End of sprint | `/review-code-security` (Tier 3) + `/review-test-quality` |
+| Shipping AI features | `/review-ai-agent-surface` |
+| Worried about perf | `/review-frontend-performance` or `/review-observability` |
+
+Full catalog: 17 prompts in `.kiro/prompts/review-*.md`
+
+---
+
 ## Threat Modeling - Recommended Before First Review
 
 Before running your first Tier 2 or Tier 3 security review, build a threat model for the project using the [AWS Labs Threat Modeling MCP Server](https://github.com/awslabs/threat-modeling-mcp-server). This produces a structured threat model (assets, trust boundaries, threat actors, data flows) that the security review prompts can reference to reduce false positives.

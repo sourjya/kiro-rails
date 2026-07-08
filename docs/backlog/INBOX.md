@@ -20,7 +20,7 @@ Mark `[x]` when done and move it to **Done** at the bottom.
 
 ## Queue
 
-- [ ] 2026-07-08 | Interactive review guide skill/power — design a clever combination of steering, skills/powers, and hooks that guides novice users into using kiro-rails review prompts. Should explain when/why to run which review, provide suggestions contextually, and serve as an interactive onboarding layer. Plan the architecture before building. | context: shipping UX review tooling (KRL-1 feat/ux-review-tooling branch)
+- [x] 2026-07-08 | Interactive review guide skill/power — design a clever combination of steering, skills/powers, and hooks that guides novice users into using kiro-rails review prompts. Should explain when/why to run which review, provide suggestions contextually, and serve as an interactive onboarding layer. Plan the architecture before building. | context: shipping UX review tooling (KRL-1 feat/ux-review-tooling branch) — DONE: KRL-2, 3-layer architecture shipped (review-suggest hook + review-guide skill + review-policy micro-ref)
 
 ## Done
 
