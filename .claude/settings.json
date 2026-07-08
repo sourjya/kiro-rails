@@ -56,6 +56,15 @@
             "command": "cat .claude/hooks/prompts/security-tier1-precommit.txt"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "IN=$(cat); printf '%s' \"$IN\" | jq -r '.tool_input.file_path // empty' | grep -qiE '\\.(tsx|jsx|css|scss)$' && cat .claude/hooks/prompts/ux-preflight-gate.txt || echo OK"
+          }
+        ]
       }
     ],
     "PostToolUse": [

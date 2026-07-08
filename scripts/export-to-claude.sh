@@ -145,7 +145,10 @@ to_entries() {
 PROMPTDIR="$OUT/hooks/prompts"
 rm -rf "$PROMPTDIR"; mkdir -p "$PROMPTDIR"
 
-ups=(); post=(); pre=(); stop=(); skipped=(); unmapped=()
+# `pre` and `preedit` are both PreToolUse, split by matcher: `pre` gates the Bash
+# tool, `preedit` gates the file-writing tools. Claude keys PreToolUse entries by
+# matcher, so they cannot share one bucket.
+ups=(); post=(); pre=(); preedit=(); stop=(); skipped=(); unmapped=()
 for h in "$HOOKS"/*.kiro.hook; do
   [ -e "$h" ] || continue
   if ! jq empty "$h" 2>/dev/null; then skipped+=("$(basename "$h")"); continue; fi
@@ -183,6 +186,15 @@ for h in "$HOOKS"/*.kiro.hook; do
     # hook's stdin payload naming a commit. See compatibility doc, "Kiro pre-commit".
     beforeCommit)
       pre+=("IN=\$(cat); printf '%s' \"\$IN\" | jq -r '.tool_input.command // empty' | grep -qE '(^|[^a-z])git commit|git-commit-push\.sh' && $cmd || echo OK") ;;
+    # Kiro fires preTaskExecution once per spec task; Claude has no per-task event.
+    # Approximate with PreToolUse on the write tools, gated on the payload's
+    # file_path naming a UI file - which is exactly the moment "coding begins" that
+    # the ux-preflight-gate prompt scopes itself to. Strictly noisier than Kiro
+    # (fires per UI-file write, not per task), but the hook is non-blocking by
+    # design, so the cost is repetition, not a false gate. Same fidelity trade as
+    # beforeCommit above. See compatibility doc, "Kiro preTaskExecution".
+    preTaskExecution)
+      preedit+=("IN=\$(cat); printf '%s' \"\$IN\" | jq -r '.tool_input.file_path // empty' | grep -qiE '\\.(tsx|jsx|css|scss)\$' && $cmd || echo OK") ;;
     *) unmapped+=("$hname (when.type=$wtype, no Claude event)"); mapped=0 ;;
   esac
   # The askAgent prompt was staged before we knew whether when.type maps. If it did
@@ -194,6 +206,7 @@ done
 ups_json=$(to_entries "${ups[@]:-}")
 post_json=$(to_entries "${post[@]:-}")
 pre_json=$(to_entries "${pre[@]:-}")
+preedit_json=$(to_entries "${preedit[@]:-}")
 stop_json=$(to_entries "${stop[@]:-}")
 
 # ── 6b) MCP: enabled servers -> project-root .mcp.json; autoApprove -> permissions ─
@@ -221,13 +234,17 @@ fi
 # destructive git call (exit 2), and there is no point running the other pre-hooks
 # on a command that is about to be refused.
 jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson pre "$pre_json" \
+      --argjson preedit "$preedit_json" \
       --argjson stop "$stop_json" --argjson mcpperms "$mcp_perms" '
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   hooks: (
     {}
     + (if ($ups|length)  > 0 then {UserPromptSubmit: [ {hooks: $ups} ]} else {} end)
-    + {PreToolUse: [ {matcher: "Bash", hooks: ([ {type: "command", command: "bash .claude/hooks/guard-bash.sh"} ] + $pre)} ]}
+    + {PreToolUse: (
+        [ {matcher: "Bash", hooks: ([ {type: "command", command: "bash .claude/hooks/guard-bash.sh"} ] + $pre)} ]
+        + (if ($preedit|length) > 0 then [ {matcher: "Edit|Write|MultiEdit", hooks: $preedit} ] else [] end)
+      )}
     + (if ($post|length) > 0 then {PostToolUse: [ {matcher: "Edit|Write|MultiEdit", hooks: $post} ]} else {} end)
     + (if ($stop|length) > 0 then {Stop: [ {hooks: $stop} ]} else {} end)
   )
@@ -235,7 +252,7 @@ jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson pre "$pre_
 + (if ($mcpperms|length) > 0 then {permissions: {allow: ($mcpperms | unique)}} else {} end)
 ' > "$OUT/settings.json"
 
-nhooks=$(( ${#ups[@]} + ${#post[@]} + ${#pre[@]} + ${#stop[@]} ))
+nhooks=$(( ${#ups[@]} + ${#post[@]} + ${#pre[@]} + ${#preedit[@]} + ${#stop[@]} ))
 echo "Generated $OUT/ : CLAUDE.md, settings.json, hooks/guard-bash.sh, $(ls "$OUT/agents" | wc -l | tr -d ' ') agents, $(ls "$OUT/commands" | wc -l | tr -d ' ') commands, $([ -d "$OUT/skills" ] && ls "$OUT/skills" | wc -l | tr -d ' ' || echo 0) skills, $nhooks hooks."
 
 # Every drop is reported. A silently-dropped hook or description is how the Claude
