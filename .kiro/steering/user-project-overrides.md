@@ -83,6 +83,40 @@ kiro-rails and will be overwritten on upgrade.
 - Example: Use structlog for all logging, not stdlib logging
 -->
 
+## Design Tokens (UX Rubric Thresholds)
+
+<!-- These values configure the thresholds in .kiro/steering/ux-console-idiom.md.
+     The rubric checks are fixed; these numbers are team-configurable.
+     Uncomment and set for your design system:
+
+### Typography (D family)
+- Body text size range: 13–14px
+- Allowed font weights: 400, 600 (max 2)
+- Body line-height range: 1.4–1.6
+
+### Surfaces (S family)
+- Content primacy: ≥60% of viewport height for primary content
+
+### Consistency (K family)
+- Max distinct border-radius values: 2
+- Spacing scale base: 4px increments
+- Icon style: outline (not mixed)
+- Color palette: [list your token names or hex values]
+
+### Save Model (V family)
+- Save pattern: explicit (one of: explicit-button | auto-save | inline-confirm)
+
+### Tables (T family)
+- Max unbounded list items before pagination: 50
+
+### Feedback timing
+- Save confirmation deadline: 300ms
+- Long operation progress threshold: 2s
+
+### Date format
+- Consistent date format: YYYY-MM-DD (or your team's choice)
+-->
+
 ## Environment and Tooling
 
 <!-- Uncomment and set your environment:
