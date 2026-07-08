@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented infrastructure decisions (intentional per-env"
+description: "Audit infrastructure-as-code for per-environment drift, over-permissive IAM policies, unencrypted resources, and infrastructure changed outside version control."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented infrastructure decisions (intentional per-environment differences, accepted cost trade-offs) to distinguish intentional configuration from accidental drift.
 

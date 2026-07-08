@@ -42,6 +42,18 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/guard-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "IN=$(cat); printf '%s' \"$IN\" | jq -r '.tool_input.command // empty' | grep -qE '(^|[^a-z])git commit|git-commit-push\\.sh' && cat .claude/hooks/prompts/changelog-maintenance.txt || echo OK"
+          },
+          {
+            "type": "command",
+            "command": "cat .claude/hooks/prompts/comment-standards-check.txt"
+          },
+          {
+            "type": "command",
+            "command": "cat .claude/hooks/prompts/security-tier1-precommit.txt"
           }
         ]
       }
@@ -50,6 +62,14 @@
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
+          {
+            "type": "command",
+            "command": "cat .claude/hooks/prompts/adr-trigger-infra-changes.txt"
+          },
+          {
+            "type": "command",
+            "command": "cat .claude/hooks/prompts/bug-doc-completion-check.txt"
+          },
           {
             "type": "command",
             "command": "bash -c 'if [ -d .claude ]; then NEW=$(find .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts .kiro/skills -type f -newer .claude/CLAUDE.md 2>/dev/null | head -1); if [ -n \"$NEW\" ]; then echo \"🔁 CLAUDE EXPORT STALE: .kiro/ changed after .claude/ was generated. Run: bash scripts/export-to-claude.sh && git add .claude (see versioning.md release checklist).\"; else echo OK; fi; else echo OK; fi'"
@@ -61,6 +81,10 @@
           {
             "type": "command",
             "command": "bash -c 'if [ -f package.json ] && grep -q '\"files\"' package.json 2>/dev/null; then echo \"=== npm pack dry-run ===\"; npm pack --dry-run 2>&1 | tail -20; elif [ -f pyproject.toml ]; then echo \"OK - verify pyproject.toml includes are correct\"; else echo \"OK\"; fi'"
+          },
+          {
+            "type": "command",
+            "command": "cat .claude/hooks/prompts/spec-validation-gate.txt"
           }
         ]
       }

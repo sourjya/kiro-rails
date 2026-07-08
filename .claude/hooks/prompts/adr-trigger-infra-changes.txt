@@ -1,0 +1,17 @@
+An infrastructure or deployment configuration file was just modified. Determine if this change represents a significant architectural decision that should be recorded.
+
+A change warrants an ADR if it:
+- Introduces a new service, database, or external dependency
+- Changes deployment topology (new container, new serverless function, new queue)
+- Switches providers or tools (e.g., nginx → Caddy, PostgreSQL → DynamoDB)
+- Adds or modifies CI/CD pipeline stages that affect release process
+- Changes authentication or networking architecture
+
+A change does NOT warrant an ADR if it:
+- Is a minor config tweak (port change, env var addition, resource limit adjustment)
+- Is a bug fix to existing infrastructure
+- Is a version bump of an existing dependency
+
+If an ADR is warranted: check docs/decisions/ for the next ADR number and suggest creating it. Format: ADR-###-short-description.md.
+
+If not warranted: respond with just 'OK'.

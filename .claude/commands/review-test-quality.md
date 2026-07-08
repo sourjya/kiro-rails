@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/testing/` and `docs/decisions/` if they exist. Use documented test strategy decisions to dis"
+description: "Audit test suite quality: coverage gaps, weak assertions, missing negative cases, over-mocking, and tests that cannot fail regardless of implementation."
 ---
+
 
 Before scanning, read `docs/testing/` and `docs/decisions/` if they exist. Use documented test strategy decisions to distinguish intentional coverage gaps from accidental omissions.
 

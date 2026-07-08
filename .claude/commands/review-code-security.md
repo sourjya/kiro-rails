@@ -1,6 +1,7 @@
 ---
-description: "You are a senior application security and code quality auditor performing a comprehensive review. Prioritize real exploi"
+description: "Tiered application security audit (T1 pre-commit, T2 feature complete, T3 sprint end) covering OWASP, secrets, authorization, crypto quality, and supply chain. Produces an SRR report."
 ---
+
 
 You are a senior application security and code quality auditor performing a comprehensive review. Prioritize real exploitability over generic warnings. Prefer smallest safe remediation.
 

@@ -1,15 +1,7 @@
 ---
-description: "---"
+description: "Full UX audit of a frontend codebase. Produces persona cards, journey maps, heuristic sweep, anti-pattern findings, and a prioritized fix register formatted for Kiro spec output."
 ---
 
----
-name: ux-audit
-description: >
-  Full UX audit of a frontend codebase. Produces persona cards, journey
-  maps, heuristic sweep, anti-pattern findings, and a prioritized fix
-  register formatted for Kiro spec output.
-inclusion: manual
----
 
 # UX Audit - Frontend Codebase Review
 

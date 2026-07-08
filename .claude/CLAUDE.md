@@ -2588,18 +2588,34 @@ While in beta (0.x.y):
 <!-- CUSTOMIZE: List all files that must be updated on version bump -->
 ## Files to Update on Version Bump
 
-All version references must match:
+**The git tag is the authoritative version.** `docs/changelogs/CHANGELOG.md` is the
+authoritative human-readable record. Every other version reference is a copy that
+must be kept in sync with them.
+
+If the project has a build manifest, list it here and update it on every bump:
 
 ```
 pyproject.toml              -> version = "0.2.0"
 package.json                -> "version": "0.2.0"
 ```
 
+If the project has **no** build manifest (a config, steering, or docs-only repo -
+kiro-rails itself is one), delete the block above. Do not invent a manifest just to
+hold a version string: the tag and the changelog are sufficient, and a checklist
+step that points at a file which does not exist is a step that silently never runs.
+
+Verify tags and changelog agree before releasing:
+
+```bash
+git tag -l "v*" | sort -V | tail -1                        # latest tag
+grep -m1 -oE '^## [0-9-]+ - v[0-9.]+' docs/changelogs/CHANGELOG.md   # latest documented
+```
+
 ## Release Checklist
 
 1. All tests pass
 2. Lint clean
-3. Update version in all version files
+3. Update version in all version files listed above (skip if the project has none)
 4. Update `docs/changelogs/CHANGELOG.md` - move Unreleased items under the new version header with date
 5. **Regenerate the Claude bonus layer** - the committed `.claude/` tree is a generated artifact and MUST be refreshed before tagging: `bash scripts/export-to-claude.sh && git add .claude`. Verify it is in sync with `bash scripts/check-claude-fresh.sh` (must print `OK`).
 6. Commit: `chore: release vX.X.X`

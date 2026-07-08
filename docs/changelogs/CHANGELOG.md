@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-08 - v0.17.0 - Claude Export Fidelity
+
+### Fixed - the generated `.claude/` layer was missing 37% of enabled hooks
+
+- **`askAgent` hooks were silently discarded.** `scripts/export-to-claude.sh` only ever read `.then.command`, so all 7 enabled `then.type: askAgent` hooks vanished with no warning, regardless of `when.type`. This removed the *entire* tiered security review system (Tier 1 pre-commit gate), the comment-standards check, the spec-validation gate, the ADR trigger, the bug-doc completion check, and changelog maintenance from the Claude layer. They are now translated: the prompt is written to `.claude/hooks/prompts/<hook>.txt` and invoked via `cat`, relying on Claude surfacing hook stdout to the model. Exported hooks: **12 -> 18**.
+- **`preToolUse` hooks were dropped.** The `when.type` remap handled `postToolUse` but not `preToolUse`, so it fell through the catch-all. Now maps to `PreToolUse` (matcher `Bash`), appended after the cross-repo guard.
+- **`beforeCommit` hooks were dropped.** Now approximated as `PreToolUse`/`Bash` gated on the hook's stdin payload matching `git commit` or `git-commit-push.sh`, as the compatibility doc always prescribed but the generator never implemented.
+- **No more silent drops.** Untranslatable hooks, unmapped agent tools, and prompts lacking a `description:` are all reported on stderr. `preTaskExecution` (`ux-preflight-gate`) remains the one hook with no Claude analog, and now says so.
+
+### Fixed - agent tool mapping failed open (security)
+
+- If every tool an agent declared was unmappable, `ctools` came out empty and **no `tools:` frontmatter line was emitted at all** - which makes a Claude subagent inherit *every* tool, including `Write` and `Bash`. A Kiro agent deliberately sandboxed to read-only would have become fully privileged. The generator now **fails closed** to `tools: Read` and warns. Latent, not triggered by any shipped agent, but the affected agents (`ux-reviewer`, `ux-red-team`, `code-security-reviewer`, `security-verifier`) exist precisely to be sandboxed.
+
+### Fixed - slash-command routing was broken by malformed descriptions
+
+- The generator derived each command's `description` from the **first non-empty line** of the prompt, yielding `description: "---"` for frontmatter-led prompts, `"<!--"` for comment-led ones, and a sentence truncated mid-word for the rest. Claude routes slash commands and skills by description, so this actively undercut the v0.16.0 Interactive Review Guide.
+- `description` is now read from the prompt's own frontmatter (folded YAML `>` scalars supported), and the source frontmatter is stripped from the emitted body so exactly one frontmatter block exists. The same strip applies to agent bodies sourced via `file://`.
+- **Added `name:` + `description:` frontmatter to all 14 `.kiro/prompts/*.md` that lacked it.**
+
+### Fixed - versioning
+
+- Backfilled the missing annotated tags **v0.14.0, v0.15.0, v0.16.0** (the changelog documented them; only `v0.13.0` was tagged).
+- `.kiro/steering/versioning.md` listed `pyproject.toml` and `package.json` under "Files to Update on Version Bump". Neither exists in this repo, so the step silently never ran. The git tag is now stated as the authoritative version, with the manifest block marked optional and a verification snippet added.
+
+### Changed
+
+- `docs/references/kiro-to-claude-compatibility-2026-06-05.md` - translation table corrected: it claimed pre-commit hooks were "not auto-translated" and omitted `then.type` entirely. Now documents both `when.type` and `then.type` remaps, the fail-closed tool rule, and the `code` tool drop (previously only `knowledge` was noted).
+
+### Known gaps
+
+- `ux-preflight-gate` (`when.type: preTaskExecution`) has no Claude event and is not exported. Warned at generation time.
+- Agent tools `knowledge` and `code` have no Claude equivalent and are dropped (Kiro is unaffected - it reads the JSON natively).
+- The `file-ticket` skill wants `.claude/ticketing.json`, but `check-claude-fresh.sh` diffs the whole generated tree and would report `STALE`. Tracked as KRL-7; not fixed here because it touches a shared cross-repo skill convention.
+
+Tickets: KRL-3 (hooks), KRL-4 (descriptions), KRL-5 (fail-open tools), KRL-6 (versioning), KRL-7 (ticketing.json).
+
 ## 2026-07-08 - v0.16.0 - UX Review Tooling + Interactive Review Guide
 
 ### Added - Interactive Review Guide (3-layer onboarding)

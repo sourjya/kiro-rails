@@ -1,6 +1,7 @@
 ---
-description: "Hardcoded Value Scan"
+description: "Scan for embedded literals that belong in config or a constants module: URLs, magic numbers, thresholds, error message strings, and environment-dependent values."
 ---
+
 
 # Hardcoded Value Scan
 

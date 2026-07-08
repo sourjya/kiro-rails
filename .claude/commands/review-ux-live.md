@@ -1,16 +1,7 @@
 ---
-description: "---"
+description: "Live browser-walk UX review using the console-idiom rubric. Requires a browser MCP (Playwright, Chrome DevTools, or equivalent). Walks each page/route with a 9-step protocol, collects quantitative evidence, and produces a scored report with rubric IDs."
 ---
 
----
-name: ux-live
-description: >
-  Live browser-walk UX review using the console-idiom rubric. Requires a
-  browser MCP (Playwright, Chrome DevTools, or equivalent). Walks each
-  page/route with a 9-step protocol, collects quantitative evidence, and
-  produces a scored report with rubric IDs.
-inclusion: manual
----
 
 # Live UX Review - Browser-Walk Protocol
 

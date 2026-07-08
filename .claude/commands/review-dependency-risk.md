@@ -1,6 +1,7 @@
 ---
-description: "Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in"
+description: "Audit dependency manifests for supply-chain risk: unmaintained or typosquatted packages, license conflicts, unpinned versions, and known vulnerabilities."
 ---
+
 
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented dependency decisions (accepted vendor lock-in, intentional SDK coupling) to distinguish intentional choices from accidental risk.
 
