@@ -87,17 +87,43 @@ for f in "$PROMPTS"/*.md; do
 done
 
 # ── 4) agents from .kiro/agents/*.json ─────────────────────────────────────────
+# Returns a SPACE-SEPARATED list of Claude tools, because some Kiro tools have no
+# single counterpart and are instead subsumed by several. Empty means genuinely
+# unmappable - the caller reports those, since a silent drop is a capability loss.
+#
+#   code      - read-only code inspection. Sits in read-only agents' allowlists
+#               (ux-red-team: "Do NOT write or modify any files"). Its Claude
+#               analogue is plain read access; it is NOT Edit/Write.
+#   knowledge - retrieval over the agent's declared `resources:`, which are file
+#               globs. Reading those is Read + Glob.
+#
+# Both are therefore subsumed by tools those agents already hold, so mapping them
+# is a no-op on capability. That is deliberate and load-bearing: the emitted
+# frontmatter must not change. See KRL-10.
 map_tool() { case "$1" in
   read) echo Read;; write) echo Write;; edit) echo Edit;;
-  grep) echo Grep;; glob) echo Glob;; shell) echo Bash;; *) echo "";; esac; }
+  grep) echo Grep;; glob) echo Glob;; shell) echo Bash;;
+  web_search) echo WebSearch;; web_fetch) echo WebFetch;;
+  code) echo "Read Grep Glob";; knowledge) echo "Read Glob";;
+  *) echo "";; esac; }
 droptools=()
 for f in "$AGENTS"/*.json; do
   [ -e "$f" ] || continue
   name=$(jq -r '.name' "$f"); desc=$(jq -r '.description' "$f")
   ctools=""
+  # `allowedTools` is the restriction and wins over `tools`: an agent may declare a
+  # tool it is not permitted to use (code-security-reviewer lists `shell` but does
+  # not allow it). Reading `tools` here would hand a sandboxed reviewer Bash.
   for t in $(jq -r '(.allowedTools // .tools // [])[]' "$f"); do
     m=$(map_tool "$t")
-    if [ -n "$m" ]; then ctools+="${ctools:+, }$m"; else droptools+=("$name:$t"); fi
+    if [ -z "$m" ]; then droptools+=("$name:$t"); continue; fi
+    # A subsumed tool expands to several Claude tools, most of which the agent
+    # already has. Dedupe on whole-word match so `Read` never matches inside a
+    # longer name, and so ordering stays stable for byte-comparable output.
+    for one in $m; do
+      case " $ctools " in *" $one,"*|*" $one "*) continue ;; esac
+      ctools+="${ctools:+, }$one"
+    done
   done
   # FAIL CLOSED. A Claude subagent with no `tools:` frontmatter inherits EVERY tool,
   # including Write and Bash. If nothing mapped, a Kiro agent that was deliberately

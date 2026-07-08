@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## 2026-07-08 - v0.17.3 - Agent Tool Mapping: Subsumed vs Lost
+
+### Fixed
+
+- **`map_tool()` reported subsumed tools as lost capability.** `code` and `knowledge` were dropped with a "no Claude equivalent" note, implying `code-security-reviewer` and `ux-red-team` had been degraded. They had not. Both tools are read-only and already covered by tools those agents hold: `code` (read-only code inspection) is `Read`/`Grep`/`Glob`; `knowledge` (retrieval over the agent's `resources:` file globs) is `Read`/`Glob`. `map_tool` now expands a Kiro tool to *several* Claude tools and de-duplicates. **The emitted agent frontmatter is byte-identical** (`Read, Grep, Glob` / `Read, Glob, Grep`) - that identity is the proof no privilege changed, and is the reason this is safe. Neither expansion includes a write tool.
+- **Variant, latent: `web_search` and `web_fetch` had no mapping either.** `ux-red-team.json` declares both in `tools`. They are not dropped today only because the exporter reads `allowedTools` (which excludes them); promoting either into `allowedTools` would have silently dropped it. Now mapped to `WebSearch`/`WebFetch`.
+- The exporter now emits **no agent-tool warning at all**, because nothing shipped is genuinely unmappable. Truly unknown tool names are still dropped and named on stderr, and the fail-closed degrade-to-`Read` path is untouched.
+
+### Corrected
+
+- The v0.17.2 notes and KRL-9 stated that mapping `knowledge`/`code` "would widen the sandbox" of the two restricted agents. **That was wrong.** `export-to-claude.sh:98` already reads `(.allowedTools // .tools)`, so `shell` / `web_search` / `web_fetch` were never eligible for export in the first place. There was no privilege leak to prevent. The real defect was a misleading diagnostic, not a missing guard.
+
+Tickets: KRL-10 (this), KRL-9 (assessment corrected).
+
 ## 2026-07-08 - v0.17.2 - UX Preflight Gate Reaches Claude
 
 ### Fixed
@@ -15,7 +29,7 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 ### Notes
 
 - The Claude gate fires **per UI-file write**, where Kiro fires **per spec task** - strictly noisier, but non-blocking by design (the guard exits 0 on both paths). Documented as an accepted fidelity trade-off alongside `beforeCommit`.
-- The two dropped agent tools reported by the same stderr warning (`code-security-reviewer:knowledge`, `ux-red-team:code`) are **deliberately not mapped**. Claude has no equivalent for either, and `ux-red-team` is declared read-only; inventing a mapping would widen the sandbox of the two agents whose purpose is to be restricted. The exporter's fail-closed behavior (emit `tools: Read` rather than an absent `tools:` line) is correct and stays.
+- ~~The two dropped agent tools reported by the same stderr warning (`code-security-reviewer:knowledge`, `ux-red-team:code`) are **deliberately not mapped**... inventing a mapping would widen the sandbox.~~ **Superseded by v0.17.3 - this reasoning was wrong.** The exporter already reads `allowedTools`, so no sandbox could have been widened. Both tools are read-only and subsumed; they are now mapped, with byte-identical output. The fail-closed behavior does stay.
 
 Ticket: KRL-9. Tactiq `Kiro-Rails` folder gained `Bugs`/`Feature Requests` subfolders; all 9 tickets routed, aliases preserved.
 
