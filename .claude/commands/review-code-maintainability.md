@@ -10,6 +10,19 @@ Your task is to perform a comprehensive optimization, maintainability, and struc
 
 Your mission is not just to find obvious duplicates. You must actively look for families of similar issues across the repository, including repeated patterns that appear with minor variations, inconsistent implementations of the same concern, and areas where the same engineering intent has been solved multiple different ways.
 
+---
+
+## Activation Triggers
+
+Run this review when:
+- A feature or module is marked complete (feature-level scope)
+- At the end of each development sprint (full codebase scope)
+- When structural drift is suspected (inconsistent patterns emerging across modules)
+- Before major refactoring work to identify priorities
+- After multiple features have landed without intermediate review
+
+---
+
 ## Review Objectives
 
 Focus on identifying:

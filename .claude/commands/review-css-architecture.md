@@ -10,6 +10,25 @@ Your mission is not to enforce a preferred methodology. It is to determine wheth
 
 ---
 
+## House Standard: Console-Idiom Rubric
+
+Before scanning, load `.kiro/steering/ux-console-idiom.md`. The D (Density & Type)
+and K (Consistency & Tokens) families define the quantitative thresholds for this
+review. Specifically:
+
+- **D-1/D-2**: body text size range and font weight count - flag violations with rubric IDs
+- **K-1/K-2/K-3**: border-radius set size, color palette adherence, spacing scale
+- **K-4/K-5**: icon style consistency, active/selected state treatment
+
+Every finding that maps to a rubric check MUST carry the rubric ID and severity.
+The token audit (Section C of output) should validate against the design tokens
+declared in `user-project-overrides.md`.
+
+Evidence from `scripts/style-survey.js` (computed-style census) is preferred over
+manual inspection for D and K family checks.
+
+---
+
 ## Review Objectives
 
 Identify:

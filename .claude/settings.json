@@ -22,6 +22,10 @@
           },
           {
             "type": "command",
+            "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); if [ -z \"$B\" ] || [ \"$B\" = \"main\" ]; then echo OK; exit 0; fi; HAS_UI=$(git diff --name-only main..HEAD 2>/dev/null | grep -cE \"\\.(tsx|jsx|css|scss|html)$\" || true); HAS_API=$(git diff --name-only main..HEAD 2>/dev/null | grep -cE \"(routes|api|handlers|endpoints)\" || true); HAS_AUTH=$(git diff --name-only main..HEAD 2>/dev/null | grep -ciE \"(auth|login|session|token|oauth)\" || true); COMMITS=$(git log --oneline main..HEAD 2>/dev/null | wc -l | tr -d \" \"); if [ \"$COMMITS\" -ge 5 ]; then SUGGEST=\"\"; if [ \"$HAS_UI\" -ge 2 ]; then SUGGEST=\"$SUGGEST /review-ux-live (UI changes detected)\"; fi; if [ \"$HAS_AUTH\" -ge 1 ]; then SUGGEST=\"$SUGGEST /review-code-security (auth-related changes)\"; elif [ \"$HAS_API\" -ge 1 ]; then SUGGEST=\"$SUGGEST /review-code-security (API changes)\"; fi; if [ -n \"$SUGGEST\" ]; then echo \"💡 REVIEW SUGGESTION: Your branch has ${COMMITS} commits. Consider running:${SUGGEST}. Type /review-guide for help choosing.\"; else echo OK; fi; else echo OK; fi'"
+          },
+          {
+            "type": "command",
             "command": "bash -c 'if [ -f scripts/session-guard.sh ]; then OUT=$(bash scripts/session-guard.sh 2>/dev/null | grep \"⚠️\"); if [ -n \"$OUT\" ]; then echo \"$OUT\"; echo \"See session-isolation.md - do not run destructive or cross-repo git.\"; else echo OK; fi; else echo OK; fi'"
           },
           {

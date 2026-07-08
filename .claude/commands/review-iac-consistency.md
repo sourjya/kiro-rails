@@ -10,6 +10,17 @@ Your mission is not to verify that resources deploy. It is to determine whether 
 
 ---
 
+## Activation Triggers
+
+Run this review when:
+- New cloud infrastructure (stacks, services, IAM roles) is added or modified
+- A Tier 2 or Tier 3 security review is scheduled
+- Before deploying infrastructure changes to production
+- After migrating resources between accounts, regions, or providers
+- When drift is suspected (console changes, manual fixes)
+
+---
+
 ## Review Objectives
 
 Identify:
@@ -37,6 +48,8 @@ Identify:
 11. **Observability and logging.** Resources missing CloudWatch alarms for critical operational metrics (errors, latency, throttling, queue depth). Missing or incomplete X-Ray tracing configuration across Lambda functions, API Gateway stages, and downstream service calls. VPC Flow Logs not enabled on production VPCs or subnets. CloudWatch log groups missing retention policies. Missing structured logging configuration in Lambda functions. Missing CloudWatch dashboards for key service health indicators. Alarm actions not configured (no SNS topic, no auto-remediation). Missing anomaly detection on metrics with variable baselines. Log groups not encrypted with KMS. Missing subscription filters for centralized log aggregation or alerting.
 
 12. **Resilience and high availability.** Single-AZ deployments for production databases, caches, or compute without documented justification. Missing dead-letter queues on SQS queues, SNS subscriptions, Lambda async invocations, and EventBridge rules. Missing automated backups on RDS, DynamoDB, and EFS. Missing cross-region replication for disaster recovery on critical data stores. Auto Scaling Groups with `minCapacity` of 1 in production. Missing health checks on ALB target groups or ECS services. Missing circuit breaker configuration on ECS service deployments. EventBridge rules without retry policies or DLQ configuration. Missing S3 versioning on buckets storing critical data. ElastiCache clusters without Multi-AZ or automatic failover enabled.
+
+13. **Cloud security baseline (account/perimeter-level).** Controls that protect the overall cloud environment, not individual resources. Missing or disabled CloudTrail with multi-region logging and log file validation. GuardDuty not enabled or not monitored. AWS Config not recording all resource types or missing compliance rules. Root account without MFA or with active access keys. Missing SCPs (Service Control Policies) preventing dangerous actions in production accounts (e.g., disabling CloudTrail, leaving a region, creating IAM users outside identity federation). CloudFront or ALB public endpoints without AWS WAF attached. Missing TLS 1.2 minimum enforcement on load balancers, API Gateway, and CloudFront distributions. KMS keys without annual rotation enabled. Missing AWS Config rules for CIS Benchmark or Foundational Security Best Practices. Publicly accessible RDS instances, Elasticsearch/OpenSearch domains, or Redshift clusters. EBS volumes or RDS snapshots shared publicly. Missing account-level S3 Block Public Access (in addition to per-bucket). For multi-account: missing centralized logging account, missing cross-account CloudTrail aggregation.
 
 ---
 
@@ -168,3 +181,10 @@ Confirm you explicitly reviewed each of the following, even if no issue was foun
 - [ ] S3 lifecycle policies and ECR image lifecycle policies
 - [ ] Secrets in environment variables versus Secrets Manager references
 - [ ] Stack update policies and CloudFormation stack policies on critical resources
+- [ ] CloudTrail enabled with multi-region logging and log file validation
+- [ ] GuardDuty enabled and monitored
+- [ ] WAF attached to all public-facing ALBs, API Gateways, and CloudFront distributions
+- [ ] TLS 1.2+ minimum enforced on all listener/distribution configurations
+- [ ] KMS key rotation enabled on all customer-managed keys
+- [ ] No publicly accessible RDS, OpenSearch, or Redshift instances
+- [ ] Account-level S3 Block Public Access enabled
