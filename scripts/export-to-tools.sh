@@ -2,9 +2,14 @@
 set -euo pipefail
 
 # kiro-rails-export: Generate AI tool config files from kiro-rails steering files
-# Exports to: .cursorrules, .claude/CLAUDE.md, .github/copilot-instructions.md, AGENTS.md
+# Exports to: .cursorrules, .github/copilot-instructions.md, AGENTS.md
+#             .claude/ is delegated to scripts/export-to-claude.sh (its single owner).
 #
 # Usage: ./scripts/export-to-tools.sh [--all | --cursor | --claude | --copilot | --codex]
+#
+# The header() below stamps a generation timestamp. That is fine for the three targets
+# written here (none are byte-compared by a freshness gate) but MUST NOT reach
+# .claude/ - see export_claude() and KRL-8.
 
 STEERING_DIR=".kiro/steering"
 OVERRIDES_FILE="$STEERING_DIR/user-project-overrides.md"
@@ -48,13 +53,18 @@ export_cursor() {
   } > .cursorrules
 }
 
+# The Claude layer is NOT generated here. scripts/export-to-claude.sh is its single
+# owner: it emits the whole tree (CLAUDE.md, settings.json hooks, agents/, commands/,
+# skills/, hooks/), and the committed .claude/ tree is a release gate verified by
+# scripts/check-claude-fresh.sh.
+#
+# Writing CLAUDE.md from here would (a) clobber that file with a degraded, differently
+# -headed copy, and (b) stamp header()'s wall-clock timestamp into a checked-in
+# artifact, making it non-idempotent and flipping check-claude-fresh.sh to STALE on
+# every run. Delegate instead. See KRL-8.
 export_claude() {
-  echo "  → .claude/CLAUDE.md"
-  mkdir -p .claude
-  {
-    header
-    collect_steering
-  } > .claude/CLAUDE.md
+  echo "  → .claude/ (delegating to export-to-claude.sh)"
+  bash "$(dirname "${BASH_SOURCE[0]}")/export-to-claude.sh"
 }
 
 export_copilot() {
