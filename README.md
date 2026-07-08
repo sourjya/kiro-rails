@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [21 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [22 steering files](.kiro/steering/) · [21 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -234,8 +234,8 @@ scripts/
 ├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
 ├── branch-check.sh     # Detect branch collisions before they become duplicate-divergent files
 ├── session-guard.sh    # Detect concurrent-session interference on a shared working tree
-├── export-to-tools.sh  # Generate flat config for Cursor / Copilot / Codex / Claude CLAUDE.md
-├── export-to-claude.sh # Generate the full native .claude/ layer (BONUS for Claude Code)
+├── export-to-tools.sh  # Generate flat config for Cursor / Copilot / Codex (delegates --claude)
+├── export-to-claude.sh # Generate the full native .claude/ layer - single owner of .claude/
 ├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
 ├── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
 └── style-survey.js     # In-page computed-style census for UX rubric evidence (D/K families)
@@ -402,13 +402,15 @@ While kiro-rails is designed for Kiro, the engineering standards are valuable in
 
 This generates:
 - `.cursorrules` - for [Cursor](https://cursor.com)
-- `.claude/CLAUDE.md` - for [Claude Code](https://claude.ai)
 - `.github/copilot-instructions.md` - for [GitHub Copilot](https://github.com/features/copilot)
 - `AGENTS.md` - for [Codex](https://openai.com/codex), [Cline](https://github.com/cline/cline), and other AGENTS.md-compatible tools
+- the full `.claude/` tree - delegated to `export-to-claude.sh` (see [below](#bonus-native-claude-code-support)); Claude gets the native layer, not a flat `CLAUDE.md`
 
 You can also export to a single tool: `--cursor`, `--claude`, `--copilot`, or `--codex`.
 
-The generated files concatenate all steering files (with `user-project-overrides.md` first) into the target tool's expected format. Regenerate after any steering file change.
+The first three targets concatenate all steering files (with `user-project-overrides.md` first) into the target tool's expected format. Regenerate after any steering file change.
+
+`--claude` is a thin delegation: `scripts/export-to-claude.sh` is the **single owner** of `.claude/`. Nothing else writes to that tree, because it is a committed artifact gated by `check-claude-fresh.sh`.
 
 ## BONUS: Native Claude Code Support
 
@@ -423,10 +425,11 @@ generates a complete `.claude/` tree from your Kiro files (the single source of 
 | Generated | From | Notes |
 |---|---|---|
 | `.claude/CLAUDE.md` | `.kiro/steering/*.md` | always-on rules |
-| `.claude/settings.json` | `.kiro/hooks/*.kiro.hook` | hooks remapped to Claude events (`UserPromptSubmit`, `PostToolUse`, `Stop`) **plus a Claude-only `PreToolUse` guard** |
+| `.claude/settings.json` | `.kiro/hooks/*.kiro.hook` | hooks remapped to Claude events: `UserPromptSubmit`, `PostToolUse`, `Stop`, and `PreToolUse` (from `preToolUse` + `beforeCommit`) **plus a Claude-only `PreToolUse` guard** |
 | `.claude/hooks/guard-bash.sh` | `scripts/claude-guard-bash.sh` | **blocks cross-repo git** (`git -C` / destructive git outside the project root) - enforcement Kiro's hook model can't express |
-| `.claude/agents/*.md` | `.kiro/agents/*.json` | subagents (tools + prompt body) |
-| `.claude/commands/*.md` | `.kiro/prompts/*.md` | review prompts as slash commands |
+| `.claude/hooks/prompts/*.txt` | `then.type: askAgent` hooks | Claude has no "ask the agent" hook; the prompt is emitted as a file and `cat`-ed, since Claude surfaces hook stdout to the model |
+| `.claude/agents/*.md` | `.kiro/agents/*.json` | subagents (tools + prompt body). **Fails closed**: an agent whose tools don't map gets `tools: Read`, never an empty `tools:` line (which would grant *every* tool) |
+| `.claude/commands/*.md` | `.kiro/prompts/*.md` | review prompts as slash commands; `description` comes from each prompt's frontmatter, which is how Claude routes them |
 | `.claude/skills/` | `.kiro/skills/` | copied as-is (format compatible) |
 | `.mcp.json` (project root) | `.kiro/settings/mcp.json` | enabled servers only (disabled omitted); `autoApprove` tools become `settings.json` `permissions.allow` entries (`mcp__server__tool`) |
 
