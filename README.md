@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [21 steering files](.kiro/steering/) · [20 automated hooks](.kiro/hooks/) · [16 review prompts](.kiro/prompts/) · [3 agents](.kiro/agents/) · [6 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 13 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [21 steering files](.kiro/steering/) · [21 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -74,6 +74,53 @@ What you get:
 - **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), session isolation (no cross-repo git, working-tree lock), consistency rules, dependency minimalism, code commenting standards
 - **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
 
+## Getting Started with Reviews
+
+kiro-rails ships 17 review prompts — but you don't need to memorize them. The system guides you automatically.
+
+### Just ask
+
+Type any of these in chat and the agent will help you pick the right review:
+
+```
+"What reviews should I run?"
+"Which prompt do I use for security?"
+"How do I audit my UI?"
+```
+
+The `/review-guide` skill activates automatically on these questions and recommends 1-3 reviews based on what you're actually working on — not a wall of options.
+
+### Or just keep working — it suggests for you
+
+The `review-suggest` hook watches your branch in the background. When you've built up enough work (5+ commits with frontend changes, auth code, or API routes), it nudges you with one line:
+
+> 💡 Your branch has 8 commits. Consider running: `/review-ux-live` (UI changes detected). Type `/review-guide` for help choosing.
+
+It never blocks you. It never repeats. It just suggests at the right moment.
+
+### The cheat sheet
+
+If you already know what you need:
+
+| You just... | Run this |
+|---|---|
+| Finished UI work | `/review-ux-live` |
+| Completed a feature | `/review-code-security` + `/review-code-maintainability` |
+| Changed auth/API code | `/review-code-security` + `/review-api-contracts` |
+| Added dependencies | `/review-dependency-risk` |
+| End of sprint | `/review-code-security` (Tier 3) + `/review-test-quality` |
+| Shipping AI features | `/review-ai-agent-surface` |
+
+### The three tiers (how depth scales)
+
+| When | What happens | You do |
+|------|-------------|--------|
+| Every commit | Tier 1 fires automatically | Nothing — secrets and unsafe code are caught for you |
+| Feature complete | Tier 2 is available | Run 2-3 relevant reviews from the cheat sheet |
+| Sprint end | Tier 3 full sweep | Run the full suite once before release |
+
+That's it. Start with `/review-guide` and let the system teach you the rest as you work.
+
 ## Documentation That Writes Itself
 
 Most teams say "we should document things" but have no enforcement. Kiro-rails makes documentation a side effect of the normal workflow - the agent does it automatically because the steering files and hooks require it.
@@ -109,6 +156,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── frontend-patterns.md          # React hooks, event propagation, CSS layout, caching, component extraction, completion verification (fileMatch: tsx/jsx)
 │   ├── api-contract-discipline.md    # Contract-first dev, response shapes, error contracts (fileMatch: api/routes)
 │   ├── ux-pattern-registry.md        # Reference patterns for common screen types (manual)
+│   ├── ux-console-idiom.md           # Console-idiom UX rubric — 9 families, severity scoring, ship gate (manual)
 │   ├── review-policy.md              # When to trigger security and maintainability reviews
 │   ├── chokepoint-logging.md         # Log recurring errors, categorize, promote to rules
 │   ├── agent-boundaries.md           # The hard "never" rules - shortest always-on file, read first
@@ -132,14 +180,18 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── focus-guard                   # Prompt submit: queue unrelated mid-task requests, don't thrash
 │   ├── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
 │   ├── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
-│   └── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
+│   ├── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
+│   └── review-suggest                # Prompt submit: suggest relevant review prompts based on branch changes
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
-│   └── security-verifier.json        # Adversarial agent that disproves false positives
+│   ├── security-verifier.json        # Adversarial agent that disproves false positives
+│   └── ux-reviewer.json              # Restricted-tool UX auditor (browser MCP + read only)
 ├── skills/
 │   ├── auth-implementation/          # Auth/SSO/OAuth flow checklist (auto-activates on auth keywords)
 │   │   └── SKILL.md
-│   └── incident-response/            # Security incident containment, evidence, recovery (auto-activates on breach keywords)
+│   ├── incident-response/            # Security incident containment, evidence, recovery (auto-activates on breach keywords)
+│   │   └── SKILL.md
+│   └── review-guide/                 # Interactive review prompt guide (auto-matches "what reviews?", "which prompt?")
 │       └── SKILL.md
 ├── prompts/
 │   ├── review-code-security.md            # Tier-aware security audit (T1 pre-commit, T2 feature, T3 sprint)
@@ -153,6 +205,7 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── review-cicd-pipeline.md            # Pipeline security, OIDC, gating, artifact integrity
 │   ├── review-frontend-performance.md     # Core Web Vitals, React rendering, bundle, memory, CLS/INP
 │   ├── review-ux-audit.md                # Persona cards, journey maps, heuristic sweep, anti-patterns
+│   ├── review-ux-live.md                 # Live browser-walk UX review — 9-step protocol, rubric scoring, evidence discipline
 │   ├── review-spec-readiness.md          # Pre-build spec hardening - 18 lenses, predicted issues, roadmap revision
 │   ├── review-ai-agent-surface.md        # AI/agentic feature audit - OWASP ASI01-10, MCP Top 10, confidence gates
 │   └── review-hardcoded-values.md        # Hardcoded value scan - UUIDs, URLs, magic numbers, secrets, env assumptions
@@ -174,7 +227,8 @@ docs/
 ├── runbooks/           # Operational guides and setup instructions
 ├── references/         # External docs, research materials, API guides
 ├── engineering/        # Engineering process documentation
-└── security/           # Security review reports and findings log
+├── security/           # Security review reports and findings log
+└── ux-reviews/         # UX review reports (UXR-###) with rubric-scored findings
 
 scripts/
 ├── git-commit-push.sh  # Commit → merge to main → push (with log capture)
@@ -183,7 +237,8 @@ scripts/
 ├── export-to-tools.sh  # Generate flat config for Cursor / Copilot / Codex / Claude CLAUDE.md
 ├── export-to-claude.sh # Generate the full native .claude/ layer (BONUS for Claude Code)
 ├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
-└── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
+├── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
+└── style-survey.js     # In-page computed-style census for UX rubric evidence (D/K families)
 
 logs/                   # Command output logs (gitignored)
 ```
@@ -212,7 +267,8 @@ They are included based on their `inclusion` setting:
 | [frontend-patterns.md](.kiro/steering/frontend-patterns.md) | fileMatch | React hooks rules, event propagation, CSS flex/grid layout, cache invalidation, component extraction & reuse (prop parity), completion verification (build ≠ done), component completeness checklist (loaded for `*.tsx`/`*.jsx` files) |
 | [api-contract-discipline.md](.kiro/steering/api-contract-discipline.md) | fileMatch | Contract-first development, response shape verification, error response contracts, rate limiting guidance (loaded for `api/`, `routes/`, `services/` files) |
 | [ux-pattern-registry.md](.kiro/steering/ux-pattern-registry.md) | manual | Reference layout patterns for common screen types; load with `/ux-pattern-registry` when designing or reviewing UI |
-| [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security and maintainability reviews, output conventions, sequencing rules, report numbering |
+| [ux-console-idiom.md](.kiro/steering/ux-console-idiom.md) | manual | Console-idiom UX rubric with 9 check families (44 checks), severity scoring, and ship gate; load with `/ux-console-idiom` when reviewing or generating console/admin UI |
+| [review-policy.md](.kiro/steering/review-policy.md) | always | When to trigger security, maintainability, and UX reviews, output conventions, sequencing rules, report numbering |
 | [chokepoint-logging.md](.kiro/steering/chokepoint-logging.md) | always | Log recurring errors on attempt #2+, categorize by pattern, promote to steering rules after 3 occurrences |
 | [agent-boundaries.md](.kiro/steering/agent-boundaries.md) | always | The hard "never" rules (the non-negotiables) in their shortest form, with `→` pointers to the detailed files - the first thing an agent should read |
 | [session-isolation.md](.kiro/steering/session-isolation.md) | always | Stay inside your project root, never operate on sibling repos (`git -C`/cross-repo PRs), verify before destructive git, never kill processes you didn't spawn |
@@ -250,6 +306,7 @@ Hooks fire automatically on file edits or before tool use:
 | Variant Search on Fix Branch | Prompt submit | On a fresh `fix/` branch, reminds the agent to search every call site for the same defect class - the reported instance is rarely the only one |
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 | Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
+| Review Suggest | Prompt submit | Suggests relevant review prompts when your branch has enough work (5+ commits with UI, API, or auth changes) — one-line nudge, never blocking |
 
 ## Development Workflow
 
