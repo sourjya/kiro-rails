@@ -2,7 +2,9 @@
 # export-to-claude.sh - generate a native Claude Code setup from kiro-rails Kiro files.
 #
 # Single source of truth = .kiro/*. Re-run after changing steering/hooks/agents/prompts/skills.
-# Produces .claude/{CLAUDE.md, settings.json, hooks/guard-bash.sh, agents/, commands/, skills/}.
+# Produces .claude/{CLAUDE.md, settings.json, hooks/{guard-bash.sh,prompts/}, agents/, commands/, skills/}.
+#
+# Anything that cannot be translated is reported on stderr, never dropped silently.
 #
 # Requires jq. See docs/references/kiro-to-claude-compatibility-2026-06-05.md
 set -uo pipefail
@@ -37,31 +39,84 @@ cp scripts/claude-guard-bash.sh "$OUT/hooks/guard-bash.sh"
 chmod +x "$OUT/hooks/guard-bash.sh"
 
 # ── 3) commands from prompts ───────────────────────────────────────────────────
+# Claude routes slash commands by their `description` frontmatter, so it must be a
+# real one-line summary. Read it from the prompt's own frontmatter; never fall back
+# to "first non-empty line" (that yields `---`, `<!--`, or a truncated sentence).
+
+# Print the frontmatter `description:` as a single line, folding YAML block
+# scalars (`>` / `|`) into one line. Empty output = no frontmatter description.
+fm_desc() {
+  # NOTE: awk's `exit` still runs the END block, so every early return must set
+  # `printed` or the folded description gets emitted twice.
+  awk '
+    NR==1 && $0=="---" { fm=1; next }
+    fm==1 && $0=="---" { if (blk && val!="") { print val; printed=1 } exit }
+    fm==1 && blk==1 {
+      if ($0 ~ /^[A-Za-z_][A-Za-z0-9_-]*:/) { print val; printed=1; exit }   # next key ends the block
+      sub(/^[ \t]+/, ""); val = (val=="" ? $0 : val " " $0); next
+    }
+    fm==1 && /^description:/ {
+      sub(/^description:[ \t]*/, "")
+      if ($0 ~ /^[|>][-+]?$/) { blk=1; val=""; next }             # block scalar follows
+      print; printed=1; exit
+    }
+    END { if (!printed && blk && val!="") print val }
+  ' "$1"
+}
+
+# Emit the prompt body with its frontmatter block removed, so the generated command
+# has exactly one frontmatter block rather than two stacked ones.
+strip_fm() {
+  awk '
+    NR==1 && $0=="---" { fm=1; next }
+    fm==1 && $0=="---" { fm=2; next }
+    fm!=1
+  ' "$1"
+}
+
+nodesc=()
 for f in "$PROMPTS"/*.md; do
   [ -e "$f" ] || continue
   name=$(basename "$f" .md)
-  desc=$(grep -m1 -E '.' "$f" | sed 's/^#\+ *//' | cut -c1-120)
-  { printf -- '---\ndescription: "%s"\n---\n\n' "${desc//\"/\'}"; cat "$f"; } > "$OUT/commands/$name.md"
+  desc=$(fm_desc "$f")
+  if [ -z "$desc" ]; then
+    nodesc+=("$name")
+    desc="Kiro review prompt: $name"   # placeholder - routing will be poor until fixed
+  fi
+  { printf -- '---\ndescription: "%s"\n---\n\n' "${desc//\"/\'}"; strip_fm "$f"; } > "$OUT/commands/$name.md"
 done
 
 # ── 4) agents from .kiro/agents/*.json ─────────────────────────────────────────
 map_tool() { case "$1" in
   read) echo Read;; write) echo Write;; edit) echo Edit;;
   grep) echo Grep;; glob) echo Glob;; shell) echo Bash;; *) echo "";; esac; }
+droptools=()
 for f in "$AGENTS"/*.json; do
   [ -e "$f" ] || continue
   name=$(jq -r '.name' "$f"); desc=$(jq -r '.description' "$f")
   ctools=""
   for t in $(jq -r '(.allowedTools // .tools // [])[]' "$f"); do
-    m=$(map_tool "$t"); [ -n "$m" ] && ctools+="${ctools:+, }$m"
+    m=$(map_tool "$t")
+    if [ -n "$m" ]; then ctools+="${ctools:+, }$m"; else droptools+=("$name:$t"); fi
   done
+  # FAIL CLOSED. A Claude subagent with no `tools:` frontmatter inherits EVERY tool,
+  # including Write and Bash. If nothing mapped, a Kiro agent that was deliberately
+  # sandboxed (read-only reviewers, red-teamers) would silently become fully
+  # privileged. Degrade to Read rather than emit an unrestricted agent.
+  if [ -z "$ctools" ]; then
+    echo "  Warning: agent '$name' has no Claude-mappable tools; failing closed to 'Read'." >&2
+    ctools="Read"
+  fi
+  # strip_fm: the referenced prompt may carry its own frontmatter (agents often point
+  # at a .kiro/prompts/*.md via file://). Inlining it verbatim would stack a second
+  # frontmatter block inside the agent body.
   ref=$(jq -r '.prompt // ""' "$f"); body=""
   case "$ref" in
-    file://*) p="$AGENTS/${ref#file://}"; [ -f "$p" ] && body=$(cat "$p") ;;
+    file://*) p="$AGENTS/${ref#file://}"; [ -f "$p" ] && body=$(strip_fm "$p") ;;
     "") ;; *) body="$ref" ;;
   esac
   { printf -- '---\nname: %s\ndescription: "%s"\n' "$name" "${desc//\"/\'}"
-    [ -n "$ctools" ] && printf 'tools: %s\n' "$ctools"
+    printf 'tools: %s\n' "$ctools"
     printf -- '---\n\n%s\n' "$body"; } > "$OUT/agents/$name.md"
 done
 
@@ -79,22 +134,66 @@ to_entries() {
   printf '%s' "$out"
 }
 
-ups=(); post=(); stop=(); skipped=()
+# Kiro hooks have two action shapes:
+#   then.type == "command"  -> then.command, a shell string
+#   then.type == "askAgent" -> then.prompt, an instruction for the agent
+# Claude has no "ask the agent" hook type, but it does surface hook stdout to the
+# model, so an askAgent prompt is faithfully emulated by a command that prints it.
+# The prompt is written to a file and `cat`-ed rather than inlined, because these
+# prompts are multi-line and contain quotes, backticks and $ - inlining them into a
+# shell string is a quoting minefield.
+PROMPTDIR="$OUT/hooks/prompts"
+rm -rf "$PROMPTDIR"; mkdir -p "$PROMPTDIR"
+
+ups=(); post=(); pre=(); stop=(); skipped=(); unmapped=()
 for h in "$HOOKS"/*.kiro.hook; do
   [ -e "$h" ] || continue
   if ! jq empty "$h" 2>/dev/null; then skipped+=("$(basename "$h")"); continue; fi
   [ "$(jq -r '.enabled' "$h")" = "false" ] && continue
-  cmd=$(jq -r '.then.command // ""' "$h"); [ -z "$cmd" ] && continue
-  case "$(jq -r '.when.type' "$h")" in
-    userPromptSubmit)            ups+=("$cmd") ;;
-    fileEdit|fileEdited|fileSave|postToolUse) post+=("$cmd") ;;
-    agentStop|stop)              stop+=("$cmd") ;;
-    *) : ;;  # preCommit/manual: no clean Claude event - see compatibility doc
+  hname=$(basename "$h" .kiro.hook)
+  wtype=$(jq -r '.when.type' "$h")
+  atype=$(jq -r '.then.type // ""' "$h")
+
+  case "$atype" in
+    runCommand|command) cmd=$(jq -r '.then.command // ""' "$h") ;;
+    # Path is hardcoded to .claude/, NOT "$OUT" - the emitted settings.json must be
+    # byte-identical whether generated in place or into a temp dir by
+    # check-claude-fresh.sh, which would otherwise bake a /tmp path in and always
+    # report STALE. Same reason guard-bash.sh is referenced by a fixed path below.
+    askAgent) jq -r '.then.prompt // ""' "$h" > "$PROMPTDIR/$hname.txt"
+              cmd="cat .claude/hooks/prompts/$hname.txt" ;;
+    *)        cmd="" ;;
   esac
+  if [ -z "$cmd" ]; then unmapped+=("$hname (then.type=${atype:-none})"); continue; fi
+
+  mapped=1
+  case "$wtype" in
+    userPromptSubmit)                         ups+=("$cmd") ;;
+    fileEdit|fileEdited|fileSave|postToolUse) post+=("$cmd") ;;
+    agentStop|stop)                           stop+=("$cmd") ;;
+    # Kiro gates the shell tool; Claude's equivalent is PreToolUse with matcher Bash.
+    preToolUse)
+      tt=$(jq -r '(.when.toolTypes // ["shell"])[0]' "$h")
+      if [ "$tt" != "shell" ]; then
+        unmapped+=("$hname (when.toolTypes=$tt, only 'shell' maps to a Claude matcher)"); mapped=0
+      else
+        pre+=("$cmd")
+      fi ;;
+    # No git-commit event in Claude. Approximate with PreToolUse/Bash gated on the
+    # hook's stdin payload naming a commit. See compatibility doc, "Kiro pre-commit".
+    beforeCommit)
+      pre+=("IN=\$(cat); printf '%s' \"\$IN\" | jq -r '.tool_input.command // empty' | grep -qE '(^|[^a-z])git commit|git-commit-push\.sh' && $cmd || echo OK") ;;
+    *) unmapped+=("$hname (when.type=$wtype, no Claude event)"); mapped=0 ;;
+  esac
+  # The askAgent prompt was staged before we knew whether when.type maps. If it did
+  # not, drop the orphan: check-claude-fresh.sh diffs the whole tree, so an
+  # unreferenced file is indistinguishable from drift.
+  [ "$mapped" -eq 0 ] && rm -f "$PROMPTDIR/$hname.txt"
 done
 
 ups_json=$(to_entries "${ups[@]:-}")
 post_json=$(to_entries "${post[@]:-}")
+pre_json=$(to_entries "${pre[@]:-}")
 stop_json=$(to_entries "${stop[@]:-}")
 
 # ── 6b) MCP: enabled servers -> project-root .mcp.json; autoApprove -> permissions ─
@@ -118,13 +217,17 @@ if [ -f "$MCP_SRC" ] && jq empty "$MCP_SRC" 2>/dev/null; then
                        | (.value.autoApprove // [])[] | "mcp__\($n)__\(.)" ]' "$MCP_SRC")
 fi
 
-jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson stop "$stop_json" --argjson mcpperms "$mcp_perms" '
+# The cross-repo guard must stay FIRST in the Bash matcher: it can hard-block a
+# destructive git call (exit 2), and there is no point running the other pre-hooks
+# on a command that is about to be refused.
+jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson pre "$pre_json" \
+      --argjson stop "$stop_json" --argjson mcpperms "$mcp_perms" '
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   hooks: (
     {}
     + (if ($ups|length)  > 0 then {UserPromptSubmit: [ {hooks: $ups} ]} else {} end)
-    + {PreToolUse: [ {matcher: "Bash", hooks: [ {type: "command", command: "bash .claude/hooks/guard-bash.sh"} ]} ]}
+    + {PreToolUse: [ {matcher: "Bash", hooks: ([ {type: "command", command: "bash .claude/hooks/guard-bash.sh"} ] + $pre)} ]}
     + (if ($post|length) > 0 then {PostToolUse: [ {matcher: "Edit|Write|MultiEdit", hooks: $post} ]} else {} end)
     + (if ($stop|length) > 0 then {Stop: [ {hooks: $stop} ]} else {} end)
   )
@@ -132,8 +235,25 @@ jq -n --argjson ups "$ups_json" --argjson post "$post_json" --argjson stop "$sto
 + (if ($mcpperms|length) > 0 then {permissions: {allow: ($mcpperms | unique)}} else {} end)
 ' > "$OUT/settings.json"
 
-echo "Generated $OUT/ : CLAUDE.md, settings.json, hooks/guard-bash.sh, $(ls "$OUT/agents" | wc -l | tr -d ' ') agents, $(ls "$OUT/commands" | wc -l | tr -d ' ') commands, $([ -d "$OUT/skills" ] && ls "$OUT/skills" | wc -l | tr -d ' ' || echo 0) skills."
+nhooks=$(( ${#ups[@]} + ${#post[@]} + ${#pre[@]} + ${#stop[@]} ))
+echo "Generated $OUT/ : CLAUDE.md, settings.json, hooks/guard-bash.sh, $(ls "$OUT/agents" | wc -l | tr -d ' ') agents, $(ls "$OUT/commands" | wc -l | tr -d ' ') commands, $([ -d "$OUT/skills" ] && ls "$OUT/skills" | wc -l | tr -d ' ' || echo 0) skills, $nhooks hooks."
+
+# Every drop is reported. A silently-dropped hook or description is how the Claude
+# layer diverged from .kiro/ in the first place.
 if [ "${#skipped[@]}" -gt 0 ]; then
   echo "  Note: ${#skipped[@]} hook(s) skipped (not valid JSON, not translated): ${skipped[*]}" >&2
+fi
+if [ "${#unmapped[@]}" -gt 0 ]; then
+  echo "  Warning: ${#unmapped[@]} enabled hook(s) have no Claude equivalent and were NOT exported:" >&2
+  printf '    - %s\n' "${unmapped[@]}" >&2
+fi
+if [ "${#droptools[@]}" -gt 0 ]; then
+  echo "  Note: ${#droptools[@]} agent tool(s) dropped (no Claude equivalent): ${droptools[*]}" >&2
+fi
+if [ "${#nodesc[@]}" -gt 0 ]; then
+  echo "  Warning: ${#nodesc[@]} prompt(s) lack a frontmatter 'description:' - Claude cannot route them well:" >&2
+  printf '    - .kiro/prompts/%s.md\n' "${nodesc[@]}" >&2
+fi
+if [ "${#skipped[@]}" -gt 0 ] || [ "${#unmapped[@]}" -gt 0 ]; then
   echo "  See docs/references/kiro-to-claude-compatibility-2026-06-05.md" >&2
 fi
