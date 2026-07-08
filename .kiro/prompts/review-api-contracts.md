@@ -1,3 +1,12 @@
+---
+name: api-contracts
+description: >
+  Audit API boundary code for contract drift: response envelope
+  consistency, error response shapes, HTTP status-code semantics, and
+  frontend/backend type agreement.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs and any API design docs if they exist. Use documented contract decisions (intentional envelope exceptions, versioning strategy) to distinguish intentional design from accidental inconsistency.
 
 Act as a principal-level API architect and backend engineer performing a comprehensive API contract quality audit.

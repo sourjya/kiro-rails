@@ -1,3 +1,12 @@
+---
+name: test-quality
+description: >
+  Audit test suite quality: coverage gaps, weak assertions, missing
+  negative cases, over-mocking, and tests that cannot fail regardless of
+  implementation.
+inclusion: manual
+---
+
 Before scanning, read `docs/testing/` and `docs/decisions/` if they exist. Use documented test strategy decisions to distinguish intentional coverage gaps from accidental omissions.
 
 Act as a principal-level software engineer and test architect performing a comprehensive test quality audit.

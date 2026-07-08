@@ -1,3 +1,12 @@
+---
+name: hardcoded-values
+description: >
+  Scan for embedded literals that belong in config or a constants module:
+  URLs, magic numbers, thresholds, error message strings, and
+  environment-dependent values.
+inclusion: manual
+---
+
 # Hardcoded Value Scan
 
 Run this prompt to detect embedded literals, magic values, and environment assumptions

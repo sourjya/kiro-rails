@@ -1,3 +1,11 @@
+---
+name: frontend-performance
+description: >
+  Audit frontend performance: bundle size and code splitting, render
+  waterfalls, N+1 data fetching, unmemoized work, and lazy-loading gaps.
+inclusion: manual
+---
+
 Before scanning, read `docs/decisions/` ADRs if they exist. Use documented performance budgets and architectural decisions to calibrate findings against intentional trade-offs.
 
 Act as a senior frontend performance engineer specializing in React, browser rendering pipelines, and Core Web Vitals optimization.
