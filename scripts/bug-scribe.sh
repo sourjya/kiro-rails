@@ -28,6 +28,7 @@ BUGS_DIR="docs/bugs"
 TEMPLATE="${BUGS_DIR}/BUG-000-template.md"
 PROCESSED_LOG="${BUGS_DIR}/.bug-scribe-processed"
 CHOKEPOINT_LOG="docs/engineering/chokepoint-log.md"
+LEDGER="${BUGS_DIR}/ledger.json"
 
 # Regex patterns
 # Case-insensitive on bug/BUG/Bug, category normalized to uppercase by script
@@ -36,6 +37,14 @@ FIRE_PATTERN='(#|//)[[:space:]]+[Bb][Uu][Gg]:[[:space:]]+([A-Za-z_]+)[[:space:]]
 
 # Near-miss: looks like a bug marker but doesn't match strict structure
 NEARMISS_PATTERN='(#|//)[[:space:]]*[Bb][Uu][Gg][[:space:]]*:'
+
+# Function detection patterns (per language, used to find enclosing function)
+# Walk backwards from marker line to find the nearest function definition
+FUNC_PATTERN_PY='^\s*(def|class)\s+([A-Za-z_][A-Za-z0-9_]*)'
+FUNC_PATTERN_JS='(function\s+[A-Za-z_]|=\s*(async\s+)?function|=\s*(async\s+)?\(|:\s*(async\s+)?\(|^\s*(export\s+)?(async\s+)?function\s+[A-Za-z_])'
+FUNC_PATTERN_GO='^\s*func\s+(\([^)]*\)\s+)?([A-Za-z_][A-Za-z0-9_]*)'
+FUNC_PATTERN_RS='^\s*(pub\s+)?(async\s+)?fn\s+([A-Za-z_][A-Za-z0-9_]*)'
+FUNC_PATTERN_JAVA='^\s*(public|private|protected|static|\s)*\s+[A-Za-z_][A-Za-z0-9_<>]*\s+([A-Za-z_][A-Za-z0-9_]*)\s*\('
 
 # Known categories (read from chokepoint log if it exists)
 KNOWN_CATEGORIES="ROUTE_ORDERING CSS_OVERSIGHT LAYOUT_OVERFLOW QUERY_INVALIDATION TYPE_MISMATCH IMPORT_ERROR DEPLOY_REGRESSION TOOL_MISUSE STATE_SYNC RACE_CONDITION"
@@ -119,6 +128,124 @@ validate_category() {
     return 1
 }
 
+# Append an entry to the JSON ledger
+ledger_append() {
+    local bug_id="$1"
+    local category="$2"
+    local file="$3"
+    local func_name="$4"
+    local description="$5"
+    local date_str="$6"
+    local branch="$7"
+
+    # Initialize ledger if it doesn't exist or is empty
+    if [ ! -f "$LEDGER" ] || [ ! -s "$LEDGER" ]; then
+        echo "[]" > "$LEDGER"
+    fi
+
+    # Build the JSON entry (no jq dependency — manual construction)
+    local entry
+    entry=$(printf '{"bug_id":"%s","category":"%s","file":"%s","function":"%s","description":"%s","discovered":"%s","branch":"%s","resolved":null,"commit":null}' \
+        "$bug_id" "$category" "$file" "$func_name" \
+        "$(echo "$description" | sed 's/"/\\"/g')" \
+        "$date_str" "$branch")
+
+    # Append to the JSON array (remove trailing ], add entry, re-close)
+    if [ "$(cat "$LEDGER")" = "[]" ]; then
+        printf '[%s]\n' "$entry" > "$LEDGER"
+    else
+        # Remove the closing ] , append comma + new entry + ]
+        sed -i'' -e '$ s/]$//' "$LEDGER" 2>/dev/null || sed -i '' -e '$ s/]$//' "$LEDGER"
+        printf ',%s]\n' "$entry" >> "$LEDGER"
+    fi
+}
+
+# Update a ledger entry on resolution
+ledger_resolve() {
+    local bug_id="$1"
+    local date_str="$2"
+    local commit_msg="$3"
+
+    if [ ! -f "$LEDGER" ]; then
+        return 0
+    fi
+
+    # Escape the commit message for JSON
+    local escaped_msg
+    escaped_msg=$(echo "$commit_msg" | head -1 | sed 's/"/\\"/g')
+
+    # Replace null resolved/commit fields for this bug_id
+    if sed --version 2>/dev/null | grep -q GNU; then
+        sed -i "s|\"bug_id\":\"${bug_id}\",\(.*\)\"resolved\":null,\"commit\":null|\"bug_id\":\"${bug_id}\",\1\"resolved\":\"${date_str}\",\"commit\":\"${escaped_msg}\"|" "$LEDGER"
+    else
+        sed -i '' "s|\"bug_id\":\"${bug_id}\",\(.*\)\"resolved\":null,\"commit\":null|\"bug_id\":\"${bug_id}\",\1\"resolved\":\"${date_str}\",\"commit\":\"${escaped_msg}\"|" "$LEDGER"
+    fi
+}
+
+# Detect the enclosing function/method for a given line in a file
+detect_function() {
+    local file="$1"
+    local line_num="$2"
+
+    # Determine language from extension
+    local ext="${file##*.}"
+    local pattern=""
+
+    case "$ext" in
+        py)     pattern="$FUNC_PATTERN_PY" ;;
+        js|jsx|ts|tsx) pattern="$FUNC_PATTERN_JS" ;;
+        go)     pattern="$FUNC_PATTERN_GO" ;;
+        rs)     pattern="$FUNC_PATTERN_RS" ;;
+        java)   pattern="$FUNC_PATTERN_JAVA" ;;
+        *)      echo "unknown"; return ;;
+    esac
+
+    # Walk backwards from marker line to find the nearest function definition
+    local i
+    for ((i = line_num; i >= 1; i--)); do
+        local line_content
+        line_content=$(sed -n "${i}p" "$file")
+
+        if echo "$line_content" | grep -qE "$pattern"; then
+            # Extract the function name
+            local func_name
+            case "$ext" in
+                py)
+                    func_name=$(echo "$line_content" | sed -nE "s/^\s*(def|class)\s+([A-Za-z_][A-Za-z0-9_]*).*/\2/p")
+                    ;;
+                go)
+                    func_name=$(echo "$line_content" | sed -nE "s/.*func\s+(\([^)]*\)\s+)?([A-Za-z_][A-Za-z0-9_]*).*/\2/p")
+                    ;;
+                rs)
+                    func_name=$(echo "$line_content" | sed -nE "s/.*(pub\s+)?(async\s+)?fn\s+([A-Za-z_][A-Za-z0-9_]*).*/\3/p")
+                    ;;
+                js|jsx|ts|tsx)
+                    # Try: function name(
+                    func_name=$(echo "$line_content" | sed -nE "s/.*function\s+([A-Za-z_][A-Za-z0-9_]*).*/\1/p")
+                    if [ -z "$func_name" ]; then
+                        # Try: const/let/var name = or name:
+                        func_name=$(echo "$line_content" | sed -nE "s/.*(const|let|var)\s+([A-Za-z_][A-Za-z0-9_]*)\s*[=:].*/\2/p")
+                    fi
+                    if [ -z "$func_name" ]; then
+                        # Try: name( — method shorthand
+                        func_name=$(echo "$line_content" | sed -nE "s/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*\(.*/\1/p")
+                    fi
+                    ;;
+                java)
+                    func_name=$(echo "$line_content" | sed -nE "s/.*\s([A-Za-z_][A-Za-z0-9_]*)\s*\(.*/\1/p")
+                    ;;
+            esac
+
+            if [ -n "$func_name" ]; then
+                echo "$func_name"
+                return
+            fi
+        fi
+    done
+
+    echo "unknown"
+}
+
 # ──────────────────────────────────────────────
 # Subcommand: discover
 # ──────────────────────────────────────────────
@@ -196,6 +323,10 @@ cmd_discover() {
         date_str=$(date +%Y-%m-%d)
         branch=$(git branch --show-current 2>/dev/null || echo "unknown")
 
+        # Detect enclosing function
+        local func_name
+        func_name=$(detect_function "$file" "$line_num")
+
         # Create temp files for multi-line injection
         local ctx_tmp
         ctx_tmp=$(mktemp)
@@ -217,6 +348,7 @@ cmd_discover() {
             "BUG_ID_LOWER=${bug_id_lower}" \
             "CATEGORY=${category}" \
             "FILE=${file}" \
+            "FUNCTION=${func_name}" \
             "DATE=${date_str}" \
             "BRANCH=${branch}" \
             "DESCRIPTION=${description}" \
@@ -250,6 +382,9 @@ EOF
 
         # Mark as processed
         mark_processed "$checksum"
+
+        # Append to JSON ledger
+        ledger_append "$bug_id" "$category" "$file" "$func_name" "$description" "$date_str" "$branch"
 
         # Clean up temp
         rm -f "$ctx_tmp"
@@ -364,6 +499,14 @@ cmd_resolve() {
 
             # Stage the updated bug doc
             git add "$bug_doc"
+
+            # Update the JSON ledger
+            local bug_id_from_doc
+            bug_id_from_doc=$(grep -oE 'BUG-[0-9]+' "$bug_doc" | head -1)
+            if [ -n "$bug_id_from_doc" ]; then
+                ledger_resolve "$bug_id_from_doc" "$date_str" "$commit_msg"
+                git add "$LEDGER"
+            fi
 
             # Clean up
             rm -f "$diff_tmp" "$msg_tmp"

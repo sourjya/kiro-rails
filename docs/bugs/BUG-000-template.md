@@ -9,6 +9,7 @@
 | **Status** | {{STATUS}} |
 | **Category** | {{CATEGORY}} |
 | **File** | `{{FILE}}` |
+| **Function** | `{{FUNCTION}}` |
 | **Reported** | {{DATE}} |
 | **Fixed** | - |
 | **Branch** | `{{BRANCH}}` |
