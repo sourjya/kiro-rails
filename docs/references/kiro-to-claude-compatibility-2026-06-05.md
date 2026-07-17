@@ -19,7 +19,7 @@ So Claude users were right that hooks/agents don't "just work" - but the fix is 
 
 | Kiro artifact | Claude Code equivalent | Translation |
 |---|---|---|
-| `.kiro/steering/*.md` `inclusion: always` | `.claude/CLAUDE.md` (project memory) | Concatenate (overrides first). |
+| `.kiro/steering/*.md` `inclusion: always` | `.claude/CLAUDE.md` (project memory) | Concatenate (overrides first). Backticked `.kiro/steering/<f>.md` cross-references (in steering and in prompts) are rewritten to name the CLAUDE.md section they now live under - e.g. *the "UX Console-Idiom Rubric" rules in `CLAUDE.md`* - since the raw `.kiro/` path has no home on the Claude side (KRL-12). |
 | `.kiro/steering/*.md` `inclusion: fileMatch` | (no native conditional include) | **Degrades** - folded into CLAUDE.md as always-on, or promote to a skill. Documented limitation. |
 | `.kiro/steering/*.md` `inclusion: manual` | `.claude/commands/*.md` or skill | Manual-load rule becomes an explicit command/skill. |
 | `.kiro/hooks/*.kiro.hook` (`when.type`) | `.claude/settings.json` `hooks.{Event}` | Event remap: `userPromptSubmit`->`UserPromptSubmit`, `fileEdit`/`fileEdited`/`fileSave`/`postToolUse`->`PostToolUse` (matcher `Edit\|Write\|MultiEdit`), `agentStop`/`stop`->`Stop`, `preToolUse` (`toolTypes: ["shell"]`)->`PreToolUse` (matcher `Bash`). `preTaskExecution` has no Claude event - **approximated** with `PreToolUse` (matcher `Edit\|Write\|MultiEdit`) gated on the stdin payload's `.tool_input.file_path` matching a UI extension (`.tsx`/`.jsx`/`.css`/`.scss`); see "Kiro preTaskExecution" below. |
@@ -36,11 +36,13 @@ Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2
 
 ## What we ship (the "BONUS for Claude")
 
-1. `scripts/export-to-claude.sh` - generator (single source of truth = `.kiro/*`). Emits `.claude/{CLAUDE.md, settings.json, hooks/guard-bash.sh, agents/, commands/, skills/}` plus a project-root `.mcp.json` when MCP servers are enabled.
+1. `scripts/export-to-claude.sh` - generator (single source of truth = `.kiro/*`). Emits `.claude/{CLAUDE.md, settings.json, hooks/guard-bash.sh, agents/, commands/, skills/}` plus a project-root `.mcp.json` when MCP servers are enabled. **Both installers run it at the end**, so a fresh install lands a working `.claude/` layer automatically (needs `jq`; prints the manual command if absent) (KRL-13).
 2. `scripts/claude-guard-bash.sh` - the `PreToolUse` cross-repo git guard (copied into `.claude/hooks/` by the generator).
-3. A **committed** generated `.claude/` tree (zero-step for cloners), kept fresh by:
-4. `scripts/check-claude-fresh.sh` - regenerates to a temp dir and diffs against the committed `.claude/`; non-zero exit on drift. Run before tagging a release (see `versioning.md` checklist).
-5. `claude-export-freshness` hook - reminds to re-run the generator when `.kiro/` source changes.
+3. **A generated `kiro-rails` index skill** (`.claude/skills/kiro-rails/SKILL.md`) - a single discoverable entry point listing every command, skill, agent, and the spec workflow with a *when-to-use* line for each, so an agent finds the right capability instead of memorizing slash-commands. Derived from the same sources the generator already walks, so it can't drift (KRL-15).
+4. **A generated capability sync ledger** (`docs/references/kiro-claude-sync-ledger.md`) - one content-hashed row per `.kiro` source -> its Claude target, with a fidelity grade (`verbatim`/`adapted`/`lossy`/`dropped`). Deterministic (git blob hashes, no timestamps), so a `git diff` on it names exactly which capabilities moved when a prompt is upgraded, and `git log -p` is the upgrade history (KRL-14).
+5. A **committed** generated `.claude/` tree (zero-step for cloners), kept fresh by:
+6. `scripts/check-claude-fresh.sh` - regenerates to a temp dir and diffs against the committed `.claude/` *and the sync ledger*; non-zero exit on drift. Run before tagging a release (see `versioning.md` checklist).
+7. `claude-export-freshness` hook - reminds to re-run the generator when `.kiro/` source changes.
 
 ## Known limitations (documented, not hidden)
 

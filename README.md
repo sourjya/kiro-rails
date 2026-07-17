@@ -431,9 +431,11 @@ generates a complete `.claude/` tree from your Kiro files (the single source of 
 | `.claude/agents/*.md` | `.kiro/agents/*.json` | subagents (tools + prompt body). **Fails closed**: an agent whose tools don't map gets `tools: Read`, never an empty `tools:` line (which would grant *every* tool) |
 | `.claude/commands/*.md` | `.kiro/prompts/*.md` | review prompts as slash commands; `description` comes from each prompt's frontmatter, which is how Claude routes them |
 | `.claude/skills/` | `.kiro/skills/` | copied as-is (format compatible) |
+| `.claude/skills/kiro-rails/` | every command, skill, agent + steering | **generated index skill** - one discoverable entry point that lists the whole toolbox with a *when-to-use* line for each, so an agent finds the right capability instead of memorizing slash-commands |
 | `.mcp.json` (project root) | `.kiro/settings/mcp.json` | enabled servers only (disabled omitted); `autoApprove` tools become `settings.json` `permissions.allow` entries (`mcp__server__tool`) |
+| `docs/references/kiro-claude-sync-ledger.md` | every `.kiro/` source | **sync ledger** - a content-hashed source→target map with a fidelity grade (`verbatim`/`adapted`/`lossy`/`dropped`) per row; `git diff` it to see exactly which capabilities moved when you upgrade a prompt, and `git log -p` it for the history |
 
-The generated `.claude/` tree is **committed** so Claude Code works the moment you clone - no extra step. Because it is generated, Kiro stays the single source of truth; `scripts/check-claude-fresh.sh` verifies the committed copy is in sync (run before any release - see the `versioning.md` checklist), and the `claude-export-freshness` hook reminds you to regenerate after editing `.kiro/`.
+The generated `.claude/` tree is **committed** so Claude Code works the moment you clone - no extra step - and **the installer runs this export at the end**, so a fresh install lands a working `.claude/` layer automatically (needs `jq`; it prints the one command to run if absent). Because it is generated, Kiro stays the single source of truth; `scripts/check-claude-fresh.sh` verifies the committed copy *and the sync ledger* are in sync (run before any release - see the `versioning.md` checklist), and the `claude-export-freshness` hook reminds you to regenerate after editing `.kiro/`.
 
 See [docs/references/kiro-to-claude-compatibility-2026-06-05.md](docs/references/kiro-to-claude-compatibility-2026-06-05.md) for the full Kiro→Claude mapping, what translates cleanly, and known limitations. Requires `jq`.
 
