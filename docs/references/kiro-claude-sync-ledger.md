@@ -108,3 +108,7 @@ on the Claude side.
 | `type-check-on-stop.kiro.hook` | `3d93459b6dbf` | settings.json Stop | verbatim | when=agentStop |
 | `ux-preflight-gate.kiro.hook` | `8869c0715697` | settings.json PreToolUse (Edit/Write) | lossy | when=preTaskExecution |
 | `variant-search-on-fix-branch.kiro.hook` | `fc8539bf3a1b` | settings.json UserPromptSubmit | verbatim | when=userPromptSubmit |
+
+## Generated (no single .kiro source)
+
+- `skills/kiro-rails/SKILL.md` - the discoverable capability index, generated from every command, skill, agent, and steering rule above (KRL-15).
