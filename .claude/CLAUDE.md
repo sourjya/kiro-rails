@@ -1935,7 +1935,7 @@ Without a threat model, the reviewer infers trust boundaries from code alone, wh
 
 **Prompt:** `.kiro/prompts/review-ux-live.md`
 **Agent:** `.kiro/agents/ux-reviewer.json` (restricted-tool: browser MCP + read + script exec only)
-**Rubric:** `.kiro/steering/ux-console-idiom.md` (loaded on-demand, NOT always-on)
+**Rubric:** the "UX Console-Idiom Rubric" rules in `CLAUDE.md` (loaded on-demand, NOT always-on)
 **Trigger:** Manual invocation at UI feature completion or pre-release
 **Scope:** All user-facing routes (or subset specified by the invoker)
 

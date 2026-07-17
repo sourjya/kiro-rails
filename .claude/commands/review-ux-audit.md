@@ -55,7 +55,7 @@ flag it as "unverifiable without runtime data" and move on.
 
 In addition to WCAG 2.2 AA and Nielsen's heuristics (the floor), score all
 findings against the **console-idiom rubric** in
-`.kiro/steering/ux-console-idiom.md` (load it before starting).
+the "UX Console-Idiom Rubric" rules in `CLAUDE.md` (load it before starting).
 
 This rubric provides 44 binary checks across 9 families (D/S/R/V/T/E/C/A/K)
 with severity-weighted scoring. Every finding in this audit MUST carry:
