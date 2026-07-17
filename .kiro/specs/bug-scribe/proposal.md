@@ -53,7 +53,7 @@ The developer's workflow becomes: write the fix, add `# bug: CATEGORY — descri
 
 ## Design Divergence: Auto-COE → Bug Scribe
 
-Bug Scribe is inspired by [Auto-COE](https://lnkd.in/g296rCEz) but diverges in two significant ways — one from the original, one from convergence with our existing workflow.
+Bug Scribe is inspired by [Auto-COE](https://github.com/yogeshselvarajan/kiro-auto-coe-hook) but diverges in two significant ways — one from the original, one from convergence with our existing workflow.
 
 ### Divergence 1: Discovery-first vs Fix-first
 
@@ -62,12 +62,17 @@ Auto-COE starts from "I just fixed a bug" — the marker goes in alongside the f
 | | Auto-COE (original) | Bug Scribe (ours) |
 |---|---|---|
 | Marker means | "I just fixed this" | "I found this" |
-| Trigger | fileEdit (save) | fileEdit (discovery) + beforeCommit (resolution) |
+| Trigger | fileEdit (marker *removed* = bug was fixed) | fileEdit (marker *added* = bug discovered) + beforeCommit (diff captured) |
 | Diff captured | Immediately (assumes fix is done) | At commit time (when fix is actually complete) |
 | "Report only" flow | Not supported | Supported — doc exists in OPEN state until fix lands |
 | Solution | Inferred from diff | Explicit from commit message |
 
-This matters because developers don't always fix what they find immediately. A bug noticed during feature work gets filed for later (per our existing branch discipline — "do NOT fix bugs on the current feature branch"). The discovery moment and the fix moment are often separated by hours or days.
+**These are complementary, not competing.** Auto-COE detects marker *disappearance* (the fix moment). Bug Scribe detects marker *appearance* (the discovery moment). The full lifecycle is both:
+
+1. Marker added → Bug Scribe fires `discover` → scaffolds the bug doc (OPEN)
+2. Marker removed (fix applied) → Auto-COE pattern fires `resolve` → captures diff + solution
+
+A future version should support both triggers: marker added = discovery, marker removed = resolution. This is the full convergence — the marker's entire lifecycle from birth to death is documented automatically.
 
 ### Divergence 2: Convergence with existing kiro-rails bug tracking
 

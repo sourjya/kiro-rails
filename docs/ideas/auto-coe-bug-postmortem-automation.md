@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-18
 **Status:** Implemented (spec: `.kiro/specs/bug-scribe/`)
-**Inspiration:** [Auto-COE](https://lnkd.in/g296rCEz) — proved the two-layer deterministic+agent pattern for bug automation. Credit in README.
+**Inspiration:** [Auto-COE](https://github.com/yogeshselvarajan/kiro-auto-coe-hook) — proved the two-layer deterministic+agent pattern for bug automation. Credit in README.
 **Relevance:** Directly implementable with the existing kiro-rails hook + steering infrastructure
 
 ---
@@ -433,7 +433,7 @@ This is a separate idea doc / spec once Auto-COE proves the pattern works.
 
 ## References
 
-- **Inspiration:** [Auto-COE](https://lnkd.in/g296rCEz) by LinkedIn community — proved the two-layer deterministic+agent pattern for automated bug documentation. The "deterministic shell, not an LLM call" insight directly shaped Bug Scribe's architecture. Credit in kiro-rails README Acknowledgments.
+- **Inspiration:** [Auto-COE](https://github.com/yogeshselvarajan/kiro-auto-coe-hook) by [Yogesh Selvarajan](https://github.com/yogeshselvarajan) — proved the two-layer deterministic+agent pattern for automated bug documentation. The "deterministic shell, not an LLM call" insight directly shaped Bug Scribe's architecture. Credit in kiro-rails README Acknowledgments.
 - kiro-rails chokepoint logging: `.kiro/steering/chokepoint-logging.md`
 - kiro-rails bug workflow: `.kiro/steering/git-and-focus-discipline.md` (Part 7)
 - kiro-rails bug doc template: `docs/bugs/BUG-000-template.md`

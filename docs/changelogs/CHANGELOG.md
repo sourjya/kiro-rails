@@ -28,7 +28,7 @@ Two-trigger architecture separating discovery from resolution:
 - Discovery (`fileEdit`): "I found a bug" → scaffolds doc immediately with code context
 - Resolution (`beforeCommit`): "I fixed it" → captures the actual fix diff + commit message as solution
 
-Inspired by [Auto-COE](https://lnkd.in/g296rCEz)'s proof that a deterministic shell hook can automate bug documentation at zero LLM cost. Bug Scribe diverges by starting at discovery (not fix), producing an importable ticket unit, and converging with kiro-rails' existing bug workflow (TDD regression tests, variant search, chokepoint promotion).
+Inspired by [Auto-COE](https://github.com/yogeshselvarajan/kiro-auto-coe-hook)'s proof that a deterministic shell hook can automate bug documentation at zero LLM cost. Bug Scribe diverges by starting at discovery (not fix), producing an importable ticket unit, and converging with kiro-rails' existing bug workflow (TDD regression tests, variant search, chokepoint promotion).
 
 ## 2026-07-17 - v0.18.0 - Claude Layer: Fidelity, Discoverability, Activation
 
