@@ -132,9 +132,9 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 
 **Roadmap is a living document.** Specs link to milestones, ADRs link to roadmap rows, security reviews have their own tracking table. Plan changes require updating the roadmap and documenting the reason.
 
-**Bug tracking has teeth.** Every bug gets a [numbered document](docs/bugs/BUG-000-template.md) with reproduction steps, root cause, and fix description. Regression tests are non-negotiable. Bug documents link to the roadmap for traceability.
+**Bug tracking has teeth.** Type `# bug: CATEGORY — description` in any source file and the [Bug Scribe](scripts/bug-scribe.sh) hook instantly scaffolds a full [bug document](docs/bugs/BUG-000-template.md) — metadata, code context, chokepoint log entry — zero tokens, deterministic. On commit, a second hook captures the fix diff and your commit message as the solution. Each bug doc is a self-contained importable ticket: problem, context, root cause, solution, diff, impact, regression tests, variant search, and lessons. Pattern tracking starts at bug #1, not at sprint retro.
 
-**13 purpose-specific directories prevent the junk drawer.** Each `docs/` subdirectory has a defined purpose and placement rules. No files in `docs/` root. Ideas graduate from `docs/ideas/` to specs, then to archive.
+**14 purpose-specific directories prevent the junk drawer.** Each `docs/` subdirectory has a defined purpose and placement rules. No files in `docs/` root. Ideas graduate from `docs/ideas/` to specs, then to archive.
 
 ## Project Structure
 
