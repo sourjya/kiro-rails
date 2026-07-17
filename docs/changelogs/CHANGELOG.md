@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
-## Unreleased
+## 2026-07-17 - v0.18.0 - Claude Layer: Fidelity, Discoverability, Activation
+
+Adapts the generated Claude Code layer to the upgraded Kiro prompt set: broken
+cross-references are rewritten, the whole toolbox is made discoverable through a
+generated index skill, every source→target translation is recorded in an
+auto-emitted sync ledger, and the installers now actually deliver and activate the
+layer. Also bumps the installers off their stale 0.15.0 pin and adds them to the
+version-file list so they stop drifting.
 
 ### Fixed (installers)
 

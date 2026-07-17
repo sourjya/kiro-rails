@@ -38,7 +38,7 @@ on the Claude side.
 | `user-project-overrides.md` | `dca5a44fd00d` | `CLAUDE.md` | adapted | concatenated first; the only steering file meant to be edited |
 | `ux-console-idiom.md` | `288904d8c274` | `CLAUDE.md` | adapted | concatenated; `.kiro/steering` cross-refs rewritten to CLAUDE.md sections |
 | `ux-pattern-registry.md` | `9c067962d36a` | `CLAUDE.md` | adapted | concatenated; `.kiro/steering` cross-refs rewritten to CLAUDE.md sections |
-| `versioning.md` | `633ad728538a` | `CLAUDE.md` | adapted | concatenated; `.kiro/steering` cross-refs rewritten to CLAUDE.md sections |
+| `versioning.md` | `ab3fd6cceec2` | `CLAUDE.md` | adapted | concatenated; `.kiro/steering` cross-refs rewritten to CLAUDE.md sections |
 
 ## Prompts → commands (slash-commands)
 

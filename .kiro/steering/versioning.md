@@ -45,17 +45,21 @@ While in beta (0.x.y):
 authoritative human-readable record. Every other version reference is a copy that
 must be kept in sync with them.
 
-If the project has a build manifest, list it here and update it on every bump:
+Every file that hard-codes the version string must be listed here and bumped on
+every release. kiro-rails has no build manifest, but its two installers each carry a
+version constant that gates the "already installed / upgrade" decision, so they ARE
+version files and must stay in sync with the tag:
 
 ```
-pyproject.toml              -> version = "0.2.0"
-package.json                -> "version": "0.2.0"
+install.sh    -> CURRENT_VERSION="0.18.0"
+install.ps1   -> $CurrentVersion = "0.18.0"
 ```
 
-If the project has **no** build manifest (a config, steering, or docs-only repo -
-kiro-rails itself is one), delete the block above. Do not invent a manifest just to
-hold a version string: the tag and the changelog are sufficient, and a checklist
-step that points at a file which does not exist is a step that silently never runs.
+(These drifted to 0.15.0 while tags reached 0.17.3 precisely because this list did
+not name them - KRL-13. A version reference not on this list is one that silently
+never gets bumped.) If you fork kiro-rails into a project WITH a build manifest, add
+`pyproject.toml` / `package.json` here too; if you strip the installers, remove this
+block rather than pointing the checklist at a file that does not exist.
 
 Verify tags and changelog agree before releasing:
 
