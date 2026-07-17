@@ -20,6 +20,10 @@ set -euo pipefail
 # Configuration
 # ──────────────────────────────────────────────
 
+# Source the reusable template library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/template.sh"
+
 BUGS_DIR="docs/bugs"
 TEMPLATE="${BUGS_DIR}/BUG-000-template.md"
 PROCESSED_LOG="${BUGS_DIR}/.bug-scribe-processed"
@@ -207,25 +211,20 @@ cmd_discover() {
             exit 1
         fi
 
-        # Pass 1: sed for single-line placeholders
-        sed -e "s|{{BUG_ID}}|${bug_id}|g" \
-            -e "s|{{BUG_ID_LOWER}}|${bug_id_lower}|g" \
-            -e "s|{{CATEGORY}}|${category}|g" \
-            -e "s|{{FILE}}|${file}|g" \
-            -e "s|{{DATE}}|${date_str}|g" \
-            -e "s|{{BRANCH}}|${branch}|g" \
-            -e "s|{{DESCRIPTION}}|${description}|g" \
-            -e "s|{{STATUS}}|OPEN|g" \
-            -e "s|{{SEVERITY}}|TBD|g" \
-            -e "s|{{SOLUTION}}|Pending — will be captured from commit message|g" \
-            -e "s|{{DIFF}}|Pending fix — will be captured on commit|g" \
-            "$TEMPLATE" > "$output_file"
-
-        # Pass 2: awk injects multi-line context
-        awk -v ctx_file="$ctx_tmp" '
-            /\{\{CONTEXT\}\}/ { while ((getline line < ctx_file) > 0) print line; next }
-            { print }
-        ' "$output_file" > "${output_file}.tmp" && mv "${output_file}.tmp" "$output_file"
+        # Render template using the reusable library
+        render_template "$TEMPLATE" "$output_file" \
+            "BUG_ID=${bug_id}" \
+            "BUG_ID_LOWER=${bug_id_lower}" \
+            "CATEGORY=${category}" \
+            "FILE=${file}" \
+            "DATE=${date_str}" \
+            "BRANCH=${branch}" \
+            "DESCRIPTION=${description}" \
+            "STATUS=OPEN" \
+            "SEVERITY=TBD" \
+            "SOLUTION=Pending — will be captured from commit message" \
+            "DIFF=Pending fix — will be captured on commit" \
+            "CONTEXT=@${ctx_tmp}"
 
         # Category validation
         if ! validate_category "$category"; then
@@ -331,7 +330,7 @@ cmd_resolve() {
             local date_str
             date_str=$(date +%Y-%m-%d)
 
-            # Create temp files for injection
+            # Create temp files for multi-line injection
             local diff_tmp msg_tmp
             diff_tmp=$(mktemp)
             msg_tmp=$(mktemp)
@@ -340,26 +339,28 @@ cmd_resolve() {
             echo "$diff_content" > "$diff_tmp"
             echo "$commit_msg" > "$msg_tmp"
 
-            # Replace "Pending fix" placeholder with actual diff
+            # Inject diff and solution using awk (multi-line replacement)
             awk -v diff_file="$diff_tmp" '
                 /Pending fix/ { while ((getline line < diff_file) > 0) print line; next }
                 { print }
             ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
 
-            # Replace "Pending — will be captured from commit message" with actual message
             awk -v msg_file="$msg_tmp" '
                 /Pending — will be captured from commit message/ { while ((getline line < msg_file) > 0) print line; next }
                 { print }
             ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
 
-            # Update status: OPEN → IN_PROGRESS
-            sed -i'' -e 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
-
-            # Update Fixed date
-            sed -i'' -e "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
-
-            # Update Timeline: add "Fix committed" entry
-            sed -i'' -e "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
+            # Update status, date, timeline (single-line replacements — portable sed)
+            _template_sed_replace "$bug_doc" "dummy" "dummy" 2>/dev/null || true  # ensure function is loaded
+            if sed --version 2>/dev/null | grep -q GNU; then
+                sed -i 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
+                sed -i "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
+                sed -i "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
+            else
+                sed -i '' 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
+                sed -i '' "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
+                sed -i '' "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
+            fi
 
             # Stage the updated bug doc
             git add "$bug_doc"
