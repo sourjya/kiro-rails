@@ -63,6 +63,8 @@ MANAGED_FILES=(
   .kiro/hooks/session-guard-check.kiro.hook
   .kiro/hooks/claude-export-freshness.kiro.hook
   .kiro/skills/auth-implementation/SKILL.md
+  .kiro/skills/incident-response/SKILL.md
+  .kiro/skills/review-guide/SKILL.md
   .kiro/skills/spec-propose/SKILL.md
   .kiro/skills/spec-implement/SKILL.md
   .kiro/skills/spec-verify/SKILL.md
@@ -70,6 +72,7 @@ MANAGED_FILES=(
   .kiro/agents/code-security-reviewer.json
   .kiro/agents/ux-red-team.json
   .kiro/agents/security-verifier.json
+  .kiro/agents/ux-reviewer.json
   .kiro/prompts/review-code-security.md
   .kiro/prompts/review-code-maintainability.md
   .kiro/prompts/review-test-quality.md
@@ -81,6 +84,7 @@ MANAGED_FILES=(
   .kiro/prompts/review-cicd-pipeline.md
   .kiro/prompts/review-frontend-performance.md
   .kiro/prompts/review-ux-audit.md
+  .kiro/prompts/review-ux-live.md
   .kiro/prompts/review-ux-preflight.md
   .kiro/prompts/review-spec-readiness.md
   .kiro/prompts/review-ai-agent-surface.md
@@ -125,6 +129,7 @@ DIRS=(
   .kiro/steering .kiro/hooks .kiro/agents .kiro/prompts
   .kiro/specs .kiro/templates .kiro/settings
   .kiro/skills/auth-implementation
+  .kiro/skills/incident-response .kiro/skills/review-guide
   .kiro/skills/spec-propose .kiro/skills/spec-implement
   .kiro/skills/spec-verify .kiro/skills/spec-archive
   docs/decisions docs/architecture docs/roadmap docs/changelogs
@@ -355,6 +360,16 @@ else
   dep_degraded=$((dep_degraded + 1))
 fi
 
+# jq (required to generate the native Claude Code layer from .kiro/)
+if command -v jq &>/dev/null; then
+  echo "  ✓ jq $(jq --version 2>/dev/null | sed 's/jq-//')"
+  dep_ok=$((dep_ok + 1))
+else
+  echo "  ✗ jq (not found) — the native Claude Code layer (.claude/) cannot be generated"
+  echo "    Install: https://jqlang.github.io/jq/download/  then run: bash scripts/export-to-claude.sh"
+  dep_degraded=$((dep_degraded + 1))
+fi
+
 # node/npm (for TypeScript projects)
 if command -v node &>/dev/null; then
   echo "  ✓ node $(node --version 2>/dev/null)"
@@ -420,6 +435,29 @@ else
 fi
 
 # ──────────────────────────────────────────────
+# Generate the native Claude Code layer (.claude/ + .mcp.json + sync ledger)
+# The .kiro/ tree is the source of truth; scripts/export-to-claude.sh translates it
+# into what Claude Code reads natively. Running it here means Claude Code users get a
+# working setup on install instead of having to know to run it by hand. It is
+# non-fatal: the .kiro/ files are already in place, so a generation problem must not
+# abort the install. Requires jq; if absent we print the one command to run later.
+# ──────────────────────────────────────────────
+claude_generated=0
+echo ""
+if command -v jq &>/dev/null && [ -f scripts/export-to-claude.sh ]; then
+  echo "Generating native Claude Code layer (.claude/)..."
+  if bash scripts/export-to-claude.sh >/dev/null 2>&1; then
+    claude_generated=1
+    echo "  ✓ .claude/ generated (CLAUDE.md, commands, agents, skills, hooks, settings.json)"
+  else
+    echo "  · Could not generate .claude/ automatically. Run it yourself: bash scripts/export-to-claude.sh"
+  fi
+else
+  echo "Skipping .claude/ generation (jq not found). After installing jq, run:"
+  echo "  bash scripts/export-to-claude.sh"
+fi
+
+# ──────────────────────────────────────────────
 # Summary
 # ──────────────────────────────────────────────
 echo ""
@@ -432,7 +470,12 @@ if [ "$install_type" = "fresh" ]; then
   echo ""
   echo "Next steps:"
   echo "  1. Review .kiro/steering/user-project-overrides.md"
-  echo "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
+  if [ "$claude_generated" -eq 1 ]; then
+    echo "  2. git add .kiro/ .claude/ .mcp.json docs/ scripts/ && git commit -m 'feat: add kiro-rails'"
+    echo "     (.claude/ is generated from .kiro/ - re-run scripts/export-to-claude.sh after editing steering)"
+  else
+    echo "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
+  fi
 else
   echo "Done! $downloaded new, $updated updated, $removed removed."
   [ $removed -gt 0 ] && echo "  Stale files from previous versions were cleaned up."

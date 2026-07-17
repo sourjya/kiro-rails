@@ -54,6 +54,8 @@ $ManagedFiles = @(
     ".kiro/hooks/session-guard-check.kiro.hook"
     ".kiro/hooks/claude-export-freshness.kiro.hook"
     ".kiro/skills/auth-implementation/SKILL.md"
+    ".kiro/skills/incident-response/SKILL.md"
+    ".kiro/skills/review-guide/SKILL.md"
     ".kiro/skills/spec-propose/SKILL.md"
     ".kiro/skills/spec-implement/SKILL.md"
     ".kiro/skills/spec-verify/SKILL.md"
@@ -61,6 +63,7 @@ $ManagedFiles = @(
     ".kiro/agents/code-security-reviewer.json"
     ".kiro/agents/ux-red-team.json"
     ".kiro/agents/security-verifier.json"
+    ".kiro/agents/ux-reviewer.json"
     ".kiro/prompts/review-code-security.md"
     ".kiro/prompts/review-code-maintainability.md"
     ".kiro/prompts/review-test-quality.md"
@@ -72,6 +75,7 @@ $ManagedFiles = @(
     ".kiro/prompts/review-cicd-pipeline.md"
     ".kiro/prompts/review-frontend-performance.md"
     ".kiro/prompts/review-ux-audit.md"
+    ".kiro/prompts/review-ux-live.md"
     ".kiro/prompts/review-ux-preflight.md"
     ".kiro/prompts/review-spec-readiness.md"
     ".kiro/prompts/review-ai-agent-surface.md"
@@ -104,6 +108,7 @@ $Dirs = @(
     ".kiro/steering"; ".kiro/hooks"; ".kiro/agents"; ".kiro/prompts"
     ".kiro/specs"; ".kiro/templates"; ".kiro/settings"
     ".kiro/skills/auth-implementation"
+    ".kiro/skills/incident-response"; ".kiro/skills/review-guide"
     ".kiro/skills/spec-propose"; ".kiro/skills/spec-implement"
     ".kiro/skills/spec-verify"; ".kiro/skills/spec-archive"
     "docs/decisions"; "docs/architecture"; "docs/roadmap"; "docs/changelogs"
@@ -301,6 +306,28 @@ if (Test-Path $overridesLocal) {
 # Write version file
 [System.IO.File]::WriteAllText((Join-Path $cwd $VersionFile), $CurrentVersion)
 
+# Generate the native Claude Code layer (.claude/ + .mcp.json + sync ledger).
+# export-to-claude.sh is a bash+jq script; on Windows it runs under Git Bash or WSL.
+# Non-fatal: the .kiro/ files are already in place, so a generation problem must not
+# fail the install. If bash or jq is missing we print the one command to run later.
+$claudeGenerated = $false
+Write-Host ""
+$hasBash = [bool](Get-Command bash -ErrorAction SilentlyContinue)
+$hasJq   = [bool](Get-Command jq   -ErrorAction SilentlyContinue)
+if ($hasBash -and $hasJq -and (Test-Path "scripts/export-to-claude.sh")) {
+    Write-Host "Generating native Claude Code layer (.claude/)..."
+    & bash scripts/export-to-claude.sh *> $null
+    if ($LASTEXITCODE -eq 0) {
+        $claudeGenerated = $true
+        Write-Host "  + .claude/ generated (CLAUDE.md, commands, agents, skills, hooks, settings.json)"
+    } else {
+        Write-Host "  - Could not generate .claude/ automatically. Run it yourself: bash scripts/export-to-claude.sh"
+    }
+} else {
+    Write-Host "Skipping .claude/ generation (needs bash + jq). After installing them, run:"
+    Write-Host "  bash scripts/export-to-claude.sh"
+}
+
 # Summary
 Write-Host ""
 if ($installType -eq "fresh") {
@@ -312,7 +339,12 @@ if ($installType -eq "fresh") {
     Write-Host ""
     Write-Host "Next steps:"
     Write-Host "  1. Review .kiro/steering/user-project-overrides.md"
-    Write-Host "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
+    if ($claudeGenerated) {
+        Write-Host "  2. git add .kiro/ .claude/ .mcp.json docs/ scripts/ && git commit -m 'feat: add kiro-rails'"
+        Write-Host "     (.claude/ is generated from .kiro/ - re-run scripts/export-to-claude.sh after editing steering)"
+    } else {
+        Write-Host "  2. git add .kiro/ docs/ scripts/ && git commit -m 'feat: add kiro-rails steering files'"
+    }
 } else {
     Write-Host "Done! $downloaded new, $updated updated, $removed removed." -ForegroundColor Green
     if ($removed -gt 0) { Write-Host "  Stale files from previous versions were cleaned up." }
