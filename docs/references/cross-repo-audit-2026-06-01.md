@@ -30,35 +30,35 @@
 
 ## Items Found in Other Repos - NOT Adopted (with Justification)
 
-### Project A (task management SaaS)
+### Project A (an internal web app)
 
 | Item | Type | Why NOT adopted |
 |------|------|-----------------|
-| `ux-patterns.md` (41KB) | Steering | Project-specific UI patterns for task management screens. Too domain-specific. Kiro-rails ships the generic `ux-pattern-registry.md` (3.8KB) with common screen-type patterns; projects extend it in overrides. |
+| `ux-patterns.md` (41KB) | Steering | Project-specific UI patterns for the app's screens. Too domain-specific. Kiro-rails ships the generic `ux-pattern-registry.md` (3.8KB) with common screen-type patterns; projects extend it in overrides. |
 | `devtools-testing.md` | Steering | Project-specific DevTools/Playwright testing conventions. Generic testing standards are already in `testing-standards.md`. |
-| `vg-*.md` prompts (11 files) | Prompts | Product-specific visual debugging prompts (diff, capture, ideate, etc.). These are workflow shortcuts, not generic review prompts. |
-| `viewgraph-*.md` steering (3 files) | Steering | ViewGraph-specific rules (hostile DOM handling, workflow, resolution). |
+| Product-specific prompts (11 files) | Prompts | Product-specific visual debugging prompts (diff, capture, ideate, etc.). These are workflow shortcuts, not generic review prompts. |
+| Product-specific steering (3 files) | Steering | Project A-specific rules (DOM handling, workflow, resolution). |
 | `wsl-shell-commands.md` | Steering | WSL-specific shell workarounds. Environment-specific, not generic. |
 
-### Project B (developer platform)
+### Project B (an internal web app)
 
 | Item | Type | Why NOT adopted |
 |------|------|-----------------|
-| `tracepulse-subagent-rules.md` | Steering | Rules for how to use TracePulse MCP tools. Project-specific to repos that use TracePulse. Users who install TracePulse should add this to their overrides. |
-| `webwright-browser-agent.md` | Steering | Browser automation agent rules using Microsoft WebWright. Product-specific integration. |
+| MCP-usage steering | Steering | Rules for how to use a project-specific test/build MCP. Specific to repos that use that MCP; users who install it add this to their overrides. |
+| Browser-agent steering | Steering | Browser-automation agent rules using a product-specific browser tool. Product-specific integration. |
 | `dev-queue.md` | Steering | Agentic development queue conventions. Product-specific architecture. |
 | `ui-spacing-typography.md` | Steering | Project-specific spacing/typography tokens. Generic spacing rules are in `frontend-patterns.md`. |
 | `new-project-checklist.md` | Steering | Checklist for bootstrapping sub-projects. The kiro-rails installer serves this purpose for new projects. |
 | `strengthen-project-spec.md` (20KB) | Prompt | Spec hardening prompt. Overlaps significantly with `review-spec-readiness.md` which is already in kiro-rails. This version is tuned to a specific domain. |
-| `enforce-tracepulse-usage.kiro.hook` | Hook | Forces TracePulse over raw shell for tests/builds. Product-specific to TracePulse users. |
+| MCP-enforcement hook | Hook | Forces a project-specific test/build MCP over raw shell for tests/builds. Product-specific to that MCP's users. |
 
-### Project C (ticket/issue tracking)
+### Project C (an internal web app)
 
 | Item | Type | Why NOT adopted |
 |------|------|-----------------|
 | `ux-design-sprint.md` | Prompt | UX design sprint workflow prompt. Interesting but too opinionated for a generic template - assumes a specific design sprint methodology. Projects can add to overrides. |
-| `tp-*.md` prompts (5 files) | Prompts | TracePulse shortcut prompts (tp-start, tp-test, tp-debug, tp-health, tp-diagnose). Product-specific to TracePulse users. |
-| `tp-shell-intercept.kiro.hook` | Hook | Intercepts shell commands to route through TracePulse. Product-specific. |
+| Product-specific prompts (5 files) | Prompts | Shortcut prompts for a project-specific test/build MCP (start, test, debug, health, diagnose). Product-specific. |
+| Shell-intercept hook | Hook | Intercepts shell commands to route through a project-specific MCP. Product-specific. |
 | `ui-component-standards.md` | Steering | Project-specific component library conventions. Generic component rules are in `frontend-patterns.md` and `reusable-architecture.md`. |
 | `import-path-aliases.md` | Steering | Project-specific path alias config. Generic rules are in `import-path-rules.md`. |
 
@@ -90,7 +90,7 @@ This audit documents how kiro-rails' agent/prompt library evolved:
 2. Is it tied to a specific product, domain, or tool? → User override
 3. Does it duplicate something already in kiro-rails? → Don't include
 
-Items that are project-specific (TracePulse rules, product-specific prompts, queue conventions) correctly live in each project's `user-project-overrides.md` or as additional steering files that the installer doesn't manage.
+Items that are project-specific (project-specific MCP rules, product-specific prompts, queue conventions) correctly live in each project's `user-project-overrides.md` or as additional steering files that the installer doesn't manage.
 
 ---
 
@@ -98,4 +98,4 @@ Items that are project-specific (TracePulse rules, product-specific prompts, que
 
 None at this time. The three repos are well-synchronized with kiro-rails. The installer's upgrade mechanism (`kiro-rails-version` marker + managed file overwrite) keeps them in sync.
 
-If a pattern emerges across 3+ projects (e.g., TracePulse usage rules appearing in all repos), that's a signal to consider promoting it to kiro-rails core. Currently `tracepulse-subagent-rules.md` exists in 2/3 repos - one more adoption would trigger promotion consideration.
+If a pattern emerges across 3+ projects (e.g., project-specific MCP usage rules appearing in all repos), that's a signal to consider promoting it to kiro-rails core. Currently that MCP-usage steering exists in 2/3 repos - one more adoption would trigger promotion consideration.
