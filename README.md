@@ -68,12 +68,12 @@ This downloads all steering files, hooks, prompts, templates, and creates the `d
 
 What you get:
 
-- **Code quality** - TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 13-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
+- **Code quality** - TDD mandate, spec-driven workflow, automated hooks on every edit and commit, 14-directory documentation taxonomy, git workflow rules preventing direct commits to `main`
 - **Security** - three-tier OWASP-aligned audit (pre-commit → feature → sprint), AI/agentic surface review (ASI01-10, MCP Top 10), adversarial verifier agent, incident response skill, mandatory regression tests for bugs
 - **Architecture** - reusable component design, infrastructure abstraction (adapter pattern), centralized config/constants, contract-first APIs, async discipline, state persistence rules
 - **Observability** - error handling standards, performance guidelines (caching, pagination, N+1 prevention), observability-first design for pipelines, structured logging
 - **Discipline** - permission boundaries (Always / Ask First / Never), change scope enforcement, fix spiral detection, focus & branch discipline (queue mid-task requests, merge-and-delete branches, collision detection), session isolation (no cross-repo git, working-tree lock), consistency rules, dependency minimalism, code commenting standards
-- **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging
+- **Tooling** - auth implementation skill (SSO/OAuth checklist), package manifest verification, versioning/release process, maintainability review (33-point audit), chokepoint logging, Bug Scribe (automated bug docs from inline markers)
 
 ## Getting Started with Reviews
 
@@ -230,7 +230,7 @@ docs/
 ├── testing/            # Test strategy and coverage reports
 ├── runbooks/           # Operational guides and setup instructions
 ├── references/         # External docs, research materials, API guides
-├── engineering/        # Engineering process documentation
+├── engineering/        # Engineering process documentation + chokepoint log
 ├── security/           # Security review reports and findings log
 └── ux-reviews/         # UX review reports (UXR-###) with rubric-scored findings
 
@@ -242,6 +242,7 @@ scripts/
 ├── export-to-claude.sh # Generate the full native .claude/ layer - single owner of .claude/
 ├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
 ├── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
+├── bug-scribe.sh       # Automated bug doc scaffolding from # bug: markers (zero tokens, deterministic)
 └── style-survey.js     # In-page computed-style census for UX rubric evidence (D/K families)
 
 logs/                   # Command output logs (gitignored)
@@ -361,6 +362,8 @@ main ──→ feat/A ──→ merge ──→ fix/B ──→ merge ──→ 
 4. Add regression tests (both negative and positive) - non-negotiable
 5. Update changelog and roadmap
 6. Merge to `main`
+
+> **With Bug Scribe (v0.19.0+):** Steps 1-2 are automated. Type `# bug: CATEGORY — description` in your source file and the hook scaffolds the bug doc instantly. The fix diff and commit message are captured into the doc automatically on commit.
 
 ### Security Reviews
 
@@ -482,6 +485,8 @@ The spec workflow skills and multi-tool export features were inspired by [OpenSp
 The AI/agentic surface review prompt (`review-ai-agent-surface.md`) was informed by [Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) by [Sachin Sharma](https://www.linkedin.com/in/sachinsharma8080/). Their per-vulnerability-class skill architecture, 7-Question validation gate, and the `hunt-llm-ai` skill covering ASI01-10 from the attacker's perspective directly shaped our defensive counterpart - a structured audit prompt for AI-powered features aligned to OWASP Top 10 for Agentic Applications, LLM Applications, and MCP Top 10. We adapted the offensive hunting patterns into a defensive review framework that integrates with our tiered security model and adversarial verifier workflow.
 
 The security review prompt enhancements (v0.10.0+) - supply chain integrity checks, cloud hardening baseline, GraphQL security, NIST/ATT&CK compliance tagging, and the incident-response skill - were informed by [Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) by [Mahipal Jangra](https://github.com/mukul975). Their 817-skill library across 29 security domains, structured with the [agentskills.io](https://agentskills.io/) standard and mapped to 6 compliance frameworks (MITRE ATT&CK, NIST CSF 2.0, ATLAS, D3FEND, NIST AI RMF, MITRE F3), demonstrated the value of compliance framework tagging per finding and highlighted gaps in our cloud, supply chain, and API security review coverage. We adapted their operational knowledge patterns into defensive review checklists integrated with our tiered audit model.
+
+The Bug Scribe hook system (v0.19.0+) - automated bug documentation from inline markers - was inspired by [Auto-COE](https://github.com/peterparker68/auto-coe). Their key insight: a deterministic shell command (not an LLM call) can trigger bug documentation at the moment of the fix, making postmortems a side effect of the normal workflow rather than a ceremony nobody does for small bugs. We adapted the pattern to separate discovery from resolution (two triggers instead of one), produce self-contained importable tickets, and converge with kiro-rails' existing bug workflow (TDD regression tests, variant search, chokepoint promotion). The "comment marker as automation trigger" concept and the proof that this works at zero LLM cost on the primary path are directly from Auto-COE.
 
 ## License
 
