@@ -1,6 +1,7 @@
 # Kiro Rails
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub tag](https://img.shields.io/github/v/tag/sourjya/kiro-rails?label=version)](https://github.com/sourjya/kiro-rails/releases)
 [![GitHub last commit](https://img.shields.io/github/last-commit/sourjya/kiro-rails)](https://github.com/sourjya/kiro-rails/commits/main)
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
