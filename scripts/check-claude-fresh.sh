@@ -31,14 +31,24 @@ if [ -f .mcp.json ] || [ -f "$TMP/.mcp.json" ]; then
   diff -q .mcp.json "$TMP/.mcp.json" >/dev/null 2>&1 || drift=1
 fi
 
+# The capability sync ledger is generated under OUT_BASE (docs/, outside .claude/),
+# so it is not covered by the tree diff above. It is deterministic (content hashes,
+# no timestamps), so a stable diff here means the committed ledger matches the
+# sources. Both-absent = in sync (e.g. an older checkout with no ledger yet).
+LEDGER="docs/references/kiro-claude-sync-ledger.md"
+if [ -f "$LEDGER" ] || [ -f "$TMP/$LEDGER" ]; then
+  diff -q "$LEDGER" "$TMP/$LEDGER" >/dev/null 2>&1 || drift=1
+fi
+
 if [ "$drift" -eq 0 ]; then
   echo "OK: committed .claude/ (and .mcp.json) are in sync with .kiro/ source."
   exit 0
 else
   echo "STALE: committed Claude layer differs from generated output. Regenerate before release:"
-  echo "  bash scripts/export-to-claude.sh && git add .claude .mcp.json"
+  echo "  bash scripts/export-to-claude.sh && git add .claude .mcp.json $LEDGER"
   echo "--- drift ---"
   diff -rq --exclude='settings.local.json' .claude "$TMP/.claude" 2>&1 | sed 's/^/  /'
   { [ -f .mcp.json ] || [ -f "$TMP/.mcp.json" ]; } && diff -q .mcp.json "$TMP/.mcp.json" 2>&1 | sed 's/^/  /'
+  { [ -f "$LEDGER" ] || [ -f "$TMP/$LEDGER" ]; } && diff -q "$LEDGER" "$TMP/$LEDGER" 2>&1 | sed 's/^/  /'
   exit 1
 fi
