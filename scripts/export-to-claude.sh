@@ -23,6 +23,33 @@ command -v jq >/dev/null 2>&1 || { echo "Error: jq is required for export-to-cla
 rm -rf "$OUT/agents" "$OUT/commands" "$OUT/skills"
 mkdir -p "$OUT/hooks" "$OUT/agents" "$OUT/commands"
 
+# ── 0) steering cross-ref rewriter (shared by CLAUDE.md and commands) ──────────
+# Kiro prompt/steering bodies reference sibling steering docs by their .kiro path,
+# e.g. `.kiro/steering/ux-console-idiom.md`. On the Claude side that path is not the
+# steering home: every steering doc is concatenated into CLAUDE.md. Left verbatim,
+# the reference points at content the agent would have to re-Read instead of the
+# copy already in its context - and dangles entirely if .kiro/ was not installed
+# alongside .claude/. Rewrite each backticked `.kiro/steering/<f>.md` to name the
+# CLAUDE.md section (the doc's H1 heading) it now lives under. The map is built once
+# from the steering files themselves, so it can never drift from their real
+# headings, and the transform is deterministic - generated output stays byte-stable
+# for check-claude-fresh.sh. Only backticked "load this file" references are
+# rewritten; bare-name mentions and HTML-comment notes are left as-is.
+STEER_SED=$(mktemp)
+trap 'rm -f "$STEER_SED"' EXIT
+for sf in "$STEER"/*.md; do
+  b=$(basename "$sf")
+  # The doc's first markdown H1 is its CLAUDE.md section title; fall back to the
+  # filename if a steering file somehow lacks one.
+  h1=$(grep -m1 '^# ' "$sf" | sed 's/^# //')
+  [ -z "$h1" ] && h1="$b"
+  # Escape the search path's dots (so `.` is literal, not "any char") and any sed
+  # metacharacters in the replacement heading (# is the s-command delimiter).
+  esc_path=$(printf '.kiro/steering/%s' "$b" | sed 's/[.]/\\./g')
+  esc_h1=$(printf '%s' "$h1" | sed 's/[&#\\]/\\&/g')
+  printf 's#`%s`#the "%s" rules in `CLAUDE.md`#g\n' "$esc_path" "$esc_h1" >> "$STEER_SED"
+done
+
 # ── 1) CLAUDE.md: steering concatenation (overrides first) ─────────────────────
 {
   echo "# Project Rules (generated from kiro-rails steering by scripts/export-to-claude.sh)"
@@ -32,7 +59,7 @@ mkdir -p "$OUT/hooks" "$OUT/agents" "$OUT/commands"
   for f in $(find "$STEER" -name '*.md' -not -name 'user-project-overrides.md' | sort); do
     cat "$f"; printf '\n\n---\n\n'
   done
-} > "$OUT/CLAUDE.md"
+} | sed -f "$STEER_SED" > "$OUT/CLAUDE.md"
 
 # ── 2) PreToolUse guard script ─────────────────────────────────────────────────
 cp scripts/claude-guard-bash.sh "$OUT/hooks/guard-bash.sh"
@@ -83,7 +110,7 @@ for f in "$PROMPTS"/*.md; do
     nodesc+=("$name")
     desc="Kiro review prompt: $name"   # placeholder - routing will be poor until fixed
   fi
-  { printf -- '---\ndescription: "%s"\n---\n\n' "${desc//\"/\'}"; strip_fm "$f"; } > "$OUT/commands/$name.md"
+  { printf -- '---\ndescription: "%s"\n---\n\n' "${desc//\"/\'}"; strip_fm "$f" | sed -f "$STEER_SED"; } > "$OUT/commands/$name.md"
 done
 
 # ── 4) agents from .kiro/agents/*.json ─────────────────────────────────────────

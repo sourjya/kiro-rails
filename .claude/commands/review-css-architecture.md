@@ -13,7 +13,7 @@ Your mission is not to enforce a preferred methodology. It is to determine wheth
 
 ## House Standard: Console-Idiom Rubric
 
-Before scanning, load `.kiro/steering/ux-console-idiom.md`. The D (Density & Type)
+Before scanning, load the "UX Console-Idiom Rubric" rules in `CLAUDE.md`. The D (Density & Type)
 and K (Consistency & Tokens) families define the quantitative thresholds for this
 review. Specifically:
 

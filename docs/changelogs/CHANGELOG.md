@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## Unreleased
+
+### Fixed
+
+- **KRL-12 - Exported Claude artifacts pointed at `.kiro/steering/*.md` paths.** Kiro prompt and steering bodies reference sibling steering docs by their `.kiro/` path (e.g. `` `.kiro/steering/ux-console-idiom.md` ``). On the Claude side steering has no such home - every doc is concatenated into `CLAUDE.md` - so the reference pointed at content the agent would have to re-`Read` instead of the copy already in its context, and dangled entirely where `.kiro/` was not installed beside `.claude/`. `export-to-claude.sh` now builds a filename→H1 map from the steering files themselves and rewrites each **backticked** `` `.kiro/steering/<f>.md` `` to name the `CLAUDE.md` section it now lives under (e.g. *the "UX Console-Idiom Rubric" rules in `CLAUDE.md`*). Applied to both generated `CLAUDE.md` and the review commands (8 references across 4 prompts, plus 1 in `review-policy` inside `CLAUDE.md`). Deterministic, so generated output stays byte-stable for `check-claude-fresh.sh`. Bare-name mentions and HTML-comment notes are intentionally left as-is.
+
 ## 2026-07-08 - v0.17.3 - Agent Tool Mapping: Subsumed vs Lost
 
 ### Fixed

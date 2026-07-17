@@ -7,14 +7,14 @@ description: "Live browser-walk UX review using the console-idiom rubric. Requir
 
 A structured protocol for reviewing a running application's UX via browser
 automation. Each page is walked with 9 steps that produce evidence for
-scoring against `.kiro/steering/ux-console-idiom.md`.
+scoring against the "UX Console-Idiom Rubric" rules in `CLAUDE.md`.
 
 **Prerequisites:**
 - A browser MCP (Playwright MCP, Chrome DevTools MCP, or BrowserTools MCP)
 - The application running and accessible (local or deployed)
 - `scripts/style-survey.js` available for injection
 
-**Before you start:** Load `.kiro/steering/ux-console-idiom.md` for the
+**Before you start:** Load the "UX Console-Idiom Rubric" rules in `CLAUDE.md` for the
 rubric definitions and scoring model.
 
 ---
@@ -212,8 +212,8 @@ it was retracted. This builds review credibility over time.
 
 ## Cross-references
 
-- `.kiro/steering/ux-console-idiom.md` - the rubric (load before starting)
+- the "UX Console-Idiom Rubric" rules in `CLAUDE.md` - the rubric (load before starting)
 - `scripts/style-survey.js` - quantitative evidence script (Step 3)
-- `.kiro/steering/review-policy.md` - when this review triggers
-- `.kiro/steering/ux-pattern-registry.md` - reference patterns for common screens
+- the "Periodic Review Policy" rules in `CLAUDE.md` - when this review triggers
+- the "UX Pattern Registry" rules in `CLAUDE.md` - reference patterns for common screens
 - `docs/ux-reviews/` - report output directory
