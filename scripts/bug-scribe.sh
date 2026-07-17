@@ -396,6 +396,75 @@ EOF
 }
 
 # ──────────────────────────────────────────────
+# Helper: resolve an existing bug doc with diff + solution
+# ──────────────────────────────────────────────
+
+_resolve_bug_doc() {
+    local bug_doc="$1"
+    local file="$2"
+
+    # Capture the staged diff for this file
+    local diff_content
+    diff_content=$(git diff --cached -- "$file" 2>/dev/null || echo "No diff available")
+
+    # Capture commit message (solution)
+    local commit_msg
+    commit_msg=$(cat .git/COMMIT_EDITMSG 2>/dev/null || echo "No commit message captured")
+
+    # Get current date
+    local date_str
+    date_str=$(date +%Y-%m-%d)
+
+    # Create temp files for multi-line injection
+    local diff_tmp msg_tmp
+    diff_tmp=$(mktemp)
+    msg_tmp=$(mktemp)
+    trap "rm -f '$diff_tmp' '$msg_tmp'" EXIT
+
+    echo "$diff_content" > "$diff_tmp"
+    echo "$commit_msg" > "$msg_tmp"
+
+    # Inject diff and solution using awk (multi-line replacement)
+    awk -v diff_file="$diff_tmp" '
+        /Pending fix/ { while ((getline line < diff_file) > 0) print line; next }
+        { print }
+    ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
+
+    awk -v msg_file="$msg_tmp" '
+        /Pending — will be captured from commit message/ { while ((getline line < msg_file) > 0) print line; next }
+        { print }
+    ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
+
+    # Update status, date, timeline (portable sed)
+    if sed --version 2>/dev/null | grep -q GNU; then
+        sed -i 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
+        sed -i "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
+        sed -i "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
+    else
+        sed -i '' 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
+        sed -i '' "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
+        sed -i '' "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
+    fi
+
+    # Stage the updated bug doc
+    git add "$bug_doc"
+
+    # Update the JSON ledger
+    local bug_id_from_doc
+    bug_id_from_doc=$(grep -oE 'BUG-[0-9]+' "$bug_doc" | head -1)
+    if [ -n "$bug_id_from_doc" ]; then
+        ledger_resolve "$bug_id_from_doc" "$date_str" "$commit_msg"
+        git add "$LEDGER"
+    fi
+
+    # Clean up
+    rm -f "$diff_tmp" "$msg_tmp"
+    trap - EXIT
+
+    echo "Bug Scribe: Updated ${bug_doc} with fix diff + solution"
+}
+
+# ──────────────────────────────────────────────
 # Subcommand: resolve
 # ──────────────────────────────────────────────
 
@@ -414,112 +483,191 @@ cmd_resolve() {
         # Skip non-existent files (deleted)
         [ -f "$file" ] || continue
 
-        # Check staged version for markers
+        # ──────────────────────────────────────────
+        # Strategy 1: Markers PRESENT in staged file → update existing bug doc with diff
+        # ──────────────────────────────────────────
         local markers
         markers=$(git show ":${file}" 2>/dev/null | grep -nE "$FIRE_PATTERN" || true)
 
-        if [ -z "$markers" ]; then
-            continue
+        if [ -n "$markers" ]; then
+            while IFS= read -r match_line; do
+                local category description
+
+                # Extract category and description
+                category=$(echo "$match_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+([A-Za-z_]+)[[:space:]]+—.*/\1/")
+                category=$(echo "$category" | tr '[:lower:]' '[:upper:]')
+                description=$(echo "$match_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+[A-Za-z_]+[[:space:]]+—[[:space:]]+(.*)/\1/")
+
+                local slug
+                slug=$(echo "$category" | tr '[:upper:]' '[:lower:]')
+
+                # Find matching bug doc (by file reference or category slug in filename)
+                local bug_doc
+                bug_doc=$(grep -rl "| \`${file}\`" "${BUGS_DIR}"/BUG-*.md 2>/dev/null | head -1 || true)
+
+                if [ -z "$bug_doc" ]; then
+                    # Try matching by category slug in filename
+                    bug_doc=$(ls "${BUGS_DIR}"/BUG-*-${slug}.md 2>/dev/null | tail -1 || true)
+                fi
+
+                if [ -z "$bug_doc" ]; then
+                    continue
+                fi
+
+                # Check if diff already captured (idempotency)
+                if ! grep -q "Pending fix" "$bug_doc" 2>/dev/null; then
+                    continue
+                fi
+
+                _resolve_bug_doc "$bug_doc" "$file"
+                found_any=true
+
+            done <<< "$markers"
         fi
 
-        while IFS= read -r match_line; do
-            local category description
+        # ──────────────────────────────────────────
+        # Strategy 2: Markers REMOVED in staged diff → the fix removed the marker
+        # This detects when a previously-tagged bug is fixed (marker disappears).
+        # ──────────────────────────────────────────
+        local removed_markers
+        removed_markers=$(git diff --cached -- "$file" 2>/dev/null \
+            | grep -E '^\-' \
+            | grep -E "$FIRE_PATTERN" || true)
 
-            # Extract category and description
-            category=$(echo "$match_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+([A-Za-z_]+)[[:space:]]+—.*/\1/")
-            category=$(echo "$category" | tr '[:lower:]' '[:upper:]')
-            description=$(echo "$match_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+[A-Za-z_]+[[:space:]]+—[[:space:]]+(.*)/\1/")
+        if [ -n "$removed_markers" ]; then
+            while IFS= read -r removed_line; do
+                # Strip the leading - from the diff line
+                local clean_line="${removed_line#-}"
 
-            local slug
-            slug=$(echo "$category" | tr '[:upper:]' '[:lower:]')
+                local category description
+                category=$(echo "$clean_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+([A-Za-z_]+)[[:space:]]+—.*/\1/")
+                category=$(echo "$category" | tr '[:lower:]' '[:upper:]')
+                description=$(echo "$clean_line" | sed -E "s/.*[Bb][Uu][Gg]:[[:space:]]+[A-Za-z_]+[[:space:]]+—[[:space:]]+(.*)/\1/")
 
-            # Find matching bug doc (by file reference or category slug in filename)
-            local bug_doc
-            bug_doc=$(grep -rl "| \`${file}\`" "${BUGS_DIR}"/BUG-*.md 2>/dev/null | head -1 || true)
+                local slug
+                slug=$(echo "$category" | tr '[:upper:]' '[:lower:]')
 
-            if [ -z "$bug_doc" ]; then
-                # Try matching by category slug in filename
-                bug_doc=$(ls "${BUGS_DIR}"/BUG-*-${slug}.md 2>/dev/null | tail -1 || true)
-            fi
+                # Find matching bug doc
+                local bug_doc
+                bug_doc=$(grep -rl "| \`${file}\`" "${BUGS_DIR}"/BUG-*.md 2>/dev/null | head -1 || true)
 
-            if [ -z "$bug_doc" ]; then
-                # No matching doc found — discover might not have run yet, skip
-                continue
-            fi
+                if [ -z "$bug_doc" ]; then
+                    bug_doc=$(ls "${BUGS_DIR}"/BUG-*-${slug}.md 2>/dev/null | tail -1 || true)
+                fi
 
-            # Check if diff already captured (idempotency)
-            if ! grep -q "Pending fix" "$bug_doc" 2>/dev/null; then
-                # Already resolved, skip
-                continue
-            fi
+                if [ -z "$bug_doc" ]; then
+                    # No existing bug doc — this marker was never discovered by Bug Scribe.
+                    # Auto-create one NOW with the diff (the full lifecycle in one commit).
+                    local bug_num bug_id bug_id_lower
+                    bug_num=$(next_bug_number)
+                    bug_id=$(printf "BUG-%03d" "$bug_num")
+                    bug_id_lower=$(echo "$bug_id" | tr '[:upper:]' '[:lower:]' | tr '-' '_')
 
-            # Capture the staged diff for this file
-            local diff_content
-            diff_content=$(git diff --cached -- "$file" 2>/dev/null || echo "No diff available")
+                    local date_str branch func_name
+                    date_str=$(date +%Y-%m-%d)
+                    branch=$(git branch --show-current 2>/dev/null || echo "unknown")
 
-            # Capture commit message (solution)
-            local commit_msg
-            commit_msg=$(cat .git/COMMIT_EDITMSG 2>/dev/null || echo "No commit message captured")
+                    # Detect function from the HEAD version of the file (marker was there)
+                    local head_content marker_line_in_head
+                    head_content=$(git show "HEAD:${file}" 2>/dev/null || true)
+                    marker_line_in_head=$(echo "$head_content" | grep -n "$clean_line" | head -1 | cut -d: -f1)
+                    if [ -n "$marker_line_in_head" ]; then
+                        # Write HEAD version to temp for function detection
+                        local head_tmp
+                        head_tmp=$(mktemp)
+                        echo "$head_content" > "$head_tmp"
+                        func_name=$(detect_function "$head_tmp" "$marker_line_in_head")
+                        rm -f "$head_tmp"
+                    else
+                        func_name="unknown"
+                    fi
 
-            # Get current date
-            local date_str
-            date_str=$(date +%Y-%m-%d)
+                    # Get context from HEAD version (around where marker was)
+                    local context=""
+                    if [ -n "$marker_line_in_head" ]; then
+                        local ctx_start=$((marker_line_in_head - 5))
+                        [ "$ctx_start" -lt 1 ] && ctx_start=1
+                        local ctx_end=$((marker_line_in_head + 5))
+                        context=$(echo "$head_content" | sed -n "${ctx_start},${ctx_end}p")
+                    fi
 
-            # Create temp files for multi-line injection
-            local diff_tmp msg_tmp
-            diff_tmp=$(mktemp)
-            msg_tmp=$(mktemp)
-            trap "rm -f '$diff_tmp' '$msg_tmp'" EXIT
+                    # Get the full diff
+                    local diff_content
+                    diff_content=$(git diff --cached -- "$file" 2>/dev/null || echo "No diff available")
 
-            echo "$diff_content" > "$diff_tmp"
-            echo "$commit_msg" > "$msg_tmp"
+                    # Get commit message
+                    local commit_msg
+                    commit_msg=$(cat .git/COMMIT_EDITMSG 2>/dev/null || echo "Marker removed — bug fixed")
 
-            # Inject diff and solution using awk (multi-line replacement)
-            awk -v diff_file="$diff_tmp" '
-                /Pending fix/ { while ((getline line < diff_file) > 0) print line; next }
-                { print }
-            ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
+                    # Create temp files
+                    local ctx_tmp diff_tmp
+                    ctx_tmp=$(mktemp)
+                    diff_tmp=$(mktemp)
+                    trap "rm -f '$ctx_tmp' '$diff_tmp'" EXIT
 
-            awk -v msg_file="$msg_tmp" '
-                /Pending — will be captured from commit message/ { while ((getline line < msg_file) > 0) print line; next }
-                { print }
-            ' "$bug_doc" > "${bug_doc}.tmp" && mv "${bug_doc}.tmp" "$bug_doc"
+                    echo "${context:-No context available}" > "$ctx_tmp"
+                    echo "$diff_content" > "$diff_tmp"
 
-            # Update status, date, timeline (single-line replacements — portable sed)
-            _template_sed_replace "$bug_doc" "dummy" "dummy" 2>/dev/null || true  # ensure function is loaded
-            if sed --version 2>/dev/null | grep -q GNU; then
-                sed -i 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
-                sed -i "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
-                sed -i "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
-            else
-                sed -i '' 's/| OPEN/| IN_PROGRESS/' "$bug_doc"
-                sed -i '' "s/| \*\*Fixed\*\* | -/| **Fixed** | ${date_str}/" "$bug_doc"
-                sed -i '' "s/| Fix committed | - | -/| Fix committed | ${date_str} | Bug Scribe (auto)/" "$bug_doc"
-            fi
+                    # Generate bug doc — already resolved
+                    local output_file="${BUGS_DIR}/${bug_id}-${slug}.md"
+                    render_template "$TEMPLATE" "$output_file" \
+                        "BUG_ID=${bug_id}" \
+                        "BUG_ID_LOWER=${bug_id_lower}" \
+                        "CATEGORY=${category}" \
+                        "FILE=${file}" \
+                        "FUNCTION=${func_name}" \
+                        "DATE=${date_str}" \
+                        "BRANCH=${branch}" \
+                        "DESCRIPTION=${description}" \
+                        "STATUS=IN_PROGRESS" \
+                        "SEVERITY=TBD" \
+                        "SOLUTION=${commit_msg}" \
+                        "CONTEXT=@${ctx_tmp}" \
+                        "DIFF=@${diff_tmp}"
 
-            # Stage the updated bug doc
-            git add "$bug_doc"
+                    # Append to ledger (already resolved)
+                    ledger_append "$bug_id" "$category" "$file" "$func_name" "$description" "$date_str" "$branch"
+                    ledger_resolve "$bug_id" "$date_str" "$commit_msg"
 
-            # Update the JSON ledger
-            local bug_id_from_doc
-            bug_id_from_doc=$(grep -oE 'BUG-[0-9]+' "$bug_doc" | head -1)
-            if [ -n "$bug_id_from_doc" ]; then
-                ledger_resolve "$bug_id_from_doc" "$date_str" "$commit_msg"
-                git add "$LEDGER"
-            fi
+                    # Append to chokepoint log
+                    if [ -f "$CHOKEPOINT_LOG" ]; then
+                        local cp_num cp_id
+                        cp_num=$(next_cp_number)
+                        cp_id=$(printf "CP-%03d" "$cp_num")
+                        cat >> "$CHOKEPOINT_LOG" << EOF
 
-            # Clean up
-            rm -f "$diff_tmp" "$msg_tmp"
-            trap - EXIT
+### ${cp_id}: ${description} | ${file} | ${category} | auto-generated by Bug Scribe (marker removed)
+- **Date:** ${date_str}
+- **Bug:** ${bug_id}
+- **Pattern:** ${category}
+- **File:** \`${file}\`
+- **Status:** Resolved (marker removed = fix applied)
+EOF
+                    fi
 
-            found_any=true
-            echo "Bug Scribe: Updated ${bug_doc} with fix diff + solution"
+                    git add "$output_file" "$LEDGER"
+                    [ -f "$CHOKEPOINT_LOG" ] && git add "$CHOKEPOINT_LOG"
 
-        done <<< "$markers"
+                    rm -f "$ctx_tmp" "$diff_tmp"
+                    trap - EXIT
+
+                    found_any=true
+                    echo "Bug Scribe: Marker removed in ${file} — created + resolved ${output_file} (${bug_id})"
+                    continue
+                fi
+
+                # Bug doc exists — check if it still needs resolution
+                if grep -q "Pending fix" "$bug_doc" 2>/dev/null; then
+                    _resolve_bug_doc "$bug_doc" "$file"
+                    found_any=true
+                fi
+
+            done <<< "$removed_markers"
+        fi
+
     done <<< "$staged_files"
 
     if [ "$found_any" = false ]; then
-        # Silent exit — no markers in staged files needing resolution
         exit 0
     fi
 }
