@@ -1,5 +1,5 @@
 # Agentic Coding Tools - Git Commit & PR Discipline
-## Deep Research Report + Steering Recommendations for ChaosLabz / Kiro
+## Deep Research Report + Steering Recommendations for the org / Kiro
 **Date:** June 2026 | **Scope:** Kiro, Claude Code, Cursor, OpenAI Codex, GitHub Copilot, Devin
 
 ---
@@ -37,7 +37,7 @@ Claude Code reads `CLAUDE.md` natively; the standard workaround for cross-tool t
 @AGENTS.md
 ```
 
-**Practical rule for ChaosLabz:** Kiro's `.kiro/steering/` is your primary system, but adding a root `AGENTS.md` + a thin `CLAUDE.md` bridge ensures any other agent you onboard picks up your conventions without a separate file to maintain.
+**Practical rule for the org:** Kiro's `.kiro/steering/` is your primary system, but adding a root `AGENTS.md` + a thin `CLAUDE.md` bridge ensures any other agent you onboard picks up your conventions without a separate file to maintain.
 
 ---
 

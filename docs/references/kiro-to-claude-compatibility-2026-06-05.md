@@ -32,7 +32,7 @@ So Claude users were right that hooks/agents don't "just work" - but the fix is 
 
 ## Claude-only capability we exploit
 
-Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2). Kiro's hook model has no pre-Bash gate. We use this to turn the `session-isolation.md` rules from *advice* into *enforcement*: `.claude/hooks/guard-bash.sh` hard-blocks `git -C` / destructive git that targets paths outside the project root - exactly the planiq cross-repo corruption incident. **This is why session isolation was built before the Claude layer:** the Claude layer is where those rules become mechanically enforced.
+Claude's `PreToolUse` hook can **block** a tool call before it runs (exit code 2). Kiro's hook model has no pre-Bash gate. We use this to turn the `session-isolation.md` rules from *advice* into *enforcement*: `.claude/hooks/guard-bash.sh` hard-blocks `git -C` / destructive git that targets paths outside the project root - exactly the cross-repo corruption incident that motivated session isolation. **This is why session isolation was built before the Claude layer:** the Claude layer is where those rules become mechanically enforced.
 
 ## What we ship (the "BONUS for Claude")
 

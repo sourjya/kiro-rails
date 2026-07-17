@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 Format: consolidated entries grouped by feature, not per-file edits.
 Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
+## Unreleased
+
+### Security
+
+- **KRL-16 - Redacted internal identifiers leaking from `docs/references/` and the changelog.** The new `leak-scan` tooling, run against kiro-rails itself, found the org name and internal product/codenames (and a few internal-app feature details) in five tracked docs of this publicly-installable template. All were redacted to role-based generics that preserve each doc's meaning: org name → "the org"/"house"; product names → "an internal app"; product categories and specific feature descriptions (e.g. invite/anti-enumeration behaviors, a specific bug list) → neutral equivalents; the internal tracker and product-specific tool/filenames in the cross-repo audit → generic descriptors. kiro-rails' own `KRL-NN` ticket refs are kept (self-references). Variant search: scanned all tracked files for the full Tier-A/B term set plus the redacted feature phrases - 0 remaining. **Caveat:** these names persist in the git *history* of the affected files; removing them there needs a deliberate, confirm-first history rewrite, not covered here.
+
 ## 2026-07-17 - v0.18.0 - Claude Layer: Fidelity, Discoverability, Activation
 
 Adapts the generated Claude Code layer to the upgraded Kiro prompt set: broken
@@ -53,7 +59,7 @@ Tickets: KRL-10 (this), KRL-9 (assessment corrected).
 - The Claude gate fires **per UI-file write**, where Kiro fires **per spec task** - strictly noisier, but non-blocking by design (the guard exits 0 on both paths). Documented as an accepted fidelity trade-off alongside `beforeCommit`.
 - ~~The two dropped agent tools reported by the same stderr warning (`code-security-reviewer:knowledge`, `ux-red-team:code`) are **deliberately not mapped**... inventing a mapping would widen the sandbox.~~ **Superseded by v0.17.3 - this reasoning was wrong.** The exporter already reads `allowedTools`, so no sandbox could have been widened. Both tools are read-only and subsumed; they are now mapped, with byte-identical output. The fail-closed behavior does stay.
 
-Ticket: KRL-9. Tactiq `Kiro-Rails` folder gained `Bugs`/`Feature Requests` subfolders; all 9 tickets routed, aliases preserved.
+Ticket: KRL-9. The issue tracker's `Kiro-Rails` folder gained `Bugs`/`Feature Requests` subfolders; all 9 tickets routed, aliases preserved.
 
 ## 2026-07-08 - v0.17.1 - Single Owner for the Claude Layer
 
@@ -205,7 +211,7 @@ Implements the recommendations of `docs/references/agentic-coding-tools-git-comm
 kiro-rails now ships a native Claude Code setup generated from the Kiro files (single source of truth), so the discipline works in Claude Code, not just Kiro. Answers the recurring "kiro-rails isn't compatible with Claude" report - the fix is a generator, not a rewrite.
 
 - **`scripts/export-to-claude.sh`** - generates a complete `.claude/` tree: `CLAUDE.md` (steering), `settings.json` (hooks remapped to Claude events `UserPromptSubmit`/`PostToolUse`/`Stop`), `agents/*.md` (subagents from `.kiro/agents/*.json`), `commands/*.md` (slash commands from `.kiro/prompts/*.md`), and `skills/` (copied). Skips non-JSON hook files with a clear note rather than failing.
-- **`scripts/claude-guard-bash.sh`** - Claude `PreToolUse` hook that **blocks** `git -C` / destructive git targeting paths outside the project root. This turns `session-isolation.md` from advice into enforcement (Kiro has no pre-Bash gate) - it blocks the exact planiq cross-repo incident.
+- **`scripts/claude-guard-bash.sh`** - Claude `PreToolUse` hook that **blocks** `git -C` / destructive git targeting paths outside the project root. This turns `session-isolation.md` from advice into enforcement (Kiro has no pre-Bash gate) - it blocks the exact cross-repo incident that motivated it.
 - **Committed `.claude/` tree** - generated and committed so Claude Code works on clone with zero steps.
 - **`scripts/check-claude-fresh.sh`** + **`claude-export-freshness` hook** - keep the committed `.claude/` from drifting: the check (used in the release checklist) regenerates to a temp dir and diffs; the hook reminds when `.kiro/` source changes.
 - **`versioning.md` release checklist** - new mandatory step to regenerate and verify `.claude/` before tagging.
@@ -227,7 +233,7 @@ Guardrails against concurrent agent sessions interfering with each other across 
 
 ### Added - Focus & Branch Discipline
 
-Two recurring process failures - mid-task request thrashing and branch sprawl - are now encoded as first-class kiro-rails guardrails (steering + hooks + a tool), ported from patterns proven downstream in planiq.
+Two recurring process failures - mid-task request thrashing and branch sprawl - are now encoded as first-class kiro-rails guardrails (steering + hooks + a tool), ported from patterns proven downstream in a production app.
 
 - **`focus-and-branch-discipline.md` steering** (`inclusion: always`) - the Request Queue Protocol (file unrelated mid-task requests to the backlog, acknowledge, finish the current task; divert only on explicit user order), a strict Definition of Done (code -> tests -> commit -> merge -> delete branch -> drain backlog), and Branch Hygiene rules (one task per branch, merge-and-delete as one motion, check before branching, prune merged, reconcile divergence by committing immediately).
 - **`docs/backlog/INBOX.md`** - the on-disk request queue the protocol writes to, plus a new `docs/backlog/` directory in the taxonomy. Shipped as a download-if-missing template so a user's queue is never overwritten on upgrade.

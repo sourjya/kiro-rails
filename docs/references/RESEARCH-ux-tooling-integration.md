@@ -29,25 +29,25 @@ kiro-rails is an opinionated template that gives AI coding agents persistent eng
 - `docs/references/` - research materials (already holds a steering-research doc).
 
 ### 1.2 The external asset being folded in
-A separate Claude skill, `ux-audit`, was built and field-tested against a live ChaosLabz app (AuthIQ). It contains:
+A separate Claude skill, `ux-audit`, was built and field-tested against a live internal app. It contains:
 - `rubric.md` - a **console-idiom** rubric (details in 1.3) with 9 check families, severity scoring, and a release-gate threshold.
 - A live browser-walk protocol (9 steps, side-effect boundary, evidence discipline).
 - `scripts/style-survey.js` - a computed-style census script (font-size histogram, weight census, radii count, button widths) run in-page to produce quantitative evidence.
 - A stub Playwright crawler for unattended runs.
 
-The gap this work closes: kiro-rails' existing UX assets are **generic** (Nielsen, WCAG, textbook heuristics). The skill's rubric is **specific** to the ChaosLabz console idiom (e.g. body font 13-14px, one save pattern per app, read-first rows). Today the CLI coders review against textbook UX while the browser skill reviews against house UX. They should share one standard.
+The gap this work closes: kiro-rails' existing UX assets are **generic** (Nielsen, WCAG, textbook heuristics). The skill's rubric is **specific** to the house console idiom (e.g. body font 13-14px, one save pattern per app, read-first rows). Today the CLI coders review against textbook UX while the browser skill reviews against house UX. They should share one standard.
 
 ### 1.3 The rubric's 9 families (the asset to be made canonical)
 D (Density & Type), S (Surfaces & Layout), R (Read-first Editing), V (Save Model), T (Tables & Lists), E (Empty States & Feedback), C (Copy & Correctness), A (Accessibility & States), K (Consistency & Tokens). Each check has an ID (e.g. D-1, V-2), a severity (Sev-1 data-loss/blocking/misleading, Sev-2 idiom/flow break, Sev-3 polish), and a scoring model (start 100; Sev-1 -15, Sev-2 -5, Sev-3 -1; gate = zero Sev-1 and no page below 70).
 
 ### 1.4 The field test that validated the approach
-The rubric + browser protocol were run once against AuthIQ alpha (6 routes). Result: 2 Sev-1 (a non-modal dialog with no focus trap/Escape that gated app access; missing pending-invite/revoke), 11 Sev-2 (three save patterns on one page, 15px body font with four font weights, pluralization bug, initials bug, unnamed form controls, slug-cased product names), gate FAIL. Two screenshot-only findings were retracted after live verification. This is the evidence that the rubric catches real, specific defects that generic heuristics miss, and that live verification matters.
+The rubric + browser protocol were run once against an internal app's alpha (6 routes). Result: 2 Sev-1 (a non-modal dialog with no focus trap/Escape that blocked interaction; a missing confirmation on a destructive action), 11 Sev-2 (multiple save patterns on one page, 15px body font with four font weights, a pluralization bug, unnamed form controls, and other idiom breaks), gate FAIL. Two screenshot-only findings were retracted after live verification. This is the evidence that the rubric catches real, specific defects that generic heuristics miss, and that live verification matters.
 
 ---
 
 ## 2. Objective
 
-Make the ChaosLabz console-idiom rubric the single source of truth for UX quality across every surface that reviews or generates UI: Kiro (generation-time), the CLI coders' review prompts (review-time), and CI (gate-time). One rubric, multiple consumers, so PlanIQ/TactIQ/CoreIQ/AuthIQ inherit the same standard instead of each reinventing "settings page" badly.
+Make the console-idiom rubric the single source of truth for UX quality across every surface that reviews or generates UI: Kiro (generation-time), the CLI coders' review prompts (review-time), and CI (gate-time). One rubric, multiple consumers, so every internal app inherits the same standard instead of each reinventing "settings page" badly.
 
 ---
 
@@ -82,7 +82,7 @@ Two things reconcile this with the project being worthwhile:
 - **OneRedOak/claude-code-workflows (design-review).** A community workflow using Microsoft's Playwright MCP and Claude Code subagents, triggered on PRs or via a `/design-review` slash command, with design principles stored in CLAUDE.md and standards drawn from Stripe/Airbnb/Linear [8][9]. This is the closest existing harness to what we want for the live/CI mode.
 - **Vercel Web Interface Guidelines** (vercel-labs/web-interface-guidelines) - 100 rules across 17 categories, based on WCAG + performance + UX, installable for Claude Code, with a companion skill that fetches fresh rules each run [6][10].
 
-**Call: reimplement the good parts inside kiro-rails; do not add external repos as dependencies.** kiro-rails exists to prevent standard drift across tools. Bolting on OneRedOak's repo, AccessLint, or marketplace "expert panel" skills would fragment the standard across more tools - the exact failure the template is designed to prevent. Borrow the *pattern* (Playwright MCP walk, slash-command trigger, subagent) and point it at our rubric. The Vercel guidelines may be referenced as a secondary lint (code-level, complementary to our pixel-level walk) but our rubric is authoritative where they conflict, because ours encodes the ChaosLabz idiom and theirs encodes Vercel's.
+**Call: reimplement the good parts inside kiro-rails; do not add external repos as dependencies.** kiro-rails exists to prevent standard drift across tools. Bolting on OneRedOak's repo, AccessLint, or marketplace "expert panel" skills would fragment the standard across more tools - the exact failure the template is designed to prevent. Borrow the *pattern* (Playwright MCP walk, slash-command trigger, subagent) and point it at our rubric. The Vercel guidelines may be referenced as a secondary lint (code-level, complementary to our pixel-level walk) but our rubric is authoritative where they conflict, because ours encodes the house idiom and theirs encodes Vercel's.
 
 ---
 
@@ -116,7 +116,7 @@ Each item lists: what, why (with citation), target files, and acceptance criteri
 
 ### WI-5: Wire the UX review into review-policy.md
 **What:** Extend `.kiro/steering/review-policy.md` to define UX review triggers: run `review-ux-live.md` on `ui/` branch merges and before a release (the repo's `versioning.md` already defines release checkpoints). Define report numbering/location consistent with the existing security-report convention (e.g. `docs/security/` analog for UX under `docs/` - pick a taxonomy dir and state it).
-**Why:** Makes the audit a regression gate that lives in the template every ChaosLabz repo already installs, rather than an ad-hoc manual step. Matches the repo's existing tiered-review philosophy.
+**Why:** Makes the audit a regression gate that lives in the template every internal repo already installs, rather than an ad-hoc manual step. Matches the repo's existing tiered-review philosophy.
 **Targets:** `.kiro/steering/review-policy.md`; possibly a new `docs/` subdir for UX reports (state placement rules, no files in `docs/` root per the repo's own taxonomy rule).
 **Acceptance:** review-policy names the UX trigger conditions, the prompt to run, and the report location + naming; release checklist in `versioning.md` cross-references it.
 
@@ -136,7 +136,7 @@ Each item lists: what, why (with citation), target files, and acceptance criteri
 
 ## 6. Operationalizing as live agents (Claude Code + Kiro CLI)
 
-Sections 1-5 define the artifacts. This section defines how a running agent invokes them and emits a report, in both runtimes. The design goal: **one rubric, one report contract, two runtimes**. A PlanIQ dev on Claude Code and a CI job on Kiro CLI should produce byte-comparable reports scored against the same rubric.
+Sections 1-5 define the artifacts. This section defines how a running agent invokes them and emits a report, in both runtimes. The design goal: **one rubric, one report contract, two runtimes**. An app dev on Claude Code and a CI job on Kiro CLI should produce byte-comparable reports scored against the same rubric.
 
 ### 6.1 The artifact-to-primitive mapping
 
@@ -210,7 +210,7 @@ Deliberately do NOT run the live walk always-on or on every commit - it is expen
 - **Do not** make the rubric `inclusion: always`. Evidence [1] penalizes always-on context; use manual/on-demand. This is the single most important constraint.
 - **Do not** add external repos (OneRedOak, AccessLint, marketplace skills) as dependencies. Reimplement patterns inside the template (section 4).
 - **Do not** pad the steering file with rationale prose. Keep it minimal and checkable [1].
-- **Do not** enter credentials, send, delete, save, submit, or log out during any live walk on a real environment. Server-side behaviors (last-owner guard, invite anti-enumeration) are phase-2 local-only work.
+- **Do not** enter credentials, send, delete, save, submit, or log out during any live walk on a real environment. Server-side authorization and anti-enumeration behaviors are phase-2 local-only work.
 - **Do not** assert Sev-1/Sev-2 findings from static screenshots without live reproduction; retractions are mandatory when a prior claim is overturned.
 - **Do not** treat the Vercel or Nielsen sets as authoritative over the house rubric where they conflict; both explicitly disclaim universality [5][6].
 - **Do not** grant the live-review subagent/agent write, delete, send, or submit tools. Enforce the side-effect boundary at the tool-permission layer (restricted `tools:` frontmatter / restricted-tool agent JSON), not by instruction alone - instruction-only boundaries are unreliable given documented literal-following behavior [2].
