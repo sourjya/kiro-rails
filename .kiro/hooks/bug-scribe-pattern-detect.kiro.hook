@@ -1,0 +1,13 @@
+{
+  "name": "bug-scribe-pattern-detect",
+  "version": "0.1.0",
+  "description": "Analyzes bug patterns when a bug doc is created or updated. Flags recurring categories and recommends guardrail promotion.",
+  "trigger": {
+    "type": "fileEdit",
+    "filePattern": "docs/bugs/BUG-*.md"
+  },
+  "action": {
+    "type": "askAgent",
+    "prompt": "A bug doc was just created or updated at ${filePath}.\n\n1. Read the bug doc to understand the category and pattern.\n2. Read docs/engineering/chokepoint-log.md and count how many entries share the same category.\n3. If 2+ bugs share the category: flag the trend — report which bugs share it and what the common pattern is.\n4. If 3+ bugs share the category: recommend promoting it to a steering rule per .kiro/steering/chokepoint-logging.md. Suggest the specific rule text.\n5. Report your findings concisely."
+  }
+}

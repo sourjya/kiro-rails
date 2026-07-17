@@ -1,0 +1,12 @@
+{
+  "name": "bug-scribe-capture-diff",
+  "version": "0.1.0",
+  "description": "Captures fix diff + commit message into existing bug doc when staged files contain a # bug: marker",
+  "trigger": {
+    "type": "beforeCommit"
+  },
+  "action": {
+    "type": "runCommand",
+    "command": "bash scripts/bug-scribe.sh resolve"
+  }
+}

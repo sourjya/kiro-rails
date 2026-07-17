@@ -5,7 +5,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [22 steering files](.kiro/steering/) · [21 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [22 steering files](.kiro/steering/) · [24 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -181,7 +181,10 @@ Most teams say "we should document things" but have no enforcement. Kiro-rails m
 │   ├── branch-hygiene-check          # Prompt submit: flag merged-undeleted and sprawling branches
 │   ├── session-guard-check           # Prompt submit: detect cross-session interference on the working tree
 │   ├── claude-export-freshness       # .kiro/ edited: remind to regenerate the committed .claude/ layer
-│   └── review-suggest                # Prompt submit: suggest relevant review prompts based on branch changes
+│   ├── review-suggest                # Prompt submit: suggest relevant review prompts based on branch changes
+│   ├── bug-scribe-on-fix            # File edit: scaffolds bug doc when # bug: marker detected in source
+│   ├── bug-scribe-capture-diff      # Pre-commit: captures fix diff + solution into existing bug doc
+│   └── bug-scribe-pattern-detect    # File edit: agent-powered pattern analysis on bug doc creation
 ├── agents/
 │   ├── code-security-reviewer.json   # Restricted-tool security auditor agent
 │   ├── security-verifier.json        # Adversarial agent that disproves false positives
@@ -307,6 +310,9 @@ Hooks fire automatically on file edits or before tool use:
 | Session Guard Check | Prompt submit | Warns if another live session holds this working tree or if HEAD drifted unexpectedly (cross-session interference) |
 | Claude Export Freshness | `.kiro/` source edited | Reminds to regenerate the committed `.claude/` layer so the Claude bonus does not drift from its Kiro source |
 | Review Suggest | Prompt submit | Suggests relevant review prompts when your branch has enough work (5+ commits with UI, API, or auth changes) - one-line nudge, never blocking |
+| Bug Scribe: Discover | `.py`/`.ts`/`.js`/`.go`/`.rs`/`.java` edited | Detects `# bug: CATEGORY — description` markers, scaffolds `BUG-###.md` doc with code context + chokepoint log entry. Zero tokens, deterministic. |
+| Bug Scribe: Capture Diff | Pre-commit | When staged files contain a bug marker with an existing bug doc, injects the fix diff + commit message (solution) into the doc. Auto-stages the update. |
+| Bug Scribe: Pattern Detect | `docs/bugs/BUG-*.md` edited | Agent-powered: counts bugs per category, flags trends at 2+, recommends guardrail promotion at 3+. Optional — disable for zero-token operation. |
 
 ## Development Workflow
 

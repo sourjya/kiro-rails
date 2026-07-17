@@ -6,9 +6,29 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
 ## Unreleased
 
-### Security
+## 2026-07-18 - v0.19.0 - Bug Scribe: Automated Bug Documentation from Inline Markers
 
-- **KRL-16 - Redacted internal identifiers leaking from `docs/references/` and the changelog.** The new `leak-scan` tooling, run against kiro-rails itself, found the org name and internal product/codenames (and a few internal-app feature details) in five tracked docs of this publicly-installable template. All were redacted to role-based generics that preserve each doc's meaning: org name → "the org"/"house"; product names → "an internal app"; product categories and specific feature descriptions (e.g. invite/anti-enumeration behaviors, a specific bug list) → neutral equivalents; the internal tracker and product-specific tool/filenames in the cross-repo audit → generic descriptors. kiro-rails' own `KRL-NN` ticket refs are kept (self-references). Variant search: scanned all tracked files for the full Tier-A/B term set plus the redacted feature phrases - 0 remaining. **Caveat:** these names persist in the git *history* of the affected files; removing them there needs a deliberate, confirm-first history rewrite, not covered here.
+Three new hooks that automate the bug documentation lifecycle. Type `# bug: CATEGORY — description` in any source file, and the system scaffolds a complete bug report, captures the fix diff on commit, and tracks recurring patterns across the codebase.
+
+### Added
+
+- **Bug Scribe: `scripts/bug-scribe.sh`** — Deterministic shell script (zero tokens, zero dependencies beyond bash/git/sed/awk). Two subcommands: `discover` (scaffolds bug doc on marker detection) and `resolve` (injects fix diff + commit message into existing doc on commit). Case-insensitive on trigger word and category, strict on structure. Near-miss detection with helpful warnings. Idempotent via SHA-256 checksum log.
+- **Hook: `bug-scribe-on-fix`** — `fileEdit` trigger on source files. Detects `# bug:` / `// bug:` markers, creates `docs/bugs/BUG-###-category.md` from template with pre-filled metadata + code context, appends to chokepoint log. 13-60ms execution.
+- **Hook: `bug-scribe-capture-diff`** — `beforeCommit` trigger. Finds staged files with bug markers, locates matching bug doc, injects `git diff --cached` + commit message as the solution. Updates status and timeline. Auto-stages the enriched doc.
+- **Hook: `bug-scribe-pattern-detect`** — `fileEdit` on `docs/bugs/BUG-*.md`. Agent-powered (optional). Counts bugs per category, flags trends at 2+, recommends guardrail promotion at 3+.
+- **Importable ticket template** — `docs/bugs/BUG-000-template.md` rewritten as a self-contained unit: Metadata, Problem, Context, Root Cause, Solution, Diff, Impact, Regression Tests, Variant Search, Lessons/Pattern, Timeline. Each bug doc is directly importable as a ticket.
+- **`docs/engineering/chokepoint-log.md`** — Created with Bug Scribe integration (entries auto-appended on discovery).
+- **Test fixtures** — 7 fixture files in `tests/fixtures/bug-scribe/` covering valid markers, near-misses, mixed case, multiple markers, and no-marker cases.
+- **Spec** — `.kiro/specs/bug-scribe/` (proposal, requirements, design, tasks).
+- **Idea docs** — `docs/ideas/auto-coe-bug-postmortem-automation.md` (Bug Scribe origin), `docs/ideas/hook-automation-sweep-remind-to-act.md` (broader "remind → act" audit).
+
+### Design
+
+Two-trigger architecture separating discovery from resolution:
+- Discovery (`fileEdit`): "I found a bug" → scaffolds doc immediately with code context
+- Resolution (`beforeCommit`): "I fixed it" → captures the actual fix diff + commit message as solution
+
+Inspired by [Auto-COE](https://lnkd.in/g296rCEz)'s proof that a deterministic shell hook can automate bug documentation at zero LLM cost. Bug Scribe diverges by starting at discovery (not fix), producing an importable ticket unit, and converging with kiro-rails' existing bug workflow (TDD regression tests, variant search, chokepoint promotion).
 
 ## 2026-07-17 - v0.18.0 - Claude Layer: Fidelity, Discoverability, Activation
 

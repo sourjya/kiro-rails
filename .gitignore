@@ -45,6 +45,9 @@ htmlcov/
 coverage.xml
 .hypothesis/
 
+# Bug Scribe idempotency log
+docs/bugs/.bug-scribe-processed
+
 # Media artifacts
 artifacts/
 output/

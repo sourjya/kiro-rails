@@ -1,0 +1,13 @@
+{
+  "name": "bug-scribe-on-fix",
+  "version": "0.1.0",
+  "description": "Scaffolds bug doc + chokepoint entry when a # bug: marker is detected in a saved source file",
+  "trigger": {
+    "type": "fileEdit",
+    "filePattern": "**/*.{py,ts,tsx,js,jsx,go,rs,java,css,scss}"
+  },
+  "action": {
+    "type": "runCommand",
+    "command": "bash scripts/bug-scribe.sh discover \"${filePath}\""
+  }
+}

@@ -25,6 +25,7 @@ Chronological index of all feature specifications. Each spec contains
 
 | # | Spec | Created | Target | Description |
 |---|------|---------|--------|-------------|
+| 1 | [bug-scribe](bug-scribe/) | 2026-07-18 | KRL-17 | Automated bug doc scaffolding + diff capture via `# bug:` marker comments |
 
 ---
 

@@ -1,37 +1,74 @@
-# BUG-000: Short description
+# {{BUG_ID}}: {{DESCRIPTION}}
+
+## Metadata
 
 | Field | Value |
 |-------|-------|
-| **ID** | BUG-000 |
-| **Severity** | Critical / High / Medium / Low |
-| **Status** | Open / In Progress / Fixed |
-| **Reported** | YYYY-MM-DD |
+| **ID** | {{BUG_ID}} |
+| **Severity** | {{SEVERITY}} |
+| **Status** | {{STATUS}} |
+| **Category** | {{CATEGORY}} |
+| **File** | `{{FILE}}` |
+| **Reported** | {{DATE}} |
 | **Fixed** | - |
-| **Branch** | `fix/bug-000-description` |
+| **Branch** | `{{BRANCH}}` |
+| **Commit** | - |
 
-## Description
+## Problem
 
-What is broken and what is the expected behavior.
+{{DESCRIPTION}}
 
-## Reproduction Steps
+## Code Context (auto-captured at discovery)
 
-1. Step one
-2. Step two
-3. Observe the bug
+```
+{{CONTEXT}}
+```
 
 ## Root Cause
 
-Why the bug occurs (fill in after investigation).
+<!-- Fill in: why did this happen? What was the incorrect assumption? -->
 
-## Fix Description
+## Solution
 
-What was changed to fix it (fill in after fix).
+<!-- Auto-filled from commit message at resolution. Manual override OK. -->
+{{SOLUTION}}
 
-## Files Changed
+## Diff (auto-captured at commit)
 
-- `path/to/file.py` - what changed
+```diff
+{{DIFF}}
+```
+
+## Impact
+
+<!-- What was affected? Users? Data? Other systems? -->
 
 ## Regression Tests
 
-- `test_bug000_description` - negative test (reproduces the bug)
-- `test_bug000_description_fixed` - positive test (confirms the fix)
+| Test | Type | Status |
+|------|------|--------|
+| `test_{{BUG_ID_LOWER}}_negative` | Reproduces bug (RED) | [ ] Written |
+| `test_{{BUG_ID_LOWER}}_positive` | Confirms fix (GREEN) | [ ] Written |
+
+## Variant Search
+
+- [ ] Searched for same pattern at all call sites
+- [ ] Found ___ additional instances
+- [ ] All variants fixed in same branch
+
+## Lessons / Pattern
+
+<!-- What should the team learn from this? Is this a recurring class? -->
+- **Category:** {{CATEGORY}}
+- **Recurrence:** (auto-filled by pattern detection if 2+ in same category)
+- **Guardrail candidate:** (auto-filled if 3+ — promote to steering rule?)
+
+## Timeline
+
+| Event | Date | Actor |
+|-------|------|-------|
+| Discovered | {{DATE}} | Bug Scribe (auto) |
+| Fix started | - | - |
+| Fix committed | - | - |
+| Regression tests | - | - |
+| Closed | - | - |
