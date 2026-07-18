@@ -1,14 +1,14 @@
 {
   "enabled": true,
   "name": "Variant Search on Fix Branch",
-  "description": "On prompt submit while on a fresh fix/ branch (fewer than 3 commits ahead of main - i.e. during the active root-cause/fix window), reminds the agent that after finding a bug's root cause it must search for the same pattern at every other call site and the same class of defect elsewhere - the reported instance is rarely the only one. Surfaces the variant-search step from the bug workflow so it is not skipped inside the long checklist. The commit-count guard keeps the reminder from firing on every prompt for the life of the branch (avoids prompt fatigue).",
-  "version": "1",
+  "description": "On prompt submit while on a fix/ branch (fewer than 3 commits ahead), executes a variant search: greps the codebase for the same pattern/function and reports findings. The agent then evaluates whether they're real variants.",
+  "version": "2.0.0",
   "when": {
     "type": "userPromptSubmit"
   },
   "then": {
     "type": "runCommand",
-    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); case \"$B\" in fix/*) A=$(git rev-list --count main..HEAD 2>/dev/null || echo 0); if [ \"${A:-0}\" -lt 3 ]; then echo \"🔎 VARIANT SEARCH: on $B. After you identify the root cause, search every other call site for the same pattern AND the same defect class elsewhere, fix ALL instances in this branch, and document: \\\"Variant search: checked [locations]. Found [N] additional instances.\\\" The reported instance is rarely the only one. See git-and-focus-discipline.md.\"; else echo OK; fi;; *) echo OK;; esac'",
-    "timeout": 15
+    "command": "bash -c 'B=$(git branch --show-current 2>/dev/null); case \"$B\" in fix/*) A=$(git rev-list --count main..HEAD 2>/dev/null || echo 0); if [ \"${A:-0}\" -lt 3 ]; then echo \"🔎 VARIANT SEARCH EXECUTING on $B:\"; echo \"\"; echo \"--- Files changed in this branch ---\"; CHANGED=$(git diff --name-only main..HEAD 2>/dev/null); echo \"$CHANGED\"; echo \"\"; echo \"--- Searching for similar patterns ---\"; for F in $CHANGED; do if [ -f \"$F\" ]; then FUNCS=$(grep -oE \"(def|function|fn|func)\\s+[A-Za-z_][A-Za-z0-9_]*\" \"$F\" 2>/dev/null | head -3); for FUNC in $FUNCS; do NAME=$(echo \"$FUNC\" | sed \"s/.*\\s//\"); HITS=$(grep -rn \"$NAME\" --include=\"*.py\" --include=\"*.ts\" --include=\"*.js\" --include=\"*.go\" --include=\"*.rs\" . 2>/dev/null | grep -v \"$F\" | grep -v node_modules | grep -v .venv | head -5); if [ -n \"$HITS\" ]; then echo \"Function $NAME also appears in:\"; echo \"$HITS\"; echo \"\"; fi; done; fi; done; echo \"--- Variant search complete. Agent: evaluate above for same defect class. ---\"; else echo OK; fi;; *) echo OK;; esac'",
+    "timeout": 30
   }
 }

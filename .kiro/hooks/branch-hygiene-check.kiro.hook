@@ -1,13 +1,14 @@
 {
   "enabled": true,
   "name": "Branch Hygiene Check",
-  "description": "On prompt submit, flags local branches already merged into main but not deleted, and warns when the local branch count grows large. Prevents branch sprawl and silent divergence.",
-  "version": "1",
+  "description": "On prompt submit, auto-deletes local branches already merged into main. Logs what was deleted. Warns if branch count is high.",
+  "version": "2.0.0",
   "when": {
     "type": "userPromptSubmit"
   },
   "then": {
     "type": "runCommand",
-    "command": "bash -c 'M=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | xargs); T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\"); if [ -n \"$M\" ]; then echo \"🌿 BRANCH HYGIENE: merged into main but not deleted: $M -- run: git branch -d $M (see git-and-focus-discipline.md).\"; elif [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Prune merged ones (git branch --merged main) and finish or close stale ones before starting new work. Use bash scripts/branch-check.sh to spot collisions.\"; else echo OK; fi'"
+    "command": "bash -c 'MERGED=$(git branch --merged main 2>/dev/null | grep -v \"[*]\" | grep -vw main | tr -d \" \"); if [ -n \"$MERGED\" ]; then echo \"🌿 BRANCH HYGIENE: Auto-deleting merged branches:\"; for B in $MERGED; do git branch -d \"$B\" 2>/dev/null && echo \"  deleted: $B\"; done; else T=$(git branch 2>/dev/null | grep -vw main | grep -cv \"[*]\" || echo 0); if [ \"$T\" -ge 10 ]; then echo \"🌿 BRANCH HYGIENE: $T local branches. Consider finishing or closing stale ones.\"; else echo OK; fi; fi'",
+    "timeout": 15
   }
 }

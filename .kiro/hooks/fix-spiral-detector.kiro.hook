@@ -1,13 +1,14 @@
 {
   "enabled": true,
   "name": "Fix Spiral Detector",
-  "description": "On prompt submit, checks git log for 3+ consecutive fix commits. If detected, appends a warning to step back and map all code paths before attempting another fix.",
-  "version": "1",
+  "description": "On prompt submit, checks for 3+ consecutive fix commits. If detected, auto-creates a chokepoint-log entry with the commit sequence AND warns to step back.",
+  "version": "2.0.0",
   "when": {
     "type": "userPromptSubmit"
   },
   "then": {
     "type": "runCommand",
-    "command": "bash -c 'FIXES=$(git log --oneline -5 2>/dev/null | grep -c \"^[a-f0-9]\\+ fix\"); if [ \"$FIXES\" -ge 3 ]; then echo \"⚠️ FIX SPIRAL DETECTED: $FIXES consecutive fix commits found in last 5 commits. BEFORE attempting another fix: 1) Map ALL code paths through the affected system. 2) Document what fix #1 and #2 did and why they failed. 3) Identify the ROOT CAUSE, not another symptom. See change-discipline.md Fix Depth Rule.\"; else echo \"OK\"; fi'"
+    "command": "bash -c 'FIXES=$(git log --oneline -5 2>/dev/null | grep -c \"^[a-f0-9]\\+ fix\" || echo 0); if [ \"$FIXES\" -ge 3 ]; then echo \"⚠️ FIX SPIRAL DETECTED: $FIXES consecutive fix commits in last 5.\"; echo \"\"; COMMITS=$(git log --oneline -5 2>/dev/null | grep \"^[a-f0-9]\\+ fix\"); echo \"Commits: \"; echo \"$COMMITS\"; echo \"\"; LOG=\"docs/engineering/chokepoint-log.md\"; if [ -f \"$LOG\" ]; then LAST_CP=$(grep -oE \"CP-[0-9]+\" \"$LOG\" 2>/dev/null | sed \"s/CP-//\" | sort -n | tail -1 || echo 0); NEXT=$((${LAST_CP:-0} + 1)); CPID=$(printf \"CP-%03d\" $NEXT); BRANCH=$(git branch --show-current 2>/dev/null || echo unknown); DATE=$(date +%Y-%m-%d); printf \"\\n### %s: Fix spiral detected on %s | %s | FIX_SPIRAL | auto-generated\\n- **Date:** %s\\n- **Pattern:** FIX_SPIRAL\\n- **Branch:** \\`%s\\`\\n- **Commits:** %s\\n- **Status:** Active — needs root cause analysis\\n\" \"$CPID\" \"$BRANCH\" \"$BRANCH\" \"$DATE\" \"$BRANCH\" \"$FIXES\" >> \"$LOG\"; echo \"Logged as $CPID in chokepoint-log.md\"; fi; echo \"\"; echo \"BEFORE attempting another fix: 1) Map ALL code paths. 2) Document what each fix did and why it failed. 3) Find the ROOT CAUSE. See change-discipline.md.\"; else echo OK; fi'",
+    "timeout": 15
   }
 }
