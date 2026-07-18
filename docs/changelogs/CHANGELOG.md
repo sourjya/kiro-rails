@@ -6,6 +6,29 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
 ## Unreleased
 
+## 2026-07-18 - v0.20.1 - Internal Hardening + Frontmatter Lint
+
+Patch release: one new hook, shared library extraction, defense-in-depth fixes, self-audit reports, and research roadmap intake.
+
+### Added
+
+- **Steering frontmatter lint hook** (`steering-frontmatter-lint`) — validates every `.kiro/steering/*.md` has explicit, valid frontmatter with recognized inclusion mode. Found 3 existing defects on first run.
+- **`scripts/lib/detect.sh`** — shared preamble for detection scripts (`detect_init` sets `$FILE`/`$EXT`, handles early-exit). Refactored 4 detection scripts to use it.
+- **Feature sheet** (`docs/references/feature-sheet.md`) — comprehensive capability document for research/marketing.
+- **Research intake** (`docs/references/kiro-rails-improvement-recommendations-2026-07.md`) — 14 evidence-backed recommendations for v0.21-v0.23. 11 tickets created (KRL-36 through KRL-46).
+
+### Fixed
+
+- **KRL-35: Defense-in-depth hardening** — newline guard in template.sh, path-traversal rejection in bug-scribe.sh, JSON backslash escaping in ledger_append.
+- **KRL-32: Magic number extraction** — `CONTEXT_LINES` and `COMMON_PORTS` constants.
+- **`.tracepulse/` removed from tracking** — was accidentally committed; now gitignored.
+
+### Documentation
+
+- Self-audit reports: HVS-001 (hardcoded values), TQR-001 (test quality), MRR-001 (maintainability), SRR-001-T2 (security).
+- All 16 open tickets reviewed with spec-readiness comments.
+- 3 pre-existing tickets verified delivered and closed (KRL-11, KRL-14, KRL-15).
+
 ## 2026-07-18 - v0.20.0 - Hook Automation Sweep: Triangulation Enforcement
 
 Twelve hooks upgraded or created, closing the gap between steering rules (which *tell* the agent what to do) and automated enforcement (which *catches* it when the agent doesn't). Every engineering concern now has at least two layers of coverage: prevention (steering) + detection (hook). Architectural decision documented in ADR-002.
