@@ -117,6 +117,41 @@ These rely entirely on the agent reading the steering file and remembering. No s
 
 ## Consequences
 
+### Coverage Targets by Drift Risk
+
+Not all concerns need 3/3 coverage. The target depends on **drift risk** — how likely the concern is to degrade across a codebase over time without periodic auditing.
+
+| Drift Risk | Target | Definition | Why |
+|-----------|--------|-----------|-----|
+| **High** | 3/3 (steering + hook + prompt) | Violations accumulate codebase-wide and compound. A single missed instance encourages more. | One hardcoded URL becomes 20 before anyone notices. One empty catch becomes the team pattern. |
+| **Medium** | 2/3 (steering + hook) | Violations are per-file/per-commit, caught at creation time. Don't accumulate silently. | A bad import path is caught on save. A missing test file is caught on creation. No drift between audits. |
+| **Low** | 2/3 (steering + hook) | Violations are rare or self-correcting. | Branch hygiene is visible (branch list grows). Fix spirals are loud (builds break). |
+
+### Which concerns are high-drift (need 3/3)?
+
+| Concern | Why high-drift | Prompt that audits | Hook that catches |
+|---------|---------------|-------------------|-------------------|
+| **Hardcoded values** | One inline URL normalizes the pattern. 20 accumulate before sprint review. Each developer copies the previous example. | `/review-hardcoded-values` | `hardcoded-value-scan` (new) |
+| **Empty error handling** | "Just catch and ignore for now" becomes the team pattern. Silent failures compound until production breaks. | `/review-code-maintainability` | `empty-catch-detector` (new) |
+| **Security patterns** | One missed input validation teaches the agent "this codebase doesn't validate." Exponential risk growth. | `/review-code-security` | `security-tier1-precommit` (exists) |
+| **Code commenting** | Uncommented code teaches the agent "this codebase doesn't comment." Each new file copies the pattern of the last. | `/review-code-maintainability` | `comment-standards-check` (exists) |
+| **API contract drift** | One endpoint returns a different shape. Frontend adapts with a special case. More endpoints diverge. | `/review-api-contracts` | — (future: `api-shape-verify`) |
+| **Deprecated patterns** | Agent generates `datetime.utcnow()` from training data. Without a catch, it appears in every new file. | — (add to maintainability prompt) | `deprecated-pattern-detect` (new) |
+| **Observability gaps** | One service without structured logging normalizes "log when you feel like it." Gap widens per service. | `/review-observability` | — (future: complex detection) |
+
+### Which concerns are medium-drift (2/3 sufficient)?
+
+| Concern | Why 2/3 is enough | How drift is prevented |
+|---------|-------------------|----------------------|
+| **Test file naming** | Violation is per-file, caught at creation. Doesn't spread to other files. | Hook scaffolds on creation — the correct pattern is the default |
+| **Import paths** | Violation is per-import, caught on save. Each bad import is independent. | Hook rewrites on save — never reaches commit |
+| **Branch hygiene** | Sprawl is visible (branch list). Self-reminding because git operations slow down. | Hook auto-deletes — no accumulation |
+| **Changelog discipline** | Absence is noticed at next release. Bounded time window (1 sprint max). | Hook drafts on commit — never more than 1 commit behind |
+| **ADR creation** | Missing ADR is noticed when someone asks "why was this decided?" Bounded scope. | Hook scaffolds on infra change — decision is prompted |
+| **Chokepoint promotion** | Counted automatically (Bug Scribe logs). Mechanical threshold (3+). | Hook counts and flags — no human counting needed |
+| **Variant search** | Per-fix concern. The hook fires on the fix branch, which is the only time it matters. | Hook executes the search — result is immediate |
+| **Fix spirals** | Self-limiting (developer notices builds breaking). Bounded to one task. | Hook logs it — pattern is captured for learning |
+
 ### Positive
 - No engineering concern silently degrades between sprint reviews
 - Agent gets caught by hook even when context pressure causes it to forget steering rules
