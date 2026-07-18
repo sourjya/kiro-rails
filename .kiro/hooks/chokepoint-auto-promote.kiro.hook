@@ -1,0 +1,14 @@
+{
+  "name": "chokepoint-auto-promote",
+  "version": "0.1.0",
+  "description": "When chokepoint-log.md is edited, counts entries per category. At 3+, asks the agent to draft a steering rule for promotion.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["docs/engineering/chokepoint-log.md"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The chokepoint log was just updated. Perform pattern analysis:\n\n1. Read docs/engineering/chokepoint-log.md\n2. Count entries per **Pattern:** category\n3. For any category with 2 entries: note the trend (\"2x TYPE_MISMATCH — worth watching\")\n4. For any category with 3+ entries: this MUST be promoted to a steering rule per chokepoint-logging.md.\n   - Identify which steering file the rule belongs in\n   - Draft the concrete rule text (one sentence, actionable)\n   - Suggest where to insert it\n   - Do NOT auto-insert — present the draft for review\n5. If no category has 2+ entries, respond with just 'OK'\n\nAlso check docs/bugs/ledger.json if it exists — it may have additional categorized entries from Bug Scribe."
+  }
+}

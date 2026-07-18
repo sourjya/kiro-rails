@@ -1,0 +1,15 @@
+{
+  "name": "import-path-autofix",
+  "version": "0.1.0",
+  "description": "Detects deep relative imports (../../) on file save. Warns with correct alternative (@/ for TS, package imports for Python). Per import-path-rules.md.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/import-path-autofix.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}

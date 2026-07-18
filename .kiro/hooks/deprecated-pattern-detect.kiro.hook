@@ -1,0 +1,15 @@
+{
+  "name": "deprecated-pattern-detect",
+  "version": "0.1.0",
+  "description": "Detects deprecated/banned patterns on save: datetime.utcnow(), window.alert(), var keyword, excessive console.log. Per steering rules.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/deprecated-pattern-detect.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}

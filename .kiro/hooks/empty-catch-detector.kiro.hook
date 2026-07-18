@@ -1,0 +1,15 @@
+{
+  "name": "empty-catch-detector",
+  "version": "0.1.0",
+  "description": "Detects empty error handling blocks (except: pass, catch {}) on file save. Zero false positives — an empty catch is always wrong.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/empty-catch-detect.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}

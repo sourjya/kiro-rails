@@ -1,0 +1,15 @@
+{
+  "name": "hardcoded-value-scan",
+  "version": "0.1.0",
+  "description": "Detects hardcoded UUIDs, URLs, IP addresses, and port numbers on file save. Skips test/config/constants files. Per reusable-architecture.md.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["**/*.py", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.go", "**/*.rs"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/hardcoded-value-scan.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}
