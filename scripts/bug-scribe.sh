@@ -29,6 +29,7 @@ TEMPLATE="${BUGS_DIR}/BUG-000-template.md"
 PROCESSED_LOG="${BUGS_DIR}/.bug-scribe-processed"
 CHOKEPOINT_LOG="docs/engineering/chokepoint-log.md"
 LEDGER="${BUGS_DIR}/ledger.json"
+CONTEXT_LINES=5  # Number of lines to capture above/below a bug marker
 
 # Regex patterns
 # Case-insensitive on bug/BUG/Bug, category normalized to uppercase by script
@@ -309,12 +310,12 @@ cmd_discover() {
         bug_id_lower=$(echo "$bug_id" | tr '[:upper:]' '[:lower:]' | tr '-' '_')
         slug=$(echo "$category" | tr '[:upper:]' '[:lower:]')
 
-        # Extract code context (±5 lines around marker)
+        # Extract code context (±CONTEXT_LINES lines around marker)
         local total_lines context_start context_end context
         total_lines=$(wc -l < "$file")
-        context_start=$((line_num - 5))
+        context_start=$((line_num - CONTEXT_LINES))
         [ "$context_start" -lt 1 ] && context_start=1
-        context_end=$((line_num + 5))
+        context_end=$((line_num + CONTEXT_LINES))
         [ "$context_end" -gt "$total_lines" ] && context_end="$total_lines"
         context=$(sed -n "${context_start},${context_end}p" "$file")
 
@@ -585,9 +586,9 @@ cmd_resolve() {
                     # Get context from HEAD version (around where marker was)
                     local context=""
                     if [ -n "$marker_line_in_head" ]; then
-                        local ctx_start=$((marker_line_in_head - 5))
+                        local ctx_start=$((marker_line_in_head - CONTEXT_LINES))
                         [ "$ctx_start" -lt 1 ] && ctx_start=1
-                        local ctx_end=$((marker_line_in_head + 5))
+                        local ctx_end=$((marker_line_in_head + CONTEXT_LINES))
                         context=$(echo "$head_content" | sed -n "${ctx_start},${ctx_end}p")
                     fi
 

@@ -11,6 +11,9 @@
 
 set -euo pipefail
 
+# Common ports to flag when found hardcoded in source (not config)
+COMMON_PORTS="3000|5173|5432|8000|8080|8443|9090|6379|27017"
+
 main() {
     local file="${1:-}"
     [ -z "$file" ] && exit 0
@@ -49,9 +52,9 @@ main() {
         findings+="$(echo "$urls" | head -3 | sed 's/^/    Line /')"$'\n'
     fi
 
-    # Port numbers in string literals (common: 3000, 5173, 5432, 8000, 8080, 8443, 9090)
+    # Port numbers in string literals
     local ports
-    ports=$(grep -nE '(["\x27:])(3000|5173|5432|8000|8080|8443|9090|6379|27017)(["\x27,;)\s])' "$file" 2>/dev/null \
+    ports=$(grep -nE "([\"\\x27:])(${COMMON_PORTS})([\"\\x27,;)\\s])" "$file" 2>/dev/null \
         | grep -v '^\s*//' | grep -v '^\s*#' || true)
     if [ -n "$ports" ]; then
         local port_count
