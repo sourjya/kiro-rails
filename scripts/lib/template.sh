@@ -91,6 +91,12 @@ _template_sed_replace() {
     local key="$2"
     local val="$3"
 
+    # Guard: multi-line values must use KEY=@filepath, not KEY=value
+    if [[ "$val" == *$'\n'* ]]; then
+        echo "template.sh: ERROR — multi-line value for {{${key}}}. Use KEY=@filepath instead." >&2
+        return 1
+    fi
+
     # Escape sed special characters in the replacement value
     # & is special in sed replacement, \ needs escaping, | is our delimiter
     local escaped_val

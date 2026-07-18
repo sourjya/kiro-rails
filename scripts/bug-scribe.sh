@@ -145,10 +145,14 @@ ledger_append() {
     fi
 
     # Build the JSON entry (no jq dependency — manual construction)
+    # Escape backslash first, then quotes, for valid JSON
+    local escaped_desc
+    escaped_desc=$(echo "$description" | sed 's/\\/\\\\/g; s/"/\\"/g')
+
     local entry
     entry=$(printf '{"bug_id":"%s","category":"%s","file":"%s","function":"%s","description":"%s","discovered":"%s","branch":"%s","resolved":null,"commit":null}' \
         "$bug_id" "$category" "$file" "$func_name" \
-        "$(echo "$description" | sed 's/"/\\"/g')" \
+        "$escaped_desc" \
         "$date_str" "$branch")
 
     # Append to the JSON array (remove trailing ], add entry, re-close)
@@ -293,6 +297,12 @@ cmd_discover() {
 
         # Normalize category to UPPER_SNAKE_CASE
         category=$(echo "$category" | tr '[:lower:]' '[:upper:]')
+
+        # Guard: reject categories with path-traversal characters (defense-in-depth)
+        if [[ "$category" == *"/"* ]] || [[ "$category" == *".."* ]] || [[ "$category" == *" "* ]]; then
+            echo "Bug Scribe: ERROR — category '${category}' contains invalid characters. Must be UPPER_SNAKE_CASE."
+            continue
+        fi
 
         # Idempotency check
         local checksum_input="${file}:${line_num}:${category}:${description}"
