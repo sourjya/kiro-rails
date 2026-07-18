@@ -51,3 +51,6 @@ docs/bugs/.bug-scribe-processed
 # Media artifacts
 artifacts/
 output/
+
+# TracePulse runtime data
+.tracepulse/
