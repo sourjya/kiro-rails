@@ -6,7 +6,7 @@
 
 An opinionated project template for [Kiro](https://kiro.dev)-driven development. Steering files, automated hooks, documentation taxonomy, and workflow scripts that give your agentic IDE or CLI assistant persistent engineering discipline - TDD, spec-driven planning, security reviews, and structured documentation - from the first commit.
 
-**What's included:** [22 steering files](.kiro/steering/) · [24 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
+**What's included:** [22 steering files](.kiro/steering/) · [30 automated hooks](.kiro/hooks/) · [17 review prompts](.kiro/prompts/) · [4 agents](.kiro/agents/) · [7 skills](.kiro/skills/) · [1 TDD task template](.kiro/templates/) · 3 doc templates · 14 docs directories · [multi-tool export](scripts/export-to-tools.sh) · [native Claude Code layer](#bonus-native-claude-code-support)
 
 ## Why Use This Template
 
@@ -315,6 +315,12 @@ Hooks fire automatically on file edits or before tool use:
 | Bug Scribe: Discover | `.py`/`.ts`/`.js`/`.go`/`.rs`/`.java` edited | Detects `# bug: CATEGORY — description` markers, scaffolds `BUG-###.md` doc with code context + chokepoint log entry. Zero tokens, deterministic. |
 | Bug Scribe: Capture Diff | Pre-commit | When staged files contain a bug marker with an existing bug doc, injects the fix diff + commit message (solution) into the doc. Auto-stages the update. |
 | Bug Scribe: Pattern Detect | `docs/bugs/BUG-*.md` edited | Agent-powered: counts bugs per category, flags trends at 2+, recommends guardrail promotion at 3+. Optional — disable for zero-token operation. |
+| Test File Scaffold | `.py`/`.ts`/`.js` created | Auto-creates matching test file at correct path with imports and function skeletons. Idempotent — skips if test exists. |
+| Import Path Autofix | `.py`/`.ts`/`.js` edited | Detects `../../` deep relative imports. Warns with correct alternative (`@/` for TS, package imports for Python). |
+| Hardcoded Value Scan | `.py`/`.ts`/`.js`/`.go`/`.rs` edited | Catches UUIDs, URLs, IP addresses, port numbers in source files. Skips tests/config/constants. |
+| Empty Catch Detector | `.py`/`.ts`/`.js` edited | Catches empty `except: pass` and `catch {}` blocks. Zero false positives — an empty catch is always wrong. |
+| Deprecated Pattern Detect | `.py`/`.ts`/`.js` edited | Catches `datetime.utcnow()`, `window.alert()`, `var` keyword, excessive `console.log`. Configurable pattern list. |
+| Chokepoint Auto-Promote | `chokepoint-log.md` edited | Agent-powered: counts entries per category, drafts steering rule promotion when 3+ share a pattern. |
 
 ## Development Workflow
 
