@@ -7,6 +7,52 @@
 
 ---
 
+## The Problem
+
+AI coding agents are powerful but stateless. Between sessions, they forget your engineering standards. Without persistent guardrails, agents drift: skipping tests, inlining secrets, creating ad-hoc structures, ignoring changelogs, producing inconsistent code across features. Each session starts from zero — the agent has no memory of how your team writes code, documents decisions, or handles bugs.
+
+The result is invisible at first and expensive later. Hardcoded URLs accumulate. Empty catch blocks normalize. Bug fixes ship without documentation. The same bug class recurs because nobody connected the dots. The "we should add a regression test" promise dies because nothing forces it.
+
+Teams try to solve this with onboarding docs, code review checklists, and "please remember to..." messages. None of these work with AI agents because they require the agent to *read and remember* — which it does inconsistently, especially under context pressure in long sessions.
+
+## The Solution
+
+Kiro-rails encodes engineering discipline as **machine-readable rules that the agent cannot ignore.** Not suggestions — enforcement. Three layers working together:
+
+1. **Steering files** (22 always-on context documents) shape how the agent thinks and writes code. They're loaded into the agent's context on every interaction. The agent doesn't just write code; it follows your team's rules about *how* code should be written, tested, documented, and deployed. These are the constitution — the standing rules.
+
+2. **Automated hooks** (30 triggers) detect violations and act in real-time — on every file save and every commit. They don't remind the agent to do something; they *do* it. A detection hook catches an empty `catch {}` block the moment it's written. A scaffolding hook creates the matching test file the moment a source file appears. A documentation hook captures the bug fix diff at commit time. These are the reflexes — they fire whether the agent remembers the rule or not.
+
+3. **Review prompts** (17 on-demand audits) perform deep analysis at checkpoints — security scans, maintainability reviews, UX audits, dependency risk assessments. They catch what accumulated between hook firings: systemic drift, pattern families, codebase-wide inconsistencies that no single-file hook can see. These are the periodic health checks.
+
+The three layers form a **closed loop**: steering prevents mistakes → hooks catch what steering missed → prompts audit for systemic drift → prompt findings tune hook patterns → hooks prevent recurrence. No concern relies on a single mechanism. Every rule has a backup. The system gets tighter over time as the feedback loop runs.
+
+## How It Works In Practice
+
+**Day 1:** Install kiro-rails (`curl | bash`). The agent now has 22 steering files in its context. It follows TDD, uses conventional commits, creates specs before code, respects branch discipline. No configuration needed — the defaults are opinionated and correct.
+
+**Every file save:** Hooks fire silently. They check for deprecated patterns, deep relative imports, hardcoded values, empty catch blocks. If something's wrong, the hook speaks up with the specific violation and the correct alternative. If everything's clean, silence.
+
+**Every commit:** Pre-commit hooks verify staged files. The changelog is drafted from `git log`. Bug Scribe captures fix diffs into bug documents. Secrets are blocked. Merged branches are auto-deleted.
+
+**Feature complete:** Run 2-3 review prompts. Get a structured report with severity, evidence, and remediation. Findings become tickets. The worst patterns get wired into hooks so they're caught automatically next time.
+
+**Bug discovered:** Type `# bug: TYPE_MISMATCH — API returns wrong shape` in the code. Save. Bug Scribe instantly creates a full bug document — metadata, code context, chokepoint log entry — zero tokens, deterministic. When you commit the fix, the diff and your commit message flow into the document as the solution. If the same bug category hits 3 times, the system recommends promoting it to a permanent steering rule.
+
+**Sprint end:** Run Tier 3 security review + test quality audit. The reports prove the codebase is healthy. Drift that accumulated is identified and addressed. The cycle restarts.
+
+## What Makes It Different
+
+**It's enforcement, not documentation.** Most "rules for AI" projects produce markdown files that describe best practices. Kiro-rails *enforces* them with automated detection and action. The agent can't skip a regression test because the hook creates the test file automatically. It can't commit a secret because the pre-commit hook blocks it. It can't ignore a changelog because the draft is generated from `git log`.
+
+**The primary path costs zero tokens.** Detection hooks are deterministic shell scripts — regex, grep, awk. They run in 10-60ms with no LLM call. Only the parts that genuinely need judgment (pattern classification, ADR content) use agent tokens. The system is fast, cheap, and identical every time.
+
+**It gets smarter over time.** The feedback loop between prompts and hooks is the mechanism. Each review prompt run finds patterns the hooks don't catch yet. Those patterns become new hook regex. Next time, the hook catches it on save instead of waiting for the sprint review. The system converges toward zero drift.
+
+**It works with any AI coding tool.** Designed for Kiro, but ships a native Claude Code layer and export scripts for Cursor, Copilot, and Codex. The engineering principles are universal; the enforcement mechanisms adapt to each tool's capabilities.
+
+---
+
 ## One-Line Summary
 
 An opinionated project template that gives AI coding agents persistent engineering discipline — TDD, spec-driven planning, security reviews, automated bug documentation, and structured enforcement — from the first commit.
