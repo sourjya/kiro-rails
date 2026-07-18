@@ -1,0 +1,15 @@
+{
+  "name": "steering-frontmatter-lint",
+  "version": "0.1.0",
+  "description": "Validates steering file frontmatter: every file must have explicit inclusion mode (always/fileMatch/manual). Catches missing or invalid metadata.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": [".kiro/steering/*.md"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/steering-frontmatter-lint.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}

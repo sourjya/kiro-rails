@@ -12,15 +12,14 @@
 
 set -euo pipefail
 
-main() {
-    local file="${1:-}"
-    [ -z "$file" ] && exit 0
-    [ -f "$file" ] || exit 0
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/detect.sh"
 
-    local ext="${file##*.}"
+main() {
+    detect_init "${1:-}"
     local findings=""
 
-    case "$ext" in
+    case "$EXT" in
         py)
             # Detect: bare except: pass / except Exception: pass / except:\n    pass
             # Match lines with just `pass` or `...` after except
@@ -34,13 +33,13 @@ main() {
                 }
                 except_line && /^\s*#/ { next }
                 except_line { except_line = 0 }
-            ' "$file" 2>/dev/null || true)
+            ' "$FILE" 2>/dev/null || true)
             ;;
         js|jsx|ts|tsx)
             # Detect: catch (e) {} or catch {} or catch (e) { /* comment */ }
             # Single-line empty catch
             local single_line
-            single_line=$(grep -nE 'catch\s*(\([^)]*\))?\s*\{\s*(//.*|/\*.*\*/)?\s*\}' "$file" 2>/dev/null || true)
+            single_line=$(grep -nE 'catch\s*(\([^)]*\))?\s*\{\s*(//.*|/\*.*\*/)?\s*\}' "$FILE" 2>/dev/null || true)
             if [ -n "$single_line" ]; then
                 findings=$(echo "$single_line" | while IFS= read -r line; do
                     echo "  Line $(echo "$line" | cut -d: -f1): $(echo "$line" | cut -d: -f2- | sed 's/^\s*//')"
@@ -64,7 +63,7 @@ main() {
                 catch_line && /^\s*(\/\/|\/\*|\*\/)/ { next }
                 catch_line && /^\s*$/ { next }
                 catch_line { catch_line = 0 }
-            ' "$file" 2>/dev/null || true)
+            ' "$FILE" 2>/dev/null || true)
 
             if [ -n "$multi_line" ]; then
                 findings="${findings}${findings:+$'\n'}${multi_line}"
@@ -76,7 +75,7 @@ main() {
     esac
 
     if [ -n "$findings" ]; then
-        echo "🚫 EMPTY CATCH DETECTED in ${file}:"
+        echo "🚫 EMPTY CATCH DETECTED in ${FILE}:"
         echo "$findings"
         echo ""
         echo "Per error-handling-performance.md: 'Never silently ignore errors.'"

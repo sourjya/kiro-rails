@@ -13,20 +13,19 @@
 
 set -euo pipefail
 
-main() {
-    local file="${1:-}"
-    [ -z "$file" ] && exit 0
-    [ -f "$file" ] || exit 0
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/detect.sh"
 
-    local ext="${file##*.}"
+main() {
+    detect_init "${1:-}"
     local findings=""
 
-    case "$ext" in
+    case "$EXT" in
         ts|tsx|js|jsx)
             # Detect: from '../../...' or import '../../...'
-            findings=$(grep -nE "(from|import)\s+['\"]\.\.\/\.\.\/" "$file" 2>/dev/null || true)
+            findings=$(grep -nE "(from|import)\s+['\"]\.\.\/\.\.\/" "$FILE" 2>/dev/null || true)
             if [ -n "$findings" ]; then
-                echo "🚫 DEEP RELATIVE IMPORTS in ${file}:"
+                echo "🚫 DEEP RELATIVE IMPORTS in ${FILE}:"
                 echo "$findings" | while IFS= read -r line; do
                     echo "  Line $(echo "$line" | cut -d: -f1): $(echo "$line" | cut -d: -f2- | sed 's/^\s*//')"
                 done
@@ -37,9 +36,9 @@ main() {
             ;;
         py)
             # Detect: from ...module or from ....module (3+ dots)
-            findings=$(grep -nE "^\s*from\s+\.{3,}" "$file" 2>/dev/null || true)
+            findings=$(grep -nE "^\s*from\s+\.{3,}" "$FILE" 2>/dev/null || true)
             if [ -n "$findings" ]; then
-                echo "🚫 DEEP RELATIVE IMPORTS in ${file}:"
+                echo "🚫 DEEP RELATIVE IMPORTS in ${FILE}:"
                 echo "$findings" | while IFS= read -r line; do
                     echo "  Line $(echo "$line" | cut -d: -f1): $(echo "$line" | cut -d: -f2- | sed 's/^\s*//')"
                 done

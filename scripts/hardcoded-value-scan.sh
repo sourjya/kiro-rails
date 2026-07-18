@@ -14,13 +14,14 @@ set -euo pipefail
 # Common ports to flag when found hardcoded in source (not config)
 COMMON_PORTS="3000|5173|5432|8000|8080|8443|9090|6379|27017"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/detect.sh"
+
 main() {
-    local file="${1:-}"
-    [ -z "$file" ] && exit 0
-    [ -f "$file" ] || exit 0
+    detect_init "${1:-}"
 
     # Skip files where hardcoded values are expected
-    case "$file" in
+    case "$FILE" in
         *test*|*spec*|*fixture*|*mock*|*.md|*.json|*.yml|*.yaml|*.toml|*.cfg|*.ini|*.env*)
             exit 0 ;;
         *constants*|*config*|*settings*|*.lock)
@@ -31,7 +32,7 @@ main() {
 
     # UUID pattern (not in variable assignment to a constant)
     local uuids
-    uuids=$(grep -nE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' "$file" 2>/dev/null \
+    uuids=$(grep -nE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' "$FILE" 2>/dev/null \
         | grep -iv '(UUID|ID|_id|const|CONFIG|SETTING)' || true)
     if [ -n "$uuids" ]; then
         local uuid_count
@@ -42,7 +43,7 @@ main() {
 
     # HTTP/HTTPS URLs (not in comments, not in imports)
     local urls
-    urls=$(grep -nE "https?://[a-zA-Z0-9]" "$file" 2>/dev/null \
+    urls=$(grep -nE "https?://[a-zA-Z0-9]" "$FILE" 2>/dev/null \
         | grep -v '^\s*//' | grep -v '^\s*#' | grep -v '^\s*\*' \
         | grep -iv '(example\.com|localhost|127\.0\.0\.1|placeholder)' || true)
     if [ -n "$urls" ]; then
@@ -54,7 +55,7 @@ main() {
 
     # Port numbers in string literals
     local ports
-    ports=$(grep -nE "([\"\\x27:])(${COMMON_PORTS})([\"\\x27,;)\\s])" "$file" 2>/dev/null \
+    ports=$(grep -nE "([\"\\x27:])(${COMMON_PORTS})([\"\\x27,;)\\s])" "$FILE" 2>/dev/null \
         | grep -v '^\s*//' | grep -v '^\s*#' || true)
     if [ -n "$ports" ]; then
         local port_count
@@ -65,7 +66,7 @@ main() {
 
     # IP addresses (not localhost)
     local ips
-    ips=$(grep -nE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' "$file" 2>/dev/null \
+    ips=$(grep -nE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' "$FILE" 2>/dev/null \
         | grep -v '127\.0\.0\.1' | grep -v '0\.0\.0\.0' \
         | grep -v '^\s*//' | grep -v '^\s*#' || true)
     if [ -n "$ips" ]; then
@@ -77,7 +78,7 @@ main() {
 
     # Output
     if [ -n "$findings" ]; then
-        echo "📌 HARDCODED VALUES in ${file}:"
+        echo "📌 HARDCODED VALUES in ${FILE}:"
         echo "$findings"
         echo "Per reusable-architecture.md: 'ZERO embedded literals.'"
         echo "Move to constants/ (domain values) or config (env-dependent values)."
