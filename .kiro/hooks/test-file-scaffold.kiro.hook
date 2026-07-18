@@ -1,0 +1,21 @@
+{
+  "name": "test-file-scaffold",
+  "version": "0.1.0",
+  "description": "Auto-creates matching test file when a new source file is created. Follows naming-conventions.md: source → test path mirroring.",
+  "enabled": true,
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.py",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "bash scripts/test-file-scaffold.sh \"${filePath}\"",
+    "timeout": 10
+  }
+}
