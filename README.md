@@ -37,6 +37,12 @@ This template solves that by encoding your engineering standards as **[steering 
 | 🎯 Discipline | Stacked requests derail the current task | Request queue protocol - file it, finish current job, then drain the backlog |
 | 🌿 Discipline | Branches pile up and silently diverge | Branch hygiene - merge-and-delete, collision detector before forking a branch |
 | 🚧 Isolation | A parallel agent session corrupts another repo's git | Session isolation - stay in your project root, never `git -C` a sibling repo, working-tree lock detects foreign actors |
+| 🐛 Bugs | Bug fixes ship with no record | [Bug Scribe](scripts/bug-scribe.sh) — type `# bug:` in code, get a full postmortem + diff + pattern tracking automatically |
+| 🐛 Bugs | Same bug class keeps recurring | Pattern detection flags trends at 2+ and promotes to steering rules at 3+ |
+| 🧪 Testing | New source file, no test file | [Test file scaffold](scripts/test-file-scaffold.sh) auto-creates matching test with imports and skeletons |
+| 🔌 API | `../../` imports break on refactor | [Import path hook](scripts/import-path-autofix.sh) catches deep relative imports on save |
+| 🔒 Security | Empty `catch {}` hides real errors | [Empty catch detector](scripts/empty-catch-detect.sh) — zero false positives, fires on save |
+| 📁 Structure | Hardcoded URLs and UUIDs scattered in source | [Hardcoded value scan](scripts/hardcoded-value-scan.sh) catches magic numbers on save |
 
 The steering files work with any [MCP](https://kiro.dev/docs/cli/mcp)-compatible agent. They're designed for [Kiro](https://kiro.dev) but the principles apply to any AI-assisted development workflow.
 
@@ -243,6 +249,13 @@ scripts/
 ├── claude-guard-bash.sh # Claude PreToolUse guard: block cross-repo git (enforces session-isolation)
 ├── check-claude-fresh.sh # Verify the committed .claude/ is in sync with .kiro/ source
 ├── bug-scribe.sh       # Automated bug doc scaffolding from # bug: markers (zero tokens, deterministic)
+├── test-file-scaffold.sh # Auto-create matching test file on new source file (zero tokens)
+├── changelog-draft.sh  # Draft changelog entry from git log grouped by conventional-commit type
+├── empty-catch-detect.sh # Detect empty except:/catch{} blocks (zero false positives)
+├── deprecated-pattern-detect.sh # Catch banned patterns: utcnow(), window.alert(), var
+├── import-path-autofix.sh # Detect ../../ deep relative imports, suggest @/ alias
+├── hardcoded-value-scan.sh # Catch hardcoded UUIDs, URLs, IPs, ports in source
+├── lib/template.sh     # Reusable template rendering library (KEY=value, KEY=@filepath)
 └── style-survey.js     # In-page computed-style census for UX rubric evidence (D/K families)
 
 logs/                   # Command output logs (gitignored)

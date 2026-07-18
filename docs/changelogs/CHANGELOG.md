@@ -6,6 +6,40 @@ Rolling policy: archive to CHANGELOG.YYYY-MM-DD.md when exceeding 500 lines.
 
 ## Unreleased
 
+## 2026-07-18 - v0.20.0 - Hook Automation Sweep: Triangulation Enforcement
+
+Twelve hooks upgraded or created, closing the gap between steering rules (which *tell* the agent what to do) and automated enforcement (which *catches* it when the agent doesn't). Every engineering concern now has at least two layers of coverage: prevention (steering) + detection (hook). Architectural decision documented in ADR-002.
+
+### Added — New Detection Hooks
+
+- **Test file scaffold** (`test-file-scaffold`) — new source file → matching test file auto-created with imports, class/function skeletons. Python and TS/JS. Zero tokens. (`scripts/test-file-scaffold.sh`)
+- **Empty catch detector** (`empty-catch-detector`) — catches bare `except: pass` and `catch {}` blocks on save. Zero false positives — an empty catch is always wrong. (`scripts/empty-catch-detect.sh`)
+- **Deprecated pattern detect** (`deprecated-pattern-detect`) — catches `datetime.utcnow()`, `window.alert()`, `var` keyword, excessive `console.log`. Configurable. (`scripts/deprecated-pattern-detect.sh`)
+- **Import path autofix** (`import-path-autofix`) — detects `../../` deep relative imports, warns with correct alternative (`@/` for TS, package imports for Python). (`scripts/import-path-autofix.sh`)
+- **Hardcoded value scan** (`hardcoded-value-scan`) — catches UUIDs, URLs, IP addresses, port numbers in source files. Skips tests/config/constants. (`scripts/hardcoded-value-scan.sh`)
+- **Chokepoint auto-promote** (`chokepoint-auto-promote`) — agent-powered: counts entries per category in chokepoint log, drafts steering rule promotion at 3+.
+
+### Changed — Hook Upgrades (remind → act)
+
+- **Changelog maintenance** — now drafts entry from `git log` grouped by conventional-commit type (new `scripts/changelog-draft.sh`) instead of asking the LLM to produce from scratch. Zero tokens on the primary path.
+- **Variant search** — now executes the grep (finds functions from changed files, searches for them elsewhere in the codebase) instead of just printing a reminder.
+- **Branch hygiene** — now auto-deletes merged branches and logs each deletion instead of just listing them.
+- **Fix spiral detector** — now auto-creates a chokepoint-log entry with the commit sequence when 3+ fix commits detected.
+- **ADR trigger** — now instructs the agent to scaffold from template with pre-filled context before deciding whether to keep.
+- **Changelog consolidation** — now drafts the grouped entry using `changelog-draft.sh --dry-run` instead of just counting commits behind.
+
+### Added — Architecture
+
+- **ADR-002: Triangulation Enforcement Model** — documents the architectural decision that every engineering concern must be covered by steering (prevention) + hook (detection) minimum, with prompts (audit) as the third layer for drift-prone concerns. Classifies all 20 concerns by drift risk (high = 3/3 needed, medium = 2/3 sufficient).
+- **`scripts/lib/template.sh`** — reusable template rendering library (`KEY=value` for single-line, `KEY=@filepath` for multi-line). Used by Bug Scribe, available for all future scaffolding hooks.
+
+### Metrics
+
+- Hook count: 24 → 30 (+6 new, 6 upgraded)
+- Scripts: 8 → 15 (+7 new)
+- Concerns fully triangulated: 4 → 12
+- Single-layer concerns: 5 → 2 (only DB conventions and state persistence remain steering-only — they require semantic/runtime detection that regex can't do)
+
 ## 2026-07-18 - v0.19.0 - Bug Scribe: Automated Bug Documentation from Inline Markers
 
 Three new hooks that automate the bug documentation lifecycle. Type `# bug: CATEGORY — description` in any source file, and the system scaffolds a complete bug report, captures the fix diff on commit, and tracks recurring patterns across the codebase.
